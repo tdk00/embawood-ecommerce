@@ -58,7 +58,7 @@ class ApiProductController extends Controller
             'colorVariations.images',
             'topLists.subcategory',
             'colorVariations.attributeValues.attribute',
-        ])->findOrFail($id);
+        ])->find($id);
 
         return response()->json($product);
     }
