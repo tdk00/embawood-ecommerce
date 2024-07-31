@@ -1,0 +1,102 @@
+{
+    "products": [],
+    "sets": {
+        "1": {
+            "set": {
+                "id": 93,
+                "user_id": 22,
+                "product_id": 1,
+                "set_id": null,
+                "quantity": 2,
+                "created_at": "2024-07-30T13:29:11.000000Z",
+                "updated_at": "2024-07-30T13:29:11.000000Z",
+                "total_price": 100,
+                "product": {
+                    "id": 1,
+                    "parent_id": null,
+                    "name": "Yataq dəsti",
+                    "color": null,
+                    "sku": "321231232",
+                    "description": "ttttt",
+                    "price": "10.00",
+                    "stock": 20,
+                    "discount": null,
+                    "discount_ends_at": null,
+                    "is_set": 1,
+                    "created_at": null,
+                    "updated_at": null,
+                    "is_in_basket": true,
+                    "is_favorite": false,
+                    "products": [
+                        {
+                            "id": 3,
+                            "parent_id": null,
+                            "name": "Çarpayı",
+                            "color": null,
+                            "sku": "32231232",
+                            "description": "ttttt",
+                            "price": "10.00",
+                            "stock": 20,
+                            "discount": null,
+                            "discount_ends_at": null,
+                            "is_set": 0,
+                            "created_at": null,
+                            "updated_at": null,
+                            "is_in_basket": false,
+                            "is_favorite": false,
+                            "pivot": {
+                                "set_id": 1,
+                                "product_id": 3,
+                                "quantity": 3
+                            }
+                        },
+                        {
+                            "id": 4,
+                            "parent_id": null,
+                            "name": "product 3",
+                            "color": null,
+                            "sku": "das21dsa",
+                            "description": "dsadsa",
+                            "price": "10.00",
+                            "stock": 10,
+                            "discount": null,
+                            "discount_ends_at": null,
+                            "is_set": 0,
+                            "created_at": null,
+                            "updated_at": null,
+                            "is_in_basket": false,
+                            "is_favorite": false,
+                            "pivot": {
+                                "set_id": 1,
+                                "product_id": 4,
+                                "quantity": 2
+                            }
+                        }
+                    ]
+                }
+            },
+            "products": [
+                {
+                    "id": 94,
+                    "user_id": 22,
+                    "product_id": 3,
+                    "set_id": 1,
+                    "quantity": 6,
+                    "created_at": "2024-07-30T13:29:11.000000Z",
+                    "updated_at": "2024-07-30T13:29:11.000000Z"
+                },
+                {
+                    "id": 95,
+                    "user_id": 22,
+                    "product_id": 4,
+                    "set_id": 1,
+                    "quantity": 4,
+                    "created_at": "2024-07-30T13:29:11.000000Z",
+                    "updated_at": "2024-07-30T13:29:11.000000Z"
+                }
+            ]
+        }
+    },
+    "total": 100,
+    "coupon_discount": 0
+}
