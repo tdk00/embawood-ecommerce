@@ -78,7 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('favorites/toggle', [ApiFavoriteController::class, 'toggle']);
 
 });
-Route::get('products', [ApiProductController::class, 'index']);
+//Route::get('products', [ApiProductController::class, 'index']);
 Route::get('products/{id}', [ApiProductController::class, 'show']);
 Route::post('products/filter', [ApiProductController::class, 'filter']);
 Route::post('products', [ApiProductController::class, 'store']);

@@ -14,7 +14,8 @@ class SubcategorySeeder extends Seeder
             'category_id' => 1, // Assuming 1 is the ID of the Electronics category
             'name' => 'Mobile Phones',
             'description' => 'Smartphones and accessories',
-            'image' => 'mobile_phones.jpg'
+            'image' => 'mobile_phones.jpg',
+            'widget_view_image' => 'electronics_widget.jpg'
         ]);
 
         // Add more subcategories as needed

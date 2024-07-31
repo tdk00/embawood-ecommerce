@@ -13,8 +13,7 @@ class CategorySeeder extends Seeder
         Category::create([
             'name' => 'Electronics',
             'description' => 'All kinds of electronic items',
-            'banner_image' => 'electronics_banner.jpg',
-            'widget_view_image' => 'electronics_widget.jpg'
+            'banner_image' => 'electronics_banner.jpg'
         ]);
 
         // Add more categories as needed
