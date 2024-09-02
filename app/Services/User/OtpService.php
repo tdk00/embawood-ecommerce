@@ -10,8 +10,9 @@ class OtpService
 {
     public function generateOtp($phone)
     {
-        $otp = rand(1000, 9999);
+//        $otp = rand(1000, 9999);
 
+        $otp = 1234;
         Otp::create([
             'phone' => $phone,
             'otp' => $otp,
