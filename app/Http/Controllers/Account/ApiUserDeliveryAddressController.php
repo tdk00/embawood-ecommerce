@@ -20,7 +20,18 @@ class ApiUserDeliveryAddressController extends Controller
     public function index()
     {
         $addresses = $this->user->deliveryAddresses;
-        return response()->json($addresses);
+        $transformedAddresses = $addresses->map(function ($address) {
+            return [
+                'id' => $address->id,
+                'fullname' => $address->fullname,
+                'phone' => $address->phone,
+                'address_line1' => $address->address_line1,
+                'address_line2' => $address->address_line2,
+                'city' => $address->city,
+                'is_default' => $address->is_default,
+            ];
+        });
+        return response()->json($transformedAddresses);
     }
 
     public function store(Request $request)
@@ -75,5 +86,14 @@ class ApiUserDeliveryAddressController extends Controller
         $address = UserDeliveryAddress::where('user_id', $this->user->id)->findOrFail($id);
         $address->delete();
         return response()->json(['message' => 'Address deleted']);
+    }
+
+    public function makeSelected($id)
+    {
+        UserDeliveryAddress::where('user_id', $this->user->id)->update(['is_default' => 0]);
+
+        $address = UserDeliveryAddress::where('user_id', $this->user->id)->findOrFail($id);
+        $address->is_default = 1;
+        $address->save();
     }
 }

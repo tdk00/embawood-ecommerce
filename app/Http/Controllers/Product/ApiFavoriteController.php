@@ -15,7 +15,30 @@ class ApiFavoriteController extends Controller
         $userId = Auth::id();
         $favorites = Favorite::where('user_id', $userId)->with('product')->get();
 
-        return response()->json($favorites);
+        $transformedFavorites = $favorites->map(function ($favorite) {
+            $product = $favorite->product;
+
+            $product->main_image = url('storage/images/products/' . $product->main_image);
+            $productData = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'is_set' => $product->is_set,
+                'price' => $product->price,
+                'discount' => $product->discount,
+                'discount_ends_at' => $product->discount_ends_at,
+                'final_price' => $product->final_price,
+                'main_image' => url('storage/images/products/' . $product->main_image),
+                'average_rating' => $product->average_rating,
+                'is_in_basket' => $product->is_in_basket,
+                'is_favorite' => $product->is_favorite,
+                'remaining_discount_seconds' => $product->remaining_discount_seconds,
+                'has_unlimited_discount' => $product->has_unlimited_discount,
+                'has_limited_discount' => $product->has_limited_discount
+            ];
+            return $productData;
+        });
+
+        return response()->json($transformedFavorites);
     }
 
     public function toggle(Request $request)
@@ -29,13 +52,27 @@ class ApiFavoriteController extends Controller
 
         if ($favorite) {
             $favorite->delete();
-            return response()->json(['message' => 'Product removed from favorites']);
+            $message = 'Product removed from favorites';
+            $isFavorite = false;
         } else {
             Favorite::create([
                 'user_id' => $userId,
                 'product_id' => $productId
             ]);
-            return response()->json(['message' => 'Product added to favorites']);
+            $message = 'Product added to favorites';
+            $isFavorite = true;
         }
+
+        // Fetch all favorites for the user
+        $favorites = Favorite::where('user_id', $userId)->pluck('product_id')->toArray();
+
+        return response()->json([
+            'status' => 'success',
+            'product_id' => $productId,
+            'product_name' => $product->name,
+            'is_favorite' => $isFavorite,
+            'favorites' => $favorites, // Return all favorites
+            'message' => $message
+        ]);
     }
 }

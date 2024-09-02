@@ -1,102 +1,166 @@
 {
-    "products": [],
-    "sets": {
-        "1": {
-            "set": {
-                "id": 93,
-                "user_id": 22,
-                "product_id": 1,
-                "set_id": null,
-                "quantity": 2,
-                "created_at": "2024-07-30T13:29:11.000000Z",
-                "updated_at": "2024-07-30T13:29:11.000000Z",
-                "total_price": 100,
-                "product": {
-                    "id": 1,
-                    "parent_id": null,
-                    "name": "Yataq dəsti",
-                    "color": null,
-                    "sku": "321231232",
-                    "description": "ttttt",
-                    "price": "10.00",
-                    "stock": 20,
-                    "discount": null,
-                    "discount_ends_at": null,
-                    "is_set": 1,
-                    "created_at": null,
-                    "updated_at": null,
-                    "is_in_basket": true,
-                    "is_favorite": false,
-                    "products": [
-                        {
-                            "id": 3,
-                            "parent_id": null,
-                            "name": "Çarpayı",
-                            "color": null,
-                            "sku": "32231232",
-                            "description": "ttttt",
-                            "price": "10.00",
-                            "stock": 20,
-                            "discount": null,
-                            "discount_ends_at": null,
-                            "is_set": 0,
-                            "created_at": null,
-                            "updated_at": null,
-                            "is_in_basket": false,
-                            "is_favorite": false,
-                            "pivot": {
-                                "set_id": 1,
-                                "product_id": 3,
-                                "quantity": 3
-                            }
-                        },
-                        {
-                            "id": 4,
-                            "parent_id": null,
-                            "name": "product 3",
-                            "color": null,
-                            "sku": "das21dsa",
-                            "description": "dsadsa",
-                            "price": "10.00",
-                            "stock": 10,
-                            "discount": null,
-                            "discount_ends_at": null,
-                            "is_set": 0,
-                            "created_at": null,
-                            "updated_at": null,
-                            "is_in_basket": false,
-                            "is_favorite": false,
-                            "pivot": {
-                                "set_id": 1,
-                                "product_id": 4,
-                                "quantity": 2
-                            }
-                        }
-                    ]
-                }
+    "success": true,
+    "data": {
+        "product": {
+            "id": 1,
+            "name": "Dəst Sanny yataq dəsti",
+            "sku": "F5tHRDv03c",
+            "description": "Dizayn: Modern\nRəng: Hareli ceviz\nMaterial: plastik ayaqlar, əsas hissələr DSP, güzgü, şüşə\nDəstə daxildir: dolab 6 qapılı, çarpayı, komod, asma güzgü, tumba",
+            "price": 190,
+            "final_price": 172,
+            "stock": 21,
+            "discount": 9.473684210526317,
+            "discount_ends_at": "2024-08-29 11:48:26",
+            "is_set": 1,
+            "is_in_basket": true,
+            "is_favorite": false,
+            "remaining_discount_seconds": 4726,
+            "has_unlimited_discount": false,
+            "has_limited_discount": true
+        },
+        "set_modules": [
+            {
+                "id": 2,
+                "name": "Sanny yataq dəstinin 1ci məhsulu ",
+                "subcategory_name": "Paltar Dolabı",
+                "image": "http://192.168.110.61:8000/storage/images/products/http://192.168.110.61:8000/storage/images/products/product image-3.png",
+                "discount": 0,
+                "discount_ends_at": "2024-08-28 11:40:26",
+                "price": "50.00",
+                "final_price": "50.00",
+                "average_rating": "3.3200",
+                "is_in_basket": false,
+                "remaining_discount_seconds": 0,
+                "has_unlimited_discount": false,
+                "has_limited_discount": false
             },
-            "products": [
-                {
-                    "id": 94,
-                    "user_id": 22,
-                    "product_id": 3,
-                    "set_id": 1,
-                    "quantity": 6,
-                    "created_at": "2024-07-30T13:29:11.000000Z",
-                    "updated_at": "2024-07-30T13:29:11.000000Z"
-                },
-                {
-                    "id": 95,
-                    "user_id": 22,
-                    "product_id": 4,
-                    "set_id": 1,
-                    "quantity": 4,
-                    "created_at": "2024-07-30T13:29:11.000000Z",
-                    "updated_at": "2024-07-30T13:29:11.000000Z"
-                }
-            ]
+            {
+                "id": 3,
+                "name": "Sanny yataq dəstinin 2ci məhsulu ",
+                "subcategory_name": "Bench",
+                "image": "http://192.168.110.61:8000/storage/images/products/http://192.168.110.61:8000/storage/images/products/product image-8.png",
+                "discount": "20.00",
+                "discount_ends_at": "2024-08-29 11:48:26",
+                "price": "30.00",
+                "final_price": 24,
+                "average_rating": "3.0400",
+                "is_in_basket": false,
+                "remaining_discount_seconds": 4726,
+                "has_unlimited_discount": false,
+                "has_limited_discount": true
+            }
+        ],
+        "images": [
+            {
+                "id": 1,
+                "product_id": 1,
+                "image_path": "product image-5.png",
+                "is_main": 1,
+                "is_hover": 0,
+                "created_at": "2024-08-07T02:43:10.000000Z",
+                "updated_at": "2024-08-07T02:43:10.000000Z",
+                "full_image": "http://192.168.110.61:8000/storage/images/products/product image-5.png"
+            },
+            {
+                "id": 2,
+                "product_id": 1,
+                "image_path": "product image-2.png",
+                "is_main": 0,
+                "is_hover": 0,
+                "created_at": "2024-08-07T02:43:10.000000Z",
+                "updated_at": "2024-08-07T02:43:10.000000Z",
+                "full_image": "http://192.168.110.61:8000/storage/images/products/product image-2.png"
+            },
+            {
+                "id": 3,
+                "product_id": 1,
+                "image_path": "product image-8.png",
+                "is_main": 0,
+                "is_hover": 0,
+                "created_at": "2024-08-07T02:43:10.000000Z",
+                "updated_at": "2024-08-07T02:43:10.000000Z",
+                "full_image": "http://192.168.110.61:8000/storage/images/products/product image-8.png"
+            },
+            {
+                "id": 4,
+                "product_id": 1,
+                "image_path": "product image-2.png",
+                "is_main": 0,
+                "is_hover": 0,
+                "created_at": "2024-08-07T02:43:10.000000Z",
+                "updated_at": "2024-08-07T02:43:10.000000Z",
+                "full_image": "http://192.168.110.61:8000/storage/images/products/product image-2.png"
+            }
+        ],
+        "color_variations": [],
+        "reviews": [
+            {
+                "id": 1,
+                "product_id": 1,
+                "user_id": 1,
+                "name": "John Doe",
+                "surname": null,
+                "contact": null,
+                "review": "This is a sample review by a registered user.",
+                "rating": 1,
+                "status": "accepted",
+                "created_at": "2024-08-07T02:43:13.000000Z",
+                "updated_at": "2024-08-07T02:43:13.000000Z"
+            },
+            {
+                "id": 2,
+                "product_id": 1,
+                "user_id": 2,
+                "name": "Jane Smith",
+                "surname": null,
+                "contact": null,
+                "review": "This is a sample review by a registered user.",
+                "rating": 5,
+                "status": "accepted",
+                "created_at": "2024-08-07T02:43:13.000000Z",
+                "updated_at": "2024-08-07T02:43:13.000000Z"
+            }
+        ],
+        "similar_products": [
+            {
+                "id": 6,
+                "name": "Dəst Safir yataq dəsti",
+                "subcategory_name": "Çarpayı",
+                "image": "http://192.168.110.61:8000/storage/images/products/http://192.168.110.61:8000/storage/images/products/product image-5.png",
+                "discount": 0,
+                "discount_ends_at": null,
+                "price": 39,
+                "final_price": 39,
+                "average_rating": "3.1600",
+                "is_in_basket": false,
+                "is_favorite": false,
+                "remaining_discount_seconds": 0,
+                "has_unlimited_discount": false,
+                "has_limited_discount": false
+            }
+        ],
+        "purchased_together_products": [
+            {
+                "id": 8,
+                "name": "Dəst Amiral dressuar",
+                "subcategory_name": "Yataq dəsti",
+                "image": "http://192.168.110.61:8000/storage/images/products/http://192.168.110.61:8000/storage/images/products/product image-8.png",
+                "discount": "10.00",
+                "discount_ends_at": null,
+                "price": "175.00",
+                "final_price": 157.5,
+                "average_rating": "3.0400",
+                "is_in_basket": false,
+                "is_favorite": false,
+                "remaining_discount_seconds": 0,
+                "has_unlimited_discount": true,
+                "has_limited_discount": false
+            }
+        ],
+        "top_list": {
+            "subcategory_id": 1,
+            "name": "Yataq dəsti",
+            "position": 1
         }
-    },
-    "total": 100,
-    "coupon_discount": 0
+    }
 }

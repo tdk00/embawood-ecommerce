@@ -12,13 +12,39 @@ class ApiSubIdeaController extends Controller
 
     public function index()
     {
-        $subIdeas = SubIdea::with('subIdeaItems')->get();
-        return response()->json($subIdeas);
+        $subIdeas = SubIdea::with('subIdeaItems.images')->get();
+
+        $transformedSubIdeas = $subIdeas->map(function ($subIdea) {
+            $items = $subIdea->subIdeaItems;
+            return [
+                'id' => $subIdea->id,
+                'name' => $subIdea->title,
+                'items' => $items->map(function ($item) {
+                    return [
+                        'id' => $item->id,
+                        'image' => url('storage/images/ideas/' . $item?->images?->first()?->image_url ?? "") ,
+                    ];
+                })
+            ];
+        });
+
+        return response()->json($transformedSubIdeas);
     }
 
     public function show(SubIdea $subIdea)
     {
-        $subIdea->load('subIdeaItems');
-        return response()->json($subIdea);
+        $subIdea->load('subIdeaItems.images');
+        $items = $subIdea->subIdeaItems;
+        $data =  [
+            'id' => $subIdea->id,
+            'name' => $subIdea->title,
+            'items' => $items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'image' => url('storage/images/ideas/' . $item?->images?->first()?->image_url ?? "") ,
+                ];
+            })
+        ];
+        return response()->json($data);
     }
 }

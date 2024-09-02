@@ -13,7 +13,7 @@ class ApiIdeaWidgetTabController extends Controller
         $tabs = IdeaWidgetTab::with([
             'idea',
             'ideaWidgetItems' => function ($query) {
-                $query->limit(4)->with([
+                $query->with([
                     'subIdea'
                 ]);
             }

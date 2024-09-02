@@ -12,7 +12,7 @@ class BasketItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'product_id', 'set_id', 'quantity'
+        'user_id', 'product_id', 'set_id', 'quantity', 'identifier'
     ];
 
     public function user()

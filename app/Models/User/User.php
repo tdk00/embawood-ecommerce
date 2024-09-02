@@ -6,6 +6,7 @@ use App\Models\Account\UserDeliveryAddress;
 use App\Models\Bonus\BonusExecution;
 use App\Models\Checkout\Order;
 use App\Models\Discount\Coupon;
+use App\Models\Discount\UsedCoupon;
 use App\Models\Discount\UserCoupon;
 use App\Models\Product\Review;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -74,13 +75,13 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function userCoupons()
-    {
-        return $this->hasMany(UserCoupon::class);
-    }
-
     public function coupons()
     {
-        return $this->belongsToMany(Coupon::class, 'user_coupons')->withPivot('earned_amount', 'is_used');
+        return $this->belongsToMany(Coupon::class, 'coupon_user')->withTimestamps();
+    }
+
+    public function usedCoupons()
+    {
+        return $this->hasMany(UsedCoupon::class);
     }
 }

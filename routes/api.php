@@ -50,8 +50,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('basket/add-product', [BasketController::class, 'addProduct']);
     Route::post('basket/update-product-quantity', [BasketController::class, 'updateProductQuantity']);
+
+
+    Route::post('basket/increase-product-quantity', [BasketController::class, 'increaseProductQuantity']);
+    Route::post('basket/decrease-product-quantity', [BasketController::class, 'decreaseProductQuantity']);
+
+
     Route::post('basket/remove-product', [BasketController::class, 'removeProduct']);
     Route::get('basket', [BasketController::class, 'getBasket']);
+
+
+    Route::post('basket/attach-coupon', [BasketController::class, 'attachCouponToBasket']);
+    Route::post('basket/detach-coupon', [BasketController::class, 'detachCouponFromBasket']);
 
     Route::post('products/view', [ApiProductController::class, 'viewProduct']);
     Route::get('bonus-history', [ApiBonusHistoryController::class, 'index']);
@@ -59,8 +69,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('account/addresses', [ApiUserDeliveryAddressController::class, 'index']);
     Route::post('account/addresses/store', [ApiUserDeliveryAddressController::class, 'store']);
-    Route::post('account/addresses/update/{id}', [ApiUserDeliveryAddressController::class, 'update']);
+    Route::put('account/addresses/update/{id}', [ApiUserDeliveryAddressController::class, 'update']);
     Route::delete('account/addresses/delete/{id}', [ApiUserDeliveryAddressController::class, 'destroy']);
+    Route::put('account/addresses/make-selected/{id}', [ApiUserDeliveryAddressController::class, 'makeSelected']);
 
 
     Route::post('apply-coupon', [BasketController::class, 'applyCoupon']);
@@ -100,6 +111,13 @@ Route::get('selected-products/{id}', [ApiSelectedProductController::class, 'show
 
 Route::apiResource('categories', ApiCategoryController::class);
 Route::apiResource('subcategories', ApiSubcategoryController::class);
+
+
+Route::get('categories-with-subcategories', [ApiCategoryController::class, 'getCategoriesWithSubcategory']);
+
+
+Route::get('subcategory-details', [ApiSubcategoryController::class, 'show']);
+
 Route::get('homescreen-subcategories', [ApiSubcategoryController::class, 'get_homescreen_subcategories']);
 
 Route::get('ideas', [ApiIdeaController::class, 'index']);

@@ -20,11 +20,24 @@ class Product extends Model
     ];
 
 
-    protected $appends = ['is_in_basket', 'is_favorite'];
+    protected $appends = ['is_in_basket', 'is_favorite', 'final_price', 'remaining_discount_seconds'];
 
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function getMainImageAttribute()
+    {
+        $mainImage = $this->images()->where('is_main', true)->first();
+
+        // If no main image, fetch the first image
+        if (!$mainImage) {
+            $mainImage = $this->images()->first();
+        }
+
+        // Return the URL/path of the main image or null if no images exist
+        return $mainImage ? $mainImage->image_path : null;
     }
 
     public function attributeValues()
@@ -32,15 +45,136 @@ class Product extends Model
         return $this->hasMany(AttributeValue::class);
     }
 
-    public function getFinalPriceAttribute()
+    public function getPriceAttribute($value)
     {
-        $discount = $this->discount ?? 0;
-        return $this->price * (1 - $discount / 100);
+        // Check if the product is a set
+        if ($this->is_set) {
+            // Calculate the sum of the prices of the products within the set, considering the quantity
+            return $this->products->sum(function ($product) {
+                return $product->price * $product->pivot->quantity;
+            });
+        }
+
+        // Return the original price if it's not a set
+        return $value;
     }
 
+    public function getFinalPriceAttribute()
+    {
+        if ($this->is_set) {
+            // Calculate the sum of the final prices of the products within the set, considering the quantity
+            return $this->products->sum(function ($product) {
+                return $product->final_price * $product->pivot->quantity;
+            });
+        }
+
+        $discount = $this->discount;
+        if ($discount > 0) {
+            return $this->price * (1 - $discount / 100);
+        }
+        return $this->price;
+    }
+
+    public function getDiscountAttribute($value)
+    {
+        if ($this->is_set) {
+            $originalPrice = $this->price;
+            $finalPrice = $this->final_price;
+
+            if ($originalPrice > 0) {
+                return (($originalPrice - $finalPrice) / $originalPrice) * 100;
+            }
+
+            return 0;
+        }
+
+        // Check if the discount is active
+        if (( $value && $this->discount_ends_at && now()->lessThanOrEqualTo($this->discount_ends_at) ) || ( $value && $this->discount_ends_at === null) ) {
+            return $value;
+        }
+
+        return 0;
+    }
+
+
+    // Method to check if discount is active
     public function isDiscountActive()
     {
-        return $this->discount && $this->discount_ends_at && \Carbon\Carbon::now()->lt($this->discount_ends_at);
+        return $this->discount && ($this->discount_ends_at === null || \Carbon\Carbon::now()->lt($this->discount_ends_at));
+    }
+
+    // New method to get remaining seconds until the discount ends
+    public function getRemainingDiscountSecondsAttribute()
+    {
+        if ($this->is_set) {
+            // If HasLimitedDiscount is true, return the latest RemainingDiscountSeconds among its products
+            if ($this->has_limited_discount) {
+                return $this->products->filter(function ($product) {
+                    return $product->has_limited_discount;
+                })->max(function ($product) {
+                    return $product->remaining_discount_seconds;
+                });
+            }
+
+            return 0; // Return 0 if there is no limited discount
+        }
+
+        return $this->has_limited_discount ? \Carbon\Carbon::now()->diffInSeconds($this->discount_ends_at, false) : 0;
+    }
+
+    public function getHasUnlimitedDiscountAttribute()
+    {
+        if ($this->is_set) {
+            // Check if any product in the set has an unlimited discount
+            foreach ($this->products as $product) {
+                if ($product->has_unlimited_discount) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return $this->discount && $this->discount_ends_at === null;
+    }
+
+    public function getHasLimitedDiscountAttribute()
+    {
+        if ($this->is_set) {
+            // If HasUnlimitedDiscount is true, HasLimitedDiscount should be false
+            if ($this->has_unlimited_discount) {
+                return false;
+            }
+
+            // Check if any product in the set has a limited discount
+            foreach ($this->products as $product) {
+                if ($product->has_limited_discount) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return $this->discount && $this->discount_ends_at !== null && \Carbon\Carbon::now()->lt($this->discount_ends_at);
+    }
+
+    public function getDiscountEndsAtAttribute()
+    {
+        if ($this->is_set) {
+            if ($this->has_unlimited_discount) {
+                return null;
+            }
+
+            if ($this->has_limited_discount) {
+                // Get the latest discount_ends_at among the products with limited discounts
+                return $this->products->filter(function ($product) {
+                    return $product->has_limited_discount;
+                })->max('discount_ends_at');
+            }
+
+            return null; // If there is no limited or unlimited discount, return null
+        }
+
+        return $this->attributes['discount_ends_at'];
     }
 
     public function variations()
@@ -51,6 +185,23 @@ class Product extends Model
     public function colorVariations()
     {
         return $this->hasMany(Product::class, 'parent_id')->whereNotNull('color');
+    }
+
+
+    public function siblingColorVariations()
+    {
+        if ($this->parent_id !== null) {
+            // If this product is a child, get the parent product and all its color variations
+            return Product::where(function($query) {
+                $query->where('parent_id', $this->parent_id)
+                    ->orWhere('id', $this->parent_id);
+            })
+                ->whereNotNull('color')
+                ->get();
+        }
+
+        // If this product is not a child, return an empty collection or null
+        return collect();
     }
 
     public function parent()
@@ -105,9 +256,19 @@ class Product extends Model
 
     public function getIsInBasketAttribute()
     {
-        $userId = Auth::guard('api')?->user()?->id;
+        $identifier = $this->getBasketIdentifier();
 
-        return $this->basketItems()->where('user_id', $userId)->whereNull('set_id')->exists();
+        return $this->basketItems()->where('identifier', $identifier)->whereNull('set_id')->exists();
+    }
+
+    private function getBasketIdentifier()
+    {
+        // If the user is authenticated, use their user ID
+        if (Auth::guard('api')->check()) {
+            return Auth::guard('api')->id();
+        }
+
+        return session()->get('basket_identifier');
     }
 
     public function getIsFavoriteAttribute()
@@ -115,6 +276,18 @@ class Product extends Model
         $userId = Auth::guard('api')->user()?->id;
 
         return $this->favorites()->where('user_id', $userId)->exists();
+    }
+
+
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->where('status', 'accepted')->avg('rating');
     }
 
 }
