@@ -15,4 +15,9 @@ class Category extends Model
     {
         return $this->hasMany(Subcategory::class);
     }
+
+    public function topList()
+    {
+        return $this->hasMany(TopList::class);
+    }
 }

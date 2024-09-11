@@ -61,6 +61,10 @@ class ApiProductController extends Controller
 
         $productDetails = $this->prepareProductDetails($product);
 
+        $user = Auth::guard('api')->user();
+
+        $this->bonusService->handleProductView($user, $id);
+
         // Return the product details in JSON format
         return response()->json([
             'success' => true,
@@ -76,7 +80,7 @@ class ApiProductController extends Controller
             'products',
             'attributeValues.attribute',
             'colorVariations.images',
-            'topLists.subcategory',
+            'topLists',
             'colorVariations.attributeValues.attribute',
         ])->find($id);
     }
@@ -177,7 +181,7 @@ class ApiProductController extends Controller
                 'id' => $similiarProduct->id,
                 'name' => $similiarProduct->name,
                 'subcategory_name' => $similiarProduct->subcategories->first()?->name ?? "",
-                'image' => url('storage/images/products/' . $similiarProduct->main_image),
+                'main_image' => url('storage/images/products/' . $similiarProduct->main_image),
                 'discount' => $similiarProduct->discount,
                 'discount_ends_at' => $similiarProduct->discount_ends_at,
                 'price' => $similiarProduct->price,
@@ -199,7 +203,7 @@ class ApiProductController extends Controller
                 'id' => $purchasedTogetherProduct->id,
                 'name' => $purchasedTogetherProduct->name,
                 'subcategory_name' => $purchasedTogetherProduct->subcategories->first()?->name ?? "",
-                'image' => url('storage/images/products/' . $purchasedTogetherProduct->main_image),
+                'main_image' => url('storage/images/products/' . $purchasedTogetherProduct->main_image),
                 'discount' => $purchasedTogetherProduct->discount,
                 'discount_ends_at' => $purchasedTogetherProduct->discount_ends_at,
                 'price' => $purchasedTogetherProduct->price,
@@ -216,17 +220,37 @@ class ApiProductController extends Controller
 
     private function getTopList($product)
     {
-        $topList = $product->topLists->first();
+        $topList = $product?->topLists?->first();
 
         if ($topList) {
+            $products = $topList->category->topList->map(function ($topListProduct) {
+                return [
+                    'id' => $topListProduct->product->id,
+                    'name' => $topListProduct->product->name,
+                    'subcategory_name' => $topListProduct->product->subcategories->first()?->name ?? "",
+                    'main_image' => url('storage/images/products/' . $topListProduct->product->main_image),
+                    'discount' => $topListProduct->product->discount,
+                    'discount_ends_at' => $topListProduct->product->discount_ends_at,
+                    'price' => $topListProduct->product->price,
+                    'final_price' => $topListProduct->product->final_price,
+                    'average_rating' => $topListProduct->product->average_rating,
+                    'is_in_basket' => $topListProduct->product->is_in_basket,
+                    'is_favorite' => $topListProduct->product->is_favorite,
+                    'remaining_discount_seconds' => $topListProduct->product->remaining_discount_seconds,
+                    'has_unlimited_discount' => $topListProduct->product->has_unlimited_discount,
+                    'has_limited_discount' => $topListProduct->product->has_limited_discount
+                ];
+            });
+
             return [
-                'subcategory_id' => $topList->subcategory->id,
-                'name' => $topList->subcategory->name,
+                'category_id' => $topList->category->id,
+                'name' => $topList->category->name,
                 'position' => $topList->position,
+                'products' => $products
             ];
         }
 
-        return null; // or return an empty array if you prefer
+        return null;
     }
 
 
@@ -263,5 +287,42 @@ class ApiProductController extends Controller
         }
 
         return response()->json($product, 201);
+    }
+
+
+    public function fetchViewedProductsByIds(Request $request)
+    {
+        // Validate the incoming request to ensure 'ids' is present
+        $validatedData = $request->validate([
+            'ids' => 'required|string',  // 'ids' should be a comma-separated string
+        ]);
+
+        $idsArray = explode(',', $validatedData['ids']);
+
+        $products = Product::whereIn('id', $idsArray)->get();
+
+        $transformedProducts = $products->map(function ($product) {
+            $product->image = url('storage/images/products/' . $product->main_image);
+            $product->image_hover = url('storage/images/products/' . $product->hover_image);
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'is_set' => $product->is_set,
+                'price' => $product->price,
+                'discount' => $product->discount,
+                'discount_ends_at' => $product->discount_ends_at,
+                'final_price' => $product->final_price,
+                'main_image' => url('storage/images/products/' . $product->main_image),
+                'average_rating' => $product->average_rating,
+                'is_in_basket' => $product->is_in_basket,
+                'is_favorite' => $product->is_favorite,
+                'remaining_discount_seconds' => $product->remaining_discount_seconds,
+                'has_unlimited_discount' => $product->has_unlimited_discount,
+                'has_limited_discount' => $product->has_limited_discount
+            ];
+        });
+
+        // Return the products as a JSON response
+        return response()->json($transformedProducts);
     }
 }

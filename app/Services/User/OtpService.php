@@ -28,7 +28,10 @@ class OtpService
 
     public function verifyOtp($phone, $otp)
     {
-        $otpRecord = Otp::where('phone', $phone)->where('otp', $otp)->first();
+        $otpRecord = Otp::where('phone', $phone)
+            ->where('otp', $otp)
+            ->orderBy('created_at', 'desc') // Get the most recent OTP
+            ->first();
 
         if ($otpRecord && Carbon::now()->lt($otpRecord->expires_at)) {
             return true;

@@ -1,12 +1,17 @@
 <?php
 
+use App\Http\Controllers\Account\ApiProfileSummaryController;
 use App\Http\Controllers\Account\ApiUserDeliveryAddressController;
+use App\Http\Controllers\Account\ApiUserDetailsController;
 use App\Http\Controllers\Basket\BasketController;
 use App\Http\Controllers\Bonus\ApiBonusHistoryController;
+use App\Http\Controllers\Bonus\ApiEarnBonusController;
 use App\Http\Controllers\Category\ApiCategoryController;
 use App\Http\Controllers\Category\ApiSubcategoryController;
 use App\Http\Controllers\Category\ApiTopListController;
+use App\Http\Controllers\Checkout\ApiCheckoutDetailsController;
 use App\Http\Controllers\Checkout\ApiOrderController;
+use App\Http\Controllers\Company\ApiStoresController;
 use App\Http\Controllers\HomeScreen\ApiHomeScreenSliderController;
 use App\Http\Controllers\Ideas\ApiIdeaController;
 use App\Http\Controllers\Ideas\ApiIdeaWidgetItemController;
@@ -20,6 +25,7 @@ use App\Http\Controllers\Product\ApiReviewController;
 use App\Http\Controllers\ProductWidgets\ApiMostViewedProductController;
 use App\Http\Controllers\ProductWidgets\ApiNewProductController;
 use App\Http\Controllers\ProductWidgets\ApiSelectedProductController;
+use App\Http\Controllers\Search\ApiProductSearchController;
 use App\Http\Controllers\User\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -67,14 +73,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('bonus-history', [ApiBonusHistoryController::class, 'index']);
     Route::get('product-view-bonus-progress', [ApiProductController::class, 'getProductViewBonusProgress']);
 
-    Route::get('account/addresses', [ApiUserDeliveryAddressController::class, 'index']);
-    Route::post('account/addresses/store', [ApiUserDeliveryAddressController::class, 'store']);
-    Route::put('account/addresses/update/{id}', [ApiUserDeliveryAddressController::class, 'update']);
-    Route::delete('account/addresses/delete/{id}', [ApiUserDeliveryAddressController::class, 'destroy']);
-    Route::put('account/addresses/make-selected/{id}', [ApiUserDeliveryAddressController::class, 'makeSelected']);
+    Route::get('earn-bonus-info', [ApiEarnBonusController::class, 'getInfo']);
+
+    Route::get('user/delivery-addresses', [ApiUserDeliveryAddressController::class, 'index']);
+    Route::post('user/delivery-addresses', [ApiUserDeliveryAddressController::class, 'store']);
+    Route::put('user/delivery-addresses/{id}', [ApiUserDeliveryAddressController::class, 'update']);
+    Route::delete('user/delivery-addresses/{id}', [ApiUserDeliveryAddressController::class, 'destroy']);
+    Route::post('user/delivery-addresses/select', [ApiUserDeliveryAddressController::class, 'makeSelected']);
 
 
     Route::post('apply-coupon', [BasketController::class, 'applyCoupon']);
+
+
+    Route::post('checkout/details', [ApiCheckoutDetailsController::class, 'getDetails']);
+
 
     Route::post('checkout', [BasketController::class, 'checkout']);
 
@@ -87,12 +99,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('favorites', [ApiFavoriteController::class, 'index']);
     Route::post('favorites/toggle', [ApiFavoriteController::class, 'toggle']);
+    Route::post('favorites/remove', [ApiFavoriteController::class, 'remove']);
+
+
+    Route::get('me', [ApiUserDetailsController::class, 'getUserDetails']);
+
+    Route::get('get-profile-summary', [ApiProfileSummaryController::class, 'getDetails']);
+
+
+
 
 });
 //Route::get('products', [ApiProductController::class, 'index']);
 Route::get('products/{id}', [ApiProductController::class, 'show']);
 Route::post('products/filter', [ApiProductController::class, 'filter']);
 Route::post('products', [ApiProductController::class, 'store']);
+
+Route::get('/fetch-viewed-products-by-ids', [ApiProductController::class, 'fetchViewedProductsByIds']);
 
 Route::get('news', [ApiNewsController::class, 'index']);
 Route::get('news/{id}', [ApiNewsController::class, 'show']);
@@ -118,7 +141,12 @@ Route::get('categories-with-subcategories', [ApiCategoryController::class, 'getC
 
 Route::get('subcategory-details', [ApiSubcategoryController::class, 'show']);
 
+Route::get('category-details/{id}', [ApiCategoryController::class, 'show']);
+
+
 Route::get('homescreen-subcategories', [ApiSubcategoryController::class, 'get_homescreen_subcategories']);
+
+Route::get('homescreen-categories', [ApiCategoryController::class, 'get_homescreen_categories']);
 
 Route::get('ideas', [ApiIdeaController::class, 'index']);
 Route::get('ideas/{idea}', [ApiIdeaController::class, 'show']);
@@ -139,4 +167,10 @@ Route::get('/subcategories/{subcategory}/top-list', [ApiTopListController::class
 
 Route::post('/reviews/store/', [ApiReviewController::class, 'store']);
 Route::get('/reviews/{productId}', [ApiReviewController::class, 'getReviews']);
+
+
+Route::post('search/search-results', [ApiProductSearchController::class, 'searchResults']);
+
+
+Route::get('company/stores', [ApiStoresController::class, 'index']);
 

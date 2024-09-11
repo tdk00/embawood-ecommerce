@@ -19,7 +19,7 @@ class ApiReviewController extends Controller
 
         $user = Auth::guard('api')->user();
 
-        if (!$user || ($user && (!$user->name || !$user->surname))) {
+        if (!$user ) {
             $rules['name'] = 'required|string';
             $rules['surname'] = 'required|string';
         }
@@ -38,9 +38,9 @@ class ApiReviewController extends Controller
                 'status' => 'pending',
             ]);
 
-            if (!$user->name || !$user->surname) {
-                $review->name = $validated['name'] ?? null;
-                $review->surname = $validated['surname'] ?? null;
+            if ($user->name || $user->surname) {
+                $review->name = $user?->name ?? null;
+                $review->surname = $user?->surname ?? null;
             }
 
             $user->reviews()->save($review);
@@ -61,10 +61,22 @@ class ApiReviewController extends Controller
 
     public function getReviews(Request $request, $productId)
     {
+        // Fetch only accepted reviews for the given product
         $reviews = Review::where('product_id', $productId)
-            ->where('status', 'accepted') // Only get accepted reviews
-            ->paginate(10); // Paginate the results, 10 reviews per page
+            ->where('status', 'accepted')
+            ->get();
 
-        return response()->json($reviews);
+        // Calculate the number of reviews
+        $reviewCount = $reviews->count();
+
+        // Calculate the average rating
+        $averageRating = $reviews->avg('rating');
+
+        // Return the structured response with review count, average rating, and reviews
+        return response()->json([
+            'review_count' => $reviewCount,
+            'average_rating' => $averageRating,
+            'reviews' => $reviews,
+        ]);
     }
 }

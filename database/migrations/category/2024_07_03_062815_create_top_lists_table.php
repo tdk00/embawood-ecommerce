@@ -10,12 +10,12 @@ class CreateTopListsTable extends Migration
     {
         Schema::create('top_lists', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('subcategory_id');
+            $table->unsignedBigInteger('category_id');  // Changed from subcategory_id to category_id
             $table->unsignedBigInteger('product_id');
             $table->integer('position');
             $table->timestamps();
 
-            $table->foreign('subcategory_id')->references('id')->on('subcategories')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');  // Changed to categories table
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }

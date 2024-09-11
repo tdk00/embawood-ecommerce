@@ -10,11 +10,11 @@ class TopList extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['subcategory_id', 'product_id', 'position'];
+    protected $fillable = ['category_id', 'product_id', 'position'];  // Changed subcategory_id to category_id
 
-    public function subcategory()
+    public function category()
     {
-        return $this->belongsTo(Subcategory::class);
+        return $this->belongsTo(Category::class);  // Changed to Category relationship
     }
 
     public function product()

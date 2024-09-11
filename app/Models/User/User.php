@@ -7,7 +7,8 @@ use App\Models\Bonus\BonusExecution;
 use App\Models\Checkout\Order;
 use App\Models\Discount\Coupon;
 use App\Models\Discount\UsedCoupon;
-use App\Models\Discount\UserCoupon;
+use App\Models\Product\Favorite;
+use App\Models\Product\Product;
 use App\Models\Product\Review;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -25,6 +26,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'surname',
+        'birthdate',
         'phone',
         'phone_verified_at',
         'password',
@@ -83,5 +86,15 @@ class User extends Authenticatable
     public function usedCoupons()
     {
         return $this->hasMany(UsedCoupon::class);
+    }
+
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    public function favoriteProducts()
+    {
+        return $this->belongsToMany(Product::class, 'favorites', 'user_id', 'product_id');
     }
 }

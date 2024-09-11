@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Basket;
 use App\Http\Controllers\Controller;
 use App\Models\Account\UserDeliveryAddress;
 use App\Models\Basket\BasketItem;
+use App\Models\Basket\SafetyInformation;
+use App\Models\Bonus\BonusSetting;
 use App\Models\Checkout\Order;
 use App\Models\Checkout\OrderItem;
 use App\Models\Discount\Coupon;
@@ -650,6 +652,7 @@ class BasketController extends Controller
             }])->get();
 
         $basket = [
+            'safety_information' => [],
             'total' => 0,
             'final_total' => 0,
             'product_discount_amount' => 0,
@@ -714,6 +717,20 @@ class BasketController extends Controller
                 $basket['final_total'] -= $basket['coupon_discount_amount'];
             }
         }
+
+        $safetyInformations = SafetyInformation::all();
+
+        $transformedSafetyInformations = $safetyInformations->map(function ($informationItem) {
+            $informationItem->icon =  url('storage/images/icons/' . $informationItem->icon);
+            return [
+                'id' => $informationItem->id,
+                'title' => $informationItem->title,
+                'description' => $informationItem->description,
+                'icon' => $informationItem->icon,
+            ];
+        });
+
+        $basket['safety_information'] = $transformedSafetyInformations;
 
         return $basket;
     }
@@ -843,6 +860,8 @@ class BasketController extends Controller
 
     private function handleSet(&$basket, $set, $setProducts)
     {
+
+        $mainImage = url('storage/images/products/' . $set->product->getMainImageAttribute());
         $setItem = [
             "basket_item_id" => $set->id,
             "quantity" => $set->quantity,
@@ -857,7 +876,7 @@ class BasketController extends Controller
             "remaining_discount_seconds" => 0, // Will be calculated
             "has_unlimited_discount" => false,
             "has_limited_discount" => false,
-            "main_image" => $set->product->getMainImageAttribute(),
+            "main_image" => $mainImage,
             'average_rating' => $set->product->average_rating,
             "set_products" => []
         ];
@@ -866,6 +885,7 @@ class BasketController extends Controller
 
         foreach ($setProducts as $setProduct) {
             if ($setProduct->set_id == $set->product_id) {
+                $mainImage = url('storage/images/products/' . $setProduct->product->getMainImageAttribute());
                 $productData = [
                     "basket_item_id" => $setProduct->id,
                     "quantity" => $setProduct->quantity,
@@ -884,7 +904,7 @@ class BasketController extends Controller
                     "remaining_discount_seconds" => $setProduct->product->remaining_discount_seconds,
                     "has_unlimited_discount" => $setProduct->product->has_unlimited_discount,
                     "has_limited_discount" => $setProduct->product->has_limited_discount,
-                    "main_image" => $setProduct->product->getMainImageAttribute(),
+                    "main_image" => $mainImage,
                     'average_rating' => $setProduct->product->average_rating,
                 ];
 
@@ -930,6 +950,7 @@ class BasketController extends Controller
     private function handleIndividualProduct(&$basket, $item)
     {
 
+        $mainImage = url('storage/images/products/' . $item->product->getMainImageAttribute());
         $productData = [
             "basket_item_id" => $item->id,
             "quantity" => $item->quantity,
@@ -946,7 +967,7 @@ class BasketController extends Controller
             "remaining_discount_seconds" => $item->product->remaining_discount_seconds,
             "has_unlimited_discount" => $item->product->has_unlimited_discount,
             "has_limited_discount" => $item->product->has_limited_discount,
-            "main_image" => $item->product->getMainImageAttribute(),
+            "main_image" => $mainImage,
             'average_rating' => $item->product->average_rating,
         ];
 
@@ -1168,6 +1189,7 @@ class BasketController extends Controller
     {
         $basketData = $this->getBasketData();
 
+
         $response = [
             'status' => 'success',
             'is_empty' => count($basketData['products']) == 0 && count($basketData['sets']) == 0,
@@ -1252,7 +1274,7 @@ class BasketController extends Controller
         }
 
         $request->validate([
-            'use_bonus' => 'nullable|string',
+            'apply_bonus' => 'nullable|boolean',
         ]);
 
         // Find the user's default delivery address
@@ -1324,11 +1346,37 @@ class BasketController extends Controller
                 $couponDiscount = $basketData['coupon_discount_amount'];
             }
 
+            $usedBonus = 0;
+            if ($request->apply_bonus) {
+
+                $remainingBonus = $user->remaining_bonus_amount / 100;
+                $remainingTotal = $total - $couponDiscount - $itemDiscountsTotal;
+
+                if ($remainingBonus >= $remainingTotal) {
+                    $usedBonus = $remainingTotal;
+                } else {
+                    $usedBonus = $remainingBonus;
+                }
+
+                $user->remaining_bonus_amount -= $usedBonus * 100;
+            }
+
+            $setting = BonusSetting::where('type', 'order')->first();
+
+            $finalTotal = $total - $couponDiscount - $itemDiscountsTotal - $usedBonus;
+
+            $earnedBonus = $finalTotal * ($setting?->bonus_amount ?? 0);
+
+
             $order->update([
                 'total' => $total,
+                'bonus_discount' => $usedBonus,
                 'coupon_discount' => $couponDiscount,
                 'item_discounts_total' => $itemDiscountsTotal,
             ]);
+
+            $user->remaining_bonus_amount += $earnedBonus;  // Convert to cents
+            $user->total_bonus_amount += $earnedBonus;
 
             $user->save();
 

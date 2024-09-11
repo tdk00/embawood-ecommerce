@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\News;
+namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company\Store;
 use App\Models\News\News;
 use Illuminate\Http\Request;
 
-class ApiNewsController extends Controller
+class ApiStoresController extends Controller
 {
     public function index()
     {
-        $news = News::where('is_active', true)->get();
+        $news = Store::with('phoneNumbers')->get();
         return response()->json($news);
     }
 

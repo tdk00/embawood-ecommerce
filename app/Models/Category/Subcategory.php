@@ -32,10 +32,4 @@ class Subcategory extends Model
     {
         return $this->belongsToMany(Product::class);
     }
-
-    public function topList()
-    {
-        return $this->hasMany(TopList::class);
-    }
-
 }
