@@ -20,7 +20,7 @@ class ApiOrderController extends Controller
             'id' => $order->id,
             'code' => 'NYC'.$order->id.'C',
             'date' => $order->created_at->format('d.m.Y'),
-            'status' => $order->status == "pending" ? "Gözləmədə" : "Ləğv edilib",
+            'status' => $order->status,
         ];
     });
 
@@ -86,5 +86,56 @@ class ApiOrderController extends Controller
             'coupon_discount' => $order->coupon_discount,
             'items' => $items
         ]);
+    }
+
+    public function getDeliveryStatus( $id ){
+        $statuses = ['pending', 'preparing', 'shipping', 'delivered'];
+
+        $userId = Auth::id();
+        $order = Order::where('user_id', $userId)
+            ->where('id', $id)
+            ->first();
+
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        // Retrieve all status histories for the order, ordered by date
+        $statusHistories = $order->statusHistories()->orderBy('changed_at', 'asc')->get();
+
+        // Create an array to hold statuses and dates along with the is_current flag
+        $statusesWithDates = [];
+
+        // Initialize the structure with empty dates and false is_current
+        foreach ($statuses as $status) {
+            $statusesWithDates[] = [
+                'status' => $status,
+                'changed_at' => null,
+                'is_current' => false
+            ];
+        }
+
+        // Fill in the dates from the status history
+        foreach ($statusesWithDates as &$statusData) {
+            foreach ($statusHistories as $history) {
+                if ($statusData['status'] === $history->status) {
+                    $statusData['changed_at'] = $history->changed_at->format('Y-m-d H:i:s');
+                }
+            }
+
+            // Set the is_current flag for the current status
+            if ($statusData['status'] === $order->status) {
+                $statusData['is_current'] = true;
+            }
+        }
+
+
+
+        return response()->json([
+            'order_id' => $order->id,
+            'statuses' => $statusesWithDates
+        ]);
+
+
     }
 }

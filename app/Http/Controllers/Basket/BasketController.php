@@ -9,6 +9,7 @@ use App\Models\Basket\SafetyInformation;
 use App\Models\Bonus\BonusSetting;
 use App\Models\Checkout\Order;
 use App\Models\Checkout\OrderItem;
+use App\Models\Checkout\OrderStatusHistory;
 use App\Models\Discount\Coupon;
 use App\Models\Discount\UsedCoupon;
 use App\Models\Discount\UserCoupon;
@@ -1297,6 +1298,11 @@ class BasketController extends Controller
                 'bonus_discount' => 0,
                 'coupon_discount' => 0,
                 'item_discounts_total' => 0,
+            ]);
+
+            $orderStatusHistory = OrderStatusHistory::create([
+                'order_id' => $order['id'],
+                'status' => 'pending',
             ]);
 
             foreach ($basketData['sets'] as $setItem) {

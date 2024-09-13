@@ -95,6 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('orders/status/{status}', [ApiOrderController::class, 'getByStatus']);
     Route::get('orders/date-range', [ApiOrderController::class, 'getByDateRange']);
     Route::get('orders/{id}', [ApiOrderController::class, 'show']);
+    Route::get('orders/{id}/all-statuses', [ApiOrderController::class, 'getDeliveryStatus']);
 
 
     Route::get('favorites', [ApiFavoriteController::class, 'index']);

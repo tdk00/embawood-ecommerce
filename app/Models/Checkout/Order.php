@@ -29,4 +29,9 @@ class Order extends Model
     {
         return $this->belongsToMany(Coupon::class, 'order_coupons');
     }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(OrderStatusHistory::class);
+    }
 }
