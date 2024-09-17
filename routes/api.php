@@ -4,6 +4,7 @@ use App\Http\Controllers\Account\ApiProfileSummaryController;
 use App\Http\Controllers\Account\ApiUserDeliveryAddressController;
 use App\Http\Controllers\Account\ApiUserDetailsController;
 use App\Http\Controllers\Basket\BasketController;
+use App\Http\Controllers\Bonus\ApiBonusExecutionController;
 use App\Http\Controllers\Bonus\ApiBonusHistoryController;
 use App\Http\Controllers\Bonus\ApiEarnBonusController;
 use App\Http\Controllers\Category\ApiCategoryController;
@@ -108,7 +109,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('get-profile-summary', [ApiProfileSummaryController::class, 'getDetails']);
 
 
-
+    Route::get('get-bonus-execution', [ApiBonusExecutionController::class, 'getExecution']);
 
 });
 //Route::get('products', [ApiProductController::class, 'index']);
