@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Account\UserDeliveryAddress;
 use App\Models\Basket\BasketItem;
 use App\Models\Basket\SafetyInformation;
+use App\Models\Bonus\Bonus;
+use App\Models\Bonus\BonusExecution;
 use App\Models\Bonus\BonusSetting;
 use App\Models\Checkout\Order;
 use App\Models\Checkout\OrderItem;
@@ -15,6 +17,7 @@ use App\Models\Discount\UsedCoupon;
 use App\Models\Discount\UserCoupon;
 use App\Models\Product\Product;
 use App\Models\User\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -1383,6 +1386,17 @@ class BasketController extends Controller
 
             $user->remaining_bonus_amount += $earnedBonus;  // Convert to cents
             $user->total_bonus_amount += $earnedBonus;
+
+
+            if ($setting) {
+                $bonus = Bonus::create(['type' => 'order', 'amount' => $setting->bonus_amount]);
+                BonusExecution::create([
+                    'user_id' => $user->id,
+                    'bonus_id' => $bonus->id,
+                    'executed_at' => Carbon::now(),
+                ]);
+
+            }
 
             $user->save();
 
