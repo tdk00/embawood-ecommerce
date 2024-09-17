@@ -1389,7 +1389,7 @@ class BasketController extends Controller
 
 
             if ($setting) {
-                $bonus = Bonus::create(['type' => 'order', 'amount' => $setting->bonus_amount]);
+                $bonus = Bonus::create(['type' => 'order', 'amount' => $earnedBonus]);
                 BonusExecution::create([
                     'user_id' => $user->id,
                     'bonus_id' => $bonus->id,
