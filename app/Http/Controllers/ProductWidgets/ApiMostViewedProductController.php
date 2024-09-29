@@ -52,7 +52,8 @@ class ApiMostViewedProductController extends Controller
                 'is_favorite' => $product->is_favorite,
                 'remaining_discount_seconds' => $product->remaining_discount_seconds,
                 'has_unlimited_discount' => $product->has_unlimited_discount,
-                'has_limited_discount' => $product->has_limited_discount
+                'has_limited_discount' => $product->has_limited_discount,
+                'badge' => url('storage/images/badge/' . $product->badge)
             ];
             return $productData;
         });

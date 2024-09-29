@@ -35,7 +35,6 @@ class ApiNewProductController extends Controller
         $transformedNewProducts = $newProducts->map(function ($newProduct) {
             $product = $newProduct->product;
 
-            $product->main_image = url('storage/images/products/' . $product->main_image);
             $productData = [
                 'id' => $product->id,
                 'name' => $product->name,
@@ -50,7 +49,8 @@ class ApiNewProductController extends Controller
                 'is_favorite' => $product->is_favorite,
                 'remaining_discount_seconds' => $product->remaining_discount_seconds,
                 'has_unlimited_discount' => $product->has_unlimited_discount,
-                'has_limited_discount' => $product->has_limited_discount
+                'has_limited_discount' => $product->has_limited_discount,
+                'badge' => url('storage/images/badge/' . $product->badge)
             ];
             return $productData;
         });

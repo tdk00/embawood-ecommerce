@@ -21,7 +21,6 @@ class ApiReviewController extends Controller
 
         if (!$user ) {
             $rules['name'] = 'required|string';
-            $rules['surname'] = 'required|string';
         }
 
         if (!$user) {
@@ -38,9 +37,8 @@ class ApiReviewController extends Controller
                 'status' => 'pending',
             ]);
 
-            if ($user->name || $user->surname) {
+            if ( $user->name ) {
                 $review->name = $user?->name ?? null;
-                $review->surname = $user?->surname ?? null;
             }
 
             $user->reviews()->save($review);
@@ -48,7 +46,6 @@ class ApiReviewController extends Controller
             $review = Review::create([
                 'product_id' => $validated['product_id'],
                 'name' => $validated['name'],
-                'surname' => $validated['surname'],
                 'contact' => $validated['contact'], // Email or phone
                 'review' => $validated['review'],
                 'rating' => $validated['rating'],

@@ -78,10 +78,8 @@ class ApiProductController extends Controller
         return Product::with([
             'images',
             'products',
-            'attributeValues.attribute',
             'colorVariations.images',
             'topLists',
-            'colorVariations.attributeValues.attribute',
         ])->find($id);
     }
 
@@ -99,7 +97,7 @@ class ApiProductController extends Controller
             'product' => $product->only([
                 'id', 'name', 'sku', 'description', 'price', 'final_price', 'stock', 'discount',
                 'discount_ends_at', 'is_set', 'is_in_basket', 'is_favorite', 'remaining_discount_seconds',
-                'has_unlimited_discount', 'has_limited_discount', 'average_rating'
+                'has_unlimited_discount', 'has_limited_discount', 'average_rating', 'badge'
             ]),
             'set_modules' => $this->getSetModules($product),
             'images' => $this->getImages($product) ,
@@ -141,6 +139,7 @@ class ApiProductController extends Controller
                     'has_unlimited_discount' => $module->has_unlimited_discount,
                     'has_limited_discount' => $module->has_limited_discount,
                     'quantity' => $module?->pivot?->quantity ?? 0,
+                    'badge' => url('storage/images/badge/' . $module->badge)
                 ];
             });
         }
@@ -191,7 +190,8 @@ class ApiProductController extends Controller
                 'is_favorite' => $similiarProduct->is_favorite,
                 'remaining_discount_seconds' => $similiarProduct->remaining_discount_seconds,
                 'has_unlimited_discount' => $similiarProduct->has_unlimited_discount,
-                'has_limited_discount' => $similiarProduct->has_limited_discount
+                'has_limited_discount' => $similiarProduct->has_limited_discount,
+                'badge' => url('storage/images/badge/' . $similiarProduct->badge)
             ];
         });
     }
@@ -213,7 +213,8 @@ class ApiProductController extends Controller
                 'is_favorite' => $purchasedTogetherProduct->is_favorite,
                 'remaining_discount_seconds' => $purchasedTogetherProduct->remaining_discount_seconds,
                 'has_unlimited_discount' => $purchasedTogetherProduct->has_unlimited_discount,
-                'has_limited_discount' => $purchasedTogetherProduct->has_limited_discount
+                'has_limited_discount' => $purchasedTogetherProduct->has_limited_discount,
+                'badge' => url('storage/images/badge/' . $purchasedTogetherProduct->badge)
             ];
         });
     }
@@ -238,7 +239,8 @@ class ApiProductController extends Controller
                     'is_favorite' => $topListProduct->product->is_favorite,
                     'remaining_discount_seconds' => $topListProduct->product->remaining_discount_seconds,
                     'has_unlimited_discount' => $topListProduct->product->has_unlimited_discount,
-                    'has_limited_discount' => $topListProduct->product->has_limited_discount
+                    'has_limited_discount' => $topListProduct->product->has_limited_discount,
+                    'badge' => url('storage/images/badge/' . $topListProduct->product->badge)
                 ];
             });
 
@@ -258,14 +260,8 @@ class ApiProductController extends Controller
     {
         $query = Product::main();
 
-        foreach ($request->input('attributes') as $attribute) {
-            $query->whereHas('attributeValues', function ($q) use ($attribute) {
-                $q->where('attribute_id', $attribute['id'])
-                    ->where('value', $attribute['value']);
-            });
-        }
 
-        $products = $query->with(['images', 'attributeValues.attribute', 'variations.images', 'variations.attributeValues.attribute'])->get();
+        $products = $query->with(['images', 'variations.images'])->get();
 
         return response()->json($products);
     }
@@ -318,7 +314,8 @@ class ApiProductController extends Controller
                 'is_favorite' => $product->is_favorite,
                 'remaining_discount_seconds' => $product->remaining_discount_seconds,
                 'has_unlimited_discount' => $product->has_unlimited_discount,
-                'has_limited_discount' => $product->has_limited_discount
+                'has_limited_discount' => $product->has_limited_discount,
+                'badge' => url('storage/images/badge/' . $product->badge)
             ];
         });
 

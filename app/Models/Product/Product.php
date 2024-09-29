@@ -16,7 +16,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'parent_id', 'name', 'sku', 'description', 'price', 'stock', 'discount', 'discount_ends_at', 'is_set'
+        'parent_id', 'name', 'sku', 'description', 'price', 'stock', 'discount', 'discount_ends_at', 'is_set', 'color'
     ];
 
 
@@ -25,6 +25,13 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    public function getBadgeAttribute()
+    {
+        // Get the active badge from the Badge model
+        $activeBadge = Badge::getActiveBadge();
+        return $activeBadge ? $activeBadge->badge_image : null;
     }
 
     public function getMainImageAttribute()
@@ -38,11 +45,6 @@ class Product extends Model
 
         // Return the URL/path of the main image or null if no images exist
         return $mainImage ? $mainImage->image_path : null;
-    }
-
-    public function attributeValues()
-    {
-        return $this->hasMany(AttributeValue::class);
     }
 
     public function getPriceAttribute($value)
@@ -174,13 +176,9 @@ class Product extends Model
             return null; // If there is no limited or unlimited discount, return null
         }
 
-        return $this->attributes['discount_ends_at'];
+        return $this->attributes['discount_ends_at'] ?? null;
     }
 
-    public function variations()
-    {
-        return $this->hasMany(Product::class, 'parent_id');
-    }
 
     public function colorVariations()
     {
@@ -277,8 +275,6 @@ class Product extends Model
 
         return $this->favorites()->where('user_id', $userId)->exists();
     }
-
-
 
     public function reviews()
     {
