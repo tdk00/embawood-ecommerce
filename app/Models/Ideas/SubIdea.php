@@ -18,6 +18,18 @@ class SubIdea extends Model
         'is_active',
     ];
 
+    public function translations()
+    {
+        return $this->hasMany(SubIdeaTranslation::class);
+    }
+
+    public function getTitleAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+        return $translation ? $translation->title : $this->attributes['title'];
+    }
+
     public function idea()
     {
         return $this->belongsTo(Idea::class);

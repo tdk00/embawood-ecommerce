@@ -11,12 +11,35 @@ class Subcategory extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id', 'name',  'widget_view_image', 'homescreen_widget',  'description', 'image', 'is_active'];
+    protected $fillable = ['category_id', 'name',  'widget_view_image', 'homescreen_widget', 'banner_image',  'description', 'image', 'is_active'];
     protected $casts = [
         'homescreen_widget' => 'boolean',
     ];
 
     protected $appends = ['full_widget_view_image'];
+
+    public function translations()
+    {
+        return $this->hasMany(SubcategoryTranslation::class);
+    }
+
+    // Accessor to return the translated name
+    public function getNameAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->name : $this->attributes['name'];
+    }
+
+    // Accessor to return the translated description
+    public function getDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->description : $this->attributes['description'];
+    }
 
     public function getFullWidgetViewImageAttribute()
     {

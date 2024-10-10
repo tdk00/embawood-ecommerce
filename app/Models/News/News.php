@@ -16,4 +16,25 @@ class News extends Model
     {
         return $this->hasMany(HomeScreenSlider::class);
     }
+
+    public function translations()
+    {
+        return $this->hasMany(NewsTranslation::class);
+    }
+
+    public function getTitleAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->title : $this->attributes['title'];
+    }
+
+    public function getContentAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->content : $this->attributes['content'];
+    }
 }

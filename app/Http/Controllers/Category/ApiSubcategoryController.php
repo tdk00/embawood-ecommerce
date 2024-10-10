@@ -55,7 +55,6 @@ class ApiSubcategoryController extends Controller
         // Retrieve all products and transform product data
         $products = $productsQuery->get()->map(function ($product) {
             $product->image = url('storage/images/products/' . $product->main_image);
-            $product->image_hover = url('storage/images/products/' . $product->hover_image);
             return [
                 'id' => $product->id,
                 'name' => $product->name,
@@ -91,9 +90,9 @@ class ApiSubcategoryController extends Controller
         $homescreenSubcategories = Subcategory::where('homescreen_widget', true)->get();
 
         $transformedHomescreenSubcategories = $homescreenSubcategories->map(function ($subcategory) {
-            $subcategory->image = url('storage/images/subcategories/' . $subcategory->image);
-            $subcategory->banner_image = url('storage/images/subcategories/' . $subcategory->banner_image);
-            $subcategory->widget_view_image = url('storage/images/subcategories/' . $subcategory->widget_view_image);
+            $subcategory->image = url('storage/images/subcategories/small' . $subcategory->image);
+            $subcategory->banner_image = url('storage/images/subcategories/banner' . $subcategory->banner_image);
+            $subcategory->widget_view_image = url('storage/images/subcategories/homescreen' . $subcategory->widget_view_image);
             return [
                 'id' => $subcategory->id,
                 'name' => $subcategory->name,

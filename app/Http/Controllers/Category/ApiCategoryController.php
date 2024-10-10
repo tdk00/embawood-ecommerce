@@ -92,7 +92,7 @@ class ApiCategoryController extends Controller
                 'name' => $category->name,
                 'banner_image' => url('storage/images/category/banner/' . $category->banner_image),
                 'subcategories' => $category->subcategories->map(function ($subcategory) {
-                    $subcategory->image = url('storage/images/subcategories/' . $subcategory->image);
+                    $subcategory->image = url('storage/images/subcategories/small/' . $subcategory->image);
                     return [
                         'id' => $subcategory->id,
                         'name' => $subcategory->name,
@@ -130,7 +130,7 @@ class ApiCategoryController extends Controller
         $homescreenCategories = Category::where('homescreen_widget', true)->get();
 
         $transformedHomescreenCategories = $homescreenCategories->map(function ($category) {
-            $category->banner_image = url('storage/images/category/widget_images/' . $category->banner_image);
+            $category->banner_image = url('storage/images/category/banner/' . $category->banner_image);
             $category->widget_view_image = url('storage/images/category/widget_images/' . $category->widget_view_image);
             return [
                 'id' => $category->id,

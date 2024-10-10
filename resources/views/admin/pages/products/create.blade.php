@@ -11,33 +11,8 @@
             <!--begin::Page title-->
             <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                 <!--begin::Title-->
-                <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Product Form</h1>
+                <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Yeni Məhsul</h1>
                 <!--end::Title-->
-                <!--begin::Breadcrumb-->
-                <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-                    <!--begin::Item-->
-                    <li class="breadcrumb-item text-muted">
-                        <a href="../../demo1/dist/index.html" class="text-muted text-hover-primary">Home</a>
-                    </li>
-                    <!--end::Item-->
-                    <!--begin::Item-->
-                    <li class="breadcrumb-item">
-                        <span class="bullet bg-gray-400 w-5px h-2px"></span>
-                    </li>
-                    <!--end::Item-->
-                    <!--begin::Item-->
-                    <li class="breadcrumb-item text-muted">eCommerce</li>
-                    <!--end::Item-->
-                    <!--begin::Item-->
-                    <li class="breadcrumb-item">
-                        <span class="bullet bg-gray-400 w-5px h-2px"></span>
-                    </li>
-                    <!--end::Item-->
-                    <!--begin::Item-->
-                    <li class="breadcrumb-item text-muted">Catalog</li>
-                    <!--end::Item-->
-                </ul>
-                <!--end::Breadcrumb-->
             </div>
             <!--end::Page title-->
         </div>
@@ -58,7 +33,7 @@
                         <div class="card-header">
                             <!--begin::Card title-->
                             <div class="card-title">
-                                <h2>Thumbnail</h2>
+                                <h2>Əsas Şəkil</h2>
                             </div>
                             <!--end::Card title-->
                         </div>
@@ -151,12 +126,12 @@
                     <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
                         <!--begin:::Tab item-->
                         <li class="nav-item">
-                            <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general">General</a>
+                            <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general">Ümumi</a>
                         </li>
                         <!--end:::Tab item-->
                         <!--begin:::Tab item-->
                         <li class="nav-item">
-                            <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_advanced">Advanced</a>
+                            <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_advanced">SKU/STOK</a>
                         </li>
                         <!--end:::Tab item-->
                     </ul>
@@ -170,33 +145,55 @@
                                 <div class="card card-flush py-4">
                                     <!--begin::Card header-->
                                     <div class="card-header">
-                                        <div class="card-title">
-                                            <h2>General</h2>
-                                        </div>
                                     </div>
                                     <!--end::Card header-->
                                     <!--begin::Card body-->
                                     <div class="card-body pt-0">
                                         <!--begin::Input group-->
+                                        <!-- Product Name for Azerbaijani (AZ) -->
+                                        <div class="mb-10 fv-row">
+                                            <label class="required form-label">Məhsul adı (AZ)</label>
+                                            <input type="text" name="product_name_az" class="form-control mb-2" placeholder="Məhsul adı (AZ)" value="" />
+                                        </div>
+
+                                        <!-- Product Name for English (EN) -->
+                                        <div class="mb-10 fv-row">
+                                            <label class="required form-label">Product Name (EN)</label>
+                                            <input type="text" name="product_name_en" class="form-control mb-2" placeholder="Product Name (EN)" value="" />
+                                        </div>
+
+                                        <!-- Product Name for Russian (RU) -->
+                                        <div class="mb-10 fv-row">
+                                            <label class="required form-label">Название продукта (RU)</label>
+                                            <input type="text" name="product_name_ru" class="form-control mb-2" placeholder="Название продукта (RU)" value="" />
+                                        </div>
+
+                                        <!-- Short Description for each language -->
+                                        <div>
+                                            <label class="form-label">Məhsul haqqında (qısa məlumat AZ)</label>
+                                            <textarea name="product_description_az" class="min-h-200px mb-2 form-control"></textarea>
+                                        </div>
+
+                                        <div>
+                                            <label class="form-label">Product Short Description (EN)</label>
+                                            <textarea name="product_description_en" class="min-h-200px mb-2 form-control"></textarea>
+                                        </div>
+
+                                        <div>
+                                            <label class="form-label">Краткое описание продукта (RU)</label>
+                                            <textarea name="product_description_ru" class="min-h-200px mb-2 form-control"></textarea>
+                                        </div>
+                                        <!--begin::Input group-->
                                         <div class="mb-10 fv-row">
                                             <!--begin::Label-->
-                                            <label class="required form-label">Məhsul adı</label>
+                                            <label class="form-label">Məhsul Rənginin kodu</label>
                                             <!--end::Label-->
                                             <!--begin::Input-->
-                                            <input type="text" name="product_name" class="form-control mb-2" placeholder="Məhsul adı" value="" />
+                                            <input type="text" name="product_color" class="form-control mb-2" placeholder="#FFFFFF" value="" />
                                             <!--end::Input-->
                                         </div>
                                         <!--end::Input group-->
-                                        <!--begin::Input group-->
-                                        <div>
-                                            <!--begin::Label-->
-                                            <label class="form-label">Məhsul haqqında</label>
-                                            <!--end::Label-->
-                                            <!--begin::Editor-->
-                                            <textarea name="product_description" class="min-h-200px mb-2 form-control"></textarea>
-                                            <!--end::Editor-->
-                                        </div>
-                                        <!--end::Input group-->
+
                                     </div>
                                     <!--end::Card header-->
                                 </div>
@@ -231,8 +228,6 @@
                                                     <!--end::Info-->
                                                 </div>
                                             </div>
-                                            <!--end::Dropzone-->
-                                            <input type="hidden" id="uploaded_files" name="uploaded_files" value="[]">
                                         </div>
                                         <!--end::Input group-->
                                     </div>
@@ -405,62 +400,6 @@
                                     <!--end::Card header-->
                                 </div>
                                 <!--end::Inventory-->
-                                <!--begin::Variations-->
-                                <div class="card card-flush py-4">
-                                    <!--begin::Card header-->
-                                    <div class="card-header">
-                                        <div class="card-title">
-                                            <h2>Məhsulun rəng variasiyaları</h2>
-                                        </div>
-                                    </div>
-                                    <!--end::Card header-->
-                                    <!--begin::Card body-->
-                                    <div class="card-body pt-0">
-                                        <!--begin::Input group-->
-                                        <div class="" data-kt-ecommerce-catalog-add-product="auto-options">
-                                            <!--begin::Label-->
-                                            <label class="form-label">Rəngləri əlavə edin</label>
-                                            <!--end::Label-->
-                                            <!--begin::Repeater-->
-                                            <div id="kt_ecommerce_add_product_options">
-                                                <!--begin::Form group-->
-                                                <div class="form-group">
-                                                    <div data-repeater-list="kt_ecommerce_add_product_options" class="d-flex flex-column gap-3">
-                                                        <div data-repeater-item="" class="form-group d-flex flex-wrap align-items-center gap-5">
-                                                            <!--begin::Select2-->
-                                                            <div class="w-100 w-md-200px">
-                                                                <select class="form-select" name="product_option" data-placeholder="Rəng" data-kt-ecommerce-catalog-add-product="product_option">
-                                                                    <option selected value="color">Rəng</option>
-                                                                </select>
-                                                            </div>
-                                                            <!--end::Select2-->
-                                                            <!--begin::Input-->
-                                                            <input type="text" class="form-control mw-100 w-200px product_option_value" name="product_option_value" placeholder="Kod" />
-                                                            <!--end::Input-->
-                                                            <button type="button" data-repeater-delete="" class="btn btn-sm btn-icon btn-light-danger">
-                                                                <i class="ki-duotone ki-cross fs-1">
-                                                                    <span class="path1"></span>
-                                                                    <span class="path2"></span>
-                                                                </i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!--end::Form group-->
-                                                <!--begin::Form group-->
-                                                <div class="form-group mt-5">
-                                                    <button type="button" data-repeater-create="" class="btn btn-sm btn-light-primary">
-                                                        <i class="ki-duotone ki-plus fs-2"></i>Yeni əlavə et</button>
-                                                </div>
-                                                <!--end::Form group-->
-                                            </div>
-                                            <!--end::Repeater-->
-                                        </div>
-                                        <!--end::Input group-->
-                                    </div>
-                                    <!--end::Card header-->
-                                </div>
-                                <!--end::Variations-->
                             </div>
                         </div>
                         <!--end::Tab pane-->
@@ -502,6 +441,12 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
+            var toolbarElement = document.querySelector('.ql-image');
+            if (toolbarElement) {
+                toolbarElement.parentNode.removeChild(toolbarElement); // This removes the image button
+            }
+
+
             $("#discount_ends_datetimepicker").flatpickr({enableTime:!0,dateFormat:"Y-m-d H:i"})
             const unlimitedDiscountCheckbox = document.getElementById('unlimited_discount_checkbox');
             const discountEndsDatetimePicker = document.getElementById('discount_ends_datetimepicker');
@@ -520,7 +465,7 @@
     </script>
 
     <script>
-        new Dropzone("#kt_ecommerce_add_product_media_custom", {
+        var myDropzone = new Dropzone("#kt_ecommerce_add_product_media_custom", {
             url: "{{ route('admin.products.uploadMedia') }}",
             autoProcessQueue: false,
             paramName: "file",
@@ -568,9 +513,7 @@
                 file.previewElement.remove();
             }
         });
-    </script>
 
-    <script>
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -578,8 +521,17 @@
         });
 
         $("#add_product_submit").on('click', function () {
-            var productName = $('input[name="product_name"]').val();
-            var productDescription = $('textarea[name="product_description"]').val();
+
+            var productNameAz = $('input[name="product_name_az"]').val();
+            var productNameEn = $('input[name="product_name_en"]').val();
+            var productNameRu = $('input[name="product_name_ru"]').val();
+
+
+            var productDescriptionAz = $('textarea[name="product_description_az"]').val();
+            var productDescriptionEn = $('textarea[name="product_description_en"]').val();
+            var productDescriptionRu = $('textarea[name="product_description_ru"]').val();
+
+            var color = $('input[name="product_color"]').val();
             var price = $('input[name="price"]').val();
             var sku = $('input[name="sku"]').val();
             var stock = $('input[name="warehouse"]').val();
@@ -588,15 +540,20 @@
             var discountPercentage = $('#kt_ecommerce_add_product_discount_label').text();
             var unlimitedDiscount = $('#unlimited_discount_checkbox').is(':checked');
             var discountEndDatetime = $('#discount_ends_datetimepicker').val();
-            var uploadedFiles = $('#uploaded_files').val();
 
             var selectedSubcategoryId= $('#subcategorySelect').val();
 
-            // Collect color options
+            // Collect other form data
             var formData = new FormData();
-            formData.append('name', productName);
-            formData.append('description', productDescription);
-            formData.append('uploaded_files', uploadedFiles);
+            formData.append('name_az', productNameAz);
+            formData.append('name_en', productNameEn);
+            formData.append('name_ru', productNameRu);
+
+            formData.append('description_az', productDescriptionAz);
+            formData.append('description_en', productDescriptionEn);
+            formData.append('description_ru', productDescriptionRu);
+
+            formData.append('color', color);
             formData.append('price', price);
             formData.append('sku', sku);
             formData.append('stock', stock);
@@ -609,19 +566,24 @@
                 formData.append('discount_ends_at', discountEndDatetime);
             }
 
-            var colors = [];
-            $('.product_option_value').each(function () {
-                colors.push($(this).val());
-            });
 
-// Append the colors array to the FormData object
-            colors.forEach(function(color, index) {
-                formData.append('colors[' + index + ']', color);
-            });
-
-// Append the avatar file if it exists
             if (avatarFile) {
                 formData.append('main_image', avatarFile);
+            }
+
+
+            if (myDropzone.files && myDropzone.files.length > 0) {
+                myDropzone.files.forEach(function (file) {
+                    if (file.upload) {
+                        // Append new uploaded files (binary)
+                        formData.append("images[]", file); // This will be the binary data
+                    } else if (file.storagePath) {
+                        // Append existing file paths (string)
+                        formData.append("existing_images[]", file.name); // This will be the string path
+                    }
+                });
+            } else {
+                formData.append("images[]", ""); // Append an empty field for images if no files are selected
             }
 
             // Send AJAX request
@@ -653,4 +615,25 @@
         });
     </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var productDiscount = {{ $product->discount ?? 0 }};  // Dynamically set the product discount
+            var a = document.querySelector("#kt_ecommerce_add_product_discount_label");
+            var o = document.querySelector("#kt_ecommerce_add_product_discount_slider");
+
+            noUiSlider.create(o, {
+                start: [productDiscount],  // Set the start value to the product discount
+                connect: true,
+                range: {
+                    min: 1,
+                    max: 100
+                }
+            });
+
+            o.noUiSlider.on("update", function(e, t) {
+                a.innerHTML = Math.round(e[t]);
+            });
+        });
+
+    </script>
 @endpush

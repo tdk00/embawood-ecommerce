@@ -22,7 +22,35 @@ class Product extends Model
 
     protected $appends = ['is_in_basket', 'is_favorite', 'final_price', 'remaining_discount_seconds'];
 
+    public function translations()
+    {
+        return $this->hasMany(ProductTranslation::class);
+    }
+
+    public function getNameAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->name : $this->attributes['name'];
+    }
+
+    public function getDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->description : $this->attributes['description'];
+    }
+
+
     public function images()
+    {
+        return $this->hasMany(ProductImage::class)->where('is_main', false);
+    }
+
+    // Fetch all images, including main and hover
+    public function allImages()
     {
         return $this->hasMany(ProductImage::class);
     }
@@ -34,13 +62,19 @@ class Product extends Model
         return $activeBadge ? $activeBadge->badge_image : null;
     }
 
+    public function getCreditCardsAttribute()
+    {
+        return CreditCard::getCreditCards();
+    }
+
     public function getMainImageAttribute()
     {
-        $mainImage = $this->images()->where('is_main', true)->first();
+        // Fetch the main image using the allImages() method
+        $mainImage = $this->allImages()->where('is_main', true)->first();
 
-        // If no main image, fetch the first image
+        // If no main image, fetch the first image from all images
         if (!$mainImage) {
-            $mainImage = $this->images()->first();
+            $mainImage = $this->allImages()->first();
         }
 
         // Return the URL/path of the main image or null if no images exist

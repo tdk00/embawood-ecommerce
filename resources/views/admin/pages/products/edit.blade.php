@@ -1,6 +1,6 @@
 @extends('admin.metronic')
 
-@section('title', 'Edit Product')
+@section('title', 'Məhsul redaktə')
 
 @section('content')
     <div class="d-flex flex-column flex-column-fluid">
@@ -11,33 +11,8 @@
                 <!--begin::Page title-->
                 <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
                     <!--begin::Title-->
-                    <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Edit Product</h1>
+                    <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Məhsul redaktə</h1>
                     <!--end::Title-->
-                    <!--begin::Breadcrumb-->
-                    <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">
-                            <a href="{{ route('admin.dashboard') }}" class="text-muted text-hover-primary">Home</a>
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item">
-                            <span class="bullet bg-gray-400 w-5px h-2px"></span>
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">eCommerce</li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item">
-                            <span class="bullet bg-gray-400 w-5px h-2px"></span>
-                        </li>
-                        <!--end::Item-->
-                        <!--begin::Item-->
-                        <li class="breadcrumb-item text-muted">Catalog</li>
-                        <!--end::Item-->
-                    </ul>
-                    <!--end::Breadcrumb-->
                 </div>
                 <!--end::Page title-->
             </div>
@@ -59,7 +34,7 @@
                             <div class="card-header">
                                 <!--begin::Card title-->
                                 <div class="card-title">
-                                    <h2>Thumbnail</h2>
+                                    <h2>Əsas şəkil</h2>
                                 </div>
                                 <!--end::Card title-->
                             </div>
@@ -180,12 +155,25 @@
                         <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-n2">
                             <!--begin:::Tab item-->
                             <li class="nav-item">
-                                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general">General</a>
+                                <a class="nav-link text-active-primary pb-4 active" data-bs-toggle="tab" href="#kt_ecommerce_add_product_general">Ümumi</a>
                             </li>
                             <!--end:::Tab item-->
                             <!--begin:::Tab item-->
                             <li class="nav-item">
-                                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_advanced">Advanced</a>
+                                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_advanced">SKU/STOK</a>
+                            </li>
+                            <!--end:::Tab item-->
+                            <!--begin:::Tab item-->
+                            <li class="nav-item">
+                                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_reviews">Rənglər</a>
+                            </li>
+                            <!--end:::Tab item-->
+                            <li class="nav-item">
+                                <a  target="_blank" class="nav-link text-active-primary pb-4" href="{{ route('admin.related-products.index', $product->id) }}">Bənzər məhsullar</a>
+                            </li>
+                            <!--end:::Tab item-->
+                            <li class="nav-item">
+                                <a target="_blank" class="nav-link text-active-primary pb-4" href="{{ route('admin.purchased-together-products.index', $product->id) }}">Birlikdə alınan məhsullar</a>
                             </li>
                             <!--end:::Tab item-->
                         </ul>
@@ -200,34 +188,62 @@
                                         <!--begin::Card header-->
                                         <div class="card-header">
                                             <div class="card-title">
-                                                <h2>General</h2>
+                                                <h2>Ümumi</h2>
                                             </div>
                                         </div>
                                         <!--end::Card header-->
                                         <!--begin::Card body-->
                                         <div class="card-body pt-0">
+                                            <div class="mb-10 fv-row">
+                                                <label class="required form-label">Məhsul adı (AZ)</label>
+                                                <input type="text" name="product_name_az" class="form-control mb-2"
+                                                       placeholder="Məhsul adı (AZ)" value="{{ old('product_name_az', $product->translations->where('locale', 'az')->first()->name ?? '') }}" />
+                                            </div>
+
+                                            <!-- Product Name for English (EN) -->
+                                            <div class="mb-10 fv-row">
+                                                <label class="required form-label">Product Name (EN)</label>
+                                                <input type="text" name="product_name_en" class="form-control mb-2"
+                                                       placeholder="Product Name (EN)" value="{{ old('product_name_en', $product->translations->where('locale', 'en')->first()->name ?? '') }}" />
+                                            </div>
+
+                                            <!-- Product Name for Russian (RU) -->
+                                            <div class="mb-10 fv-row">
+                                                <label class="required form-label">Название продукта (RU)</label>
+                                                <input type="text" name="product_name_ru" class="form-control mb-2"
+                                                       placeholder="Название продукта (RU)" value="{{ old('product_name_ru', $product->translations->where('locale', 'ru')->first()->name ?? '') }}" />
+                                            </div>
+
+                                            <!-- Product Short Description for Azerbaijani (AZ) -->
+                                            <div class="mb-10 fv-row">
+                                                <label class="form-label">Məhsul haqqında (qısa məlumat AZ)</label>
+                                                <textarea name="product_description_az" class="min-h-200px mb-2 form-control">{{ old('product_description_az', $product->translations->where('locale', 'az')->first()->description ?? '') }}</textarea>
+                                            </div>
+
+                                            <!-- Product Short Description for English (EN) -->
+                                            <div class="mb-10 fv-row">
+                                                <label class="form-label">Product Short Description (EN)</label>
+                                                <textarea name="product_description_en" class="min-h-200px mb-2 form-control">{{ old('product_description_en', $product->translations->where('locale', 'en')->first()->description ?? '') }}</textarea>
+                                            </div>
+
+                                            <!-- Product Short Description for Russian (RU) -->
+                                            <div class="mb-10 fv-row">
+                                                <label class="form-label">Краткое описание продукта (RU)</label>
+                                                <textarea name="product_description_ru" class="min-h-200px mb-2 form-control">{{ old('product_description_ru', $product->translations->where('locale', 'ru')->first()->description ?? '') }}</textarea>
+                                            </div>
+
                                             <!--begin::Input group-->
                                             <div class="mb-10 fv-row">
                                                 <!--begin::Label-->
-                                                <label class="required form-label">Məhsul adı</label>
+                                                <label class="form-label">Məhsul Rənginin kodu</label>
                                                 <!--end::Label-->
                                                 <!--begin::Input-->
-                                                <input type="text" name="product_name" class="form-control mb-2"
-                                                       placeholder="Məhsul adı"
-                                                       value="{{ old('product_name', $product->name) }}" />
+                                                <input type="text" name="product_color" class="form-control mb-2" placeholder="#FFFFFF"
+                                                       value="{{ old('product_color', $product->color) }}" />
                                                 <!--end::Input-->
                                             </div>
                                             <!--end::Input group-->
-                                            <!--begin::Input group-->
-                                            <div>
-                                                <!--begin::Label-->
-                                                <label class="form-label">Məhsul haqqında</label>
-                                                <!--end::Label-->
-                                                <!--begin::Editor-->
-                                                <textarea name="product_description" class="min-h-200px mb-2 form-control">{{ old('product_description', $product->description) }}</textarea>
-                                                <!--end::Editor-->
-                                            </div>
-                                            <!--end::Input group-->
+
                                         </div>
                                         <!--end::Card body-->
                                     </div>
@@ -263,10 +279,6 @@
                                                     </div>
                                                 </div>
                                                 <!--end::Dropzone-->
-                                                <input type="hidden" id="uploaded_files" name="uploaded_files"
-                                                       value="{{ json_encode($product->images->pluck('image_path')->map(function($path) {
-                                                            return ('public/images/products/' . $path);
-                                                        })) }}">
                                             </div>
                                             <!--end::Input group-->
                                         </div>
@@ -376,7 +388,7 @@
                                                 <div class="d-flex flex-column text-center mb-5">
                                                     <div class="d-flex align-items-start justify-content-center mb-7">
                                                     <span class="fw-bold fs-3x" id="kt_ecommerce_add_product_discount_label">
-                                                        {{ $product->discount ?? 0 }}
+                                                        {{ number_format(($product->discount ?? 0), 0) }}
                                                     </span>
                                                         <span class="fw-bold fs-4 mt-1 ms-2">%</span>
                                                     </div>
@@ -471,72 +483,102 @@
                                         <!--end::Card body-->
                                     </div>
                                     <!--end::Inventory-->
-                                    <!--begin::Variations-->
+                                </div>
+                            </div>
+                            <!--end::Tab pane-->
+                            <!--begin::Tab pane-->
+                            <div class="tab-pane fade" id="kt_ecommerce_add_product_reviews" role="tab-panel">
+                                <div class="d-flex flex-column gap-7 gap-lg-10">
+                                    <!--begin::Reviews-->
                                     <div class="card card-flush py-4">
                                         <!--begin::Card header-->
                                         <div class="card-header">
-                                            <div class="card-title">
-                                                <h2>Məhsulun rəng variasiyaları</h2>
-                                            </div>
                                         </div>
                                         <!--end::Card header-->
                                         <!--begin::Card body-->
                                         <div class="card-body pt-0">
-                                            <!--begin::Input group-->
-                                            <div class="" data-kt-ecommerce-catalog-add-product="auto-options">
-                                                <!--begin::Label-->
-                                                <label class="form-label">Rəngləri əlavə edin</label>
-                                                <!--end::Label-->
-                                                <!--begin::Repeater-->
-                                                <div id="kt_ecommerce_add_product_options">
-                                                    <!--begin::Form group-->
-                                                    <div class="form-group">
-                                                        <div data-repeater-list="kt_ecommerce_add_product_options" class="d-flex flex-column gap-3">
-                                                            @foreach($product->colorVariations as $variation)
-                                                                <div data-repeater-item="" class="form-group d-flex flex-wrap align-items-center gap-5">
-                                                                    <!--begin::Select2-->
-                                                                    <div class="w-100 w-md-200px">
-                                                                        <select class="form-select" name="product_option"
-                                                                                data-placeholder="Rəng"
-                                                                                data-kt-ecommerce-catalog-add-product="product_option">
-                                                                            <option selected value="color">Rəng</option>
-                                                                            <!-- Add other options if necessary -->
-                                                                        </select>
-                                                                    </div>
-                                                                    <!--end::Select2-->
-                                                                    <!--begin::Input-->
-                                                                    <input type="text" class="form-control mw-100 w-200px product_option_value"
-                                                                           name="product_option_value"
-                                                                           placeholder="Kod"
-                                                                           value="{{ $variation->color }}" />
-                                                                    <!--end::Input-->
-                                                                    <button type="button" data-repeater-delete=""
-                                                                            class="btn btn-sm btn-icon btn-light-danger">
-                                                                        <i class="ki-duotone ki-cross fs-1">
-                                                                            <span class="path1"></span>
-                                                                            <span class="path2"></span>
-                                                                        </i>
-                                                                    </button>
-                                                                </div>
-                                                            @endforeach
+                                            <!--begin::Table-->
+                                            <table class="table table-row-dashed fs-6 gy-5 my-0" id="kt_ecommerce_add_product_reviews">
+                                                <thead>
+                                                <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                                                    <th class="w-10px pe-2">
+                                                        <div class="form-check form-check-sm form-check-custom form-check-solid me-3">
+                                                            <input class="form-check-input" type="checkbox" data-kt-check="true" data-kt-check-target="#kt_ecommerce_products_table .form-check-input" value="1" />
                                                         </div>
-                                                    </div>
-                                                    <!--end::Form group-->
-                                                    <!--begin::Form group-->
-                                                    <div class="form-group mt-5">
-                                                        <button type="button" data-repeater-create=""
-                                                                class="btn btn-sm btn-light-primary">
-                                                            <i class="ki-duotone ki-plus fs-2"></i>Yeni əlavə et</button>
-                                                    </div>
-                                                    <!--end::Form group-->
-                                                </div>
-                                                <!--end::Repeater-->
-                                            </div>
-                                            <!--end::Input group-->
+                                                    </th>
+                                                    <th class="min-w-200px">Adı</th>
+                                                    <th class="text-end min-w-100px">SKU</th>
+                                                    <th class="text-end min-w-70px">Stok</th>
+                                                    <th class="text-end min-w-100px">Qiymət</th>
+                                                    <th class="text-end min-w-100px">Rating</th>
+                                                    <th class="text-end min-w-70px">Əməliyyatlar</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                @foreach($product->colorVariations as $variation)
+                                                    <tr>
+                                                        <td>
+                                                            <div class="form-check form-check-sm form-check-custom form-check-solid">
+                                                                <input class="form-check-input" type="checkbox" value="1" />
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <!--begin::Thumbnail-->
+                                                                <a href="{{route('admin.products.edit', $variation->id)}}" class="symbol symbol-50px">
+                                                                    <span class="symbol-label" style="background-image:url('{{$product->image}}');"></span>
+                                                                </a>
+                                                                <!--end::Thumbnail-->
+                                                                <div class="ms-5">
+                                                                    <!--begin::Title-->
+                                                                    <a href="{{route('admin.products.edit', $variation->id)}}" class="text-gray-800 text-hover-primary fs-5 fw-bold" data-kt-ecommerce-product-filter="product_name">{{$product->name}}</a>
+                                                                    <!--end::Title-->
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-end pe-0">
+                                                            <span class="fw-bold">{{$variation->sku}}</span>
+                                                        </td>
+                                                        <td class="text-end pe-0" data-order="0">
+                                                            <span class="fw-bold text-primary ms-3">{{$variation->stock}}</span>
+                                                        </td>
+                                                        <td class="text-end pe-0">{{$variation->price}}</td>
+                                                        <td class="text-end pe-0" data-order="rating-{{floor($variation->average_rating)}}">
+                                                            <div class="rating justify-content-end">
+                                                                @for ($i = 1; $i <= 5; $i++)
+                                                                    <div class="rating-label {{ $i <= $variation->average_rating ? 'checked' : '' }}">
+                                                                        <i class="ki-duotone ki-star fs-6"></i>
+                                                                    </div>
+                                                                @endfor
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
+                                                                <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
+                                                            <!--begin::Menu-->
+                                                            <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
+                                                                <!--begin::Menu item-->
+                                                                <div class="menu-item px-3">
+                                                                    <a href="{{route('admin.products.edit', $variation->id)}}" class="menu-link px-3">Edit</a>
+                                                                </div>
+                                                                <!--end::Menu item-->
+                                                                <!--begin::Menu item-->
+                                                                <div class="menu-item px-3">
+                                                                    <a href="#" class="menu-link px-3" data-kt-ecommerce-product-filter="delete_row">Delete</a>
+                                                                </div>
+                                                                <!--end::Menu item-->
+                                                            </div>
+                                                            <!--end::Menu-->
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                                </tbody>
+                                            </table>
+                                            <!--end::Table-->
                                         </div>
                                         <!--end::Card body-->
                                     </div>
-                                    <!--end::Variations-->
+                                    <!--end::Reviews-->
                                 </div>
                             </div>
                             <!--end::Tab pane-->
@@ -554,7 +596,7 @@
                         </div>
                     </div>
                     <!--end::Main column-->
-                </form>f
+                </form>
                 <!--end::Form-->
             </div>
             <!--end::Content container-->
@@ -639,6 +681,8 @@
     <script>
 
         $(document).ready(function () {
+
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -658,16 +702,20 @@
                     var basePath = "/public/images/products/";
 
                     // Fetch the existing file names from the Laravel Blade template
-                    var existingFiles = @json($product->images()->where('is_main', '!=', 1)->pluck('image_path')); // Only using file names
+                    var existingFiles = @json($existingFiles);
 
-                    // Loop over each existing file name and display it in Dropzone
-                    existingFiles.forEach(function (fileName) {
-                        let imagePath = basePath + fileName; // Construct full image path
-                        let mockFile = { name: fileName, imagePath: imagePath, storagePath: '/storage/images/products/' + fileName }; // Use file name as the mock name
+                    existingFiles.forEach(function (file) {
+                        let imagePath = basePath + file.image_path; // Construct full image path
+                        let mockFile = {
+                            name: file.image_path,
+                            imagePath: imagePath,
+                            storagePath: '/storage/images/products/' + file.image_path,
+                            id: file.id // Include image ID here
+                        };
 
                         // Display the image preview in Dropzone
                         dropzoneInstance.emit("addedfile", mockFile);
-                        dropzoneInstance.emit( "thumbnail", mockFile, '/storage/images/products/' + fileName );
+                        dropzoneInstance.emit("thumbnail", mockFile, '/storage/images/products/' + file.image_path);
                         dropzoneInstance.emit("complete", mockFile);
 
                         // Mark file as added so Dropzone doesn't re-upload it
@@ -697,10 +745,20 @@
                 }
             });
 
+
             $("#edit_product_submit").on('click', function () {
+
                 var productId = {{$product->id}}; // Get the product ID
-                var productName = $('input[name="product_name"]').val();
-                var productDescription = $('textarea[name="product_description"]').val();
+                var productNameAz = $('input[name="product_name_az"]').val();
+                var productNameEn = $('input[name="product_name_en"]').val();
+                var productNameRu = $('input[name="product_name_ru"]').val();
+
+
+                var productDescriptionAz = $('textarea[name="product_description_az"]').val();
+                var productDescriptionEn = $('textarea[name="product_description_en"]').val();
+                var productDescriptionRu = $('textarea[name="product_description_ru"]').val();
+
+                var color = $('input[name="product_color"]').val();
                 var price = $('input[name="price"]').val();
                 var sku = $('input[name="sku"]').val();
                 var stock = $('input[name="warehouse"]').val();
@@ -709,15 +767,24 @@
                 var discountPercentage = $('#kt_ecommerce_add_product_discount_label').text();
                 var unlimitedDiscount = $('#unlimited_discount_checkbox').is(':checked');
                 var discountEndDatetime = $('#discount_ends_datetimepicker').val();
-                var uploadedFiles = $('#uploaded_files').val();
-                var selectedSubcategoryId = $('#subcategorySelect').val();
+
+                var selectedSubcategoryId= $('#subcategorySelect').val();
 
                 // Collect color options
                 var formData = new FormData();
-                formData.append('_method', 'PUT'); // Required for PUT request in FormData
-                formData.append('name', productName);
-                formData.append('description', productDescription);
-                formData.append('uploaded_files', uploadedFiles);
+                formData.append('_method', 'PUT');
+
+
+                formData.append('name_az', productNameAz);
+                formData.append('name_en', productNameEn);
+                formData.append('name_ru', productNameRu);
+
+                formData.append('description_az', productDescriptionAz);
+                formData.append('description_en', productDescriptionEn);
+                formData.append('description_ru', productDescriptionRu);
+
+
+                formData.append('color', color);
                 formData.append('price', price);
                 formData.append('sku', sku);
                 formData.append('stock', stock);
@@ -730,17 +797,6 @@
                     formData.append('discount_ends_at', discountEndDatetime);
                 }
 
-                var colors = [];
-                $('.product_option_value').each(function () {
-                    colors.push($(this).val());
-                });
-
-                // Append the colors array to the FormData object
-                colors.forEach(function(color, index) {
-                    formData.append('colors[' + index + ']', color);
-                });
-
-                // Append the avatar file if it exists
                 if (avatarFile) {
                     formData.append('main_image', avatarFile);
                 }
@@ -752,7 +808,8 @@
                             formData.append("images[]", file); // This will be the binary data
                         } else if (file.storagePath) {
                             // Append existing file paths (string)
-                            formData.append("existing_images[]", file.name); // This will be the string path
+                            formData.append("existing_images[]", file.name);
+                            formData.append("existing_images_ids[]", file.id);// This will be the string path
                         }
                     });
                 } else {
@@ -790,8 +847,24 @@
     </script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var productDiscount = {{ $product->discount ?? 0 }};  // Dynamically set the product discount
+            var a = document.querySelector("#kt_ecommerce_add_product_discount_label");
+            var o = document.querySelector("#kt_ecommerce_add_product_discount_slider");
 
+            noUiSlider.create(o, {
+                start: [productDiscount],  // Set the start value to the product discount
+                connect: true,
+                range: {
+                    min: 1,
+                    max: 100
+                }
+            });
 
+            o.noUiSlider.on("update", function(e, t) {
+                a.innerHTML = Math.round(e[t]);
+            });
+        });
 
     </script>
 @endpush
