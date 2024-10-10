@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\Idea\IdeaWidgetTabController;
 use App\Http\Controllers\Admin\Idea\SubIdeaController;
 use App\Http\Controllers\Admin\Idea\SubIdeaItemController;
 use App\Http\Controllers\Admin\Order\OrderController;
+use App\Http\Controllers\Admin\Product\BadgeController;
 use App\Http\Controllers\Admin\Product\IndividualProductController;
 use App\Http\Controllers\Admin\Product\PurchasedTogetherProductsController;
 use App\Http\Controllers\Admin\Product\RelatedProductsController;
@@ -145,6 +146,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
     Route::resource('safety-informations', SafetyInformationController::class);
+
+
+    Route::resource('badges', BadgeController::class);
 
 });
 
