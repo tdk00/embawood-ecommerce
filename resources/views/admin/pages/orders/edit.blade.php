@@ -195,8 +195,12 @@
                                                     <td class="text-dark fs-3 fw-bolder text-end">{{ $order->coupon_discount }} AZN</td>
                                                 </tr>
                                                 <tr>
+                                                    <td colspan="4" class="fs-3 text-dark text-end">Bonus endirim</td>
+                                                    <td class="text-dark fs-3 fw-bolder text-end">{{ $order->bonus_discount }} AZN</td>
+                                                </tr>
+                                                <tr>
                                                     <td colspan="4" class="fs-3 text-dark text-end">Ümumi cəm</td>
-                                                    <td class="text-dark fs-3 fw-bolder text-end">{{($order->total - $order->coupon_discount - $order->item_discounts_total )}} AZN</td>
+                                                    <td class="text-dark fs-3 fw-bolder text-end">{{($order->total - $order->coupon_discount - $order->bonus_discount - $order->item_discounts_total )}} AZN</td>
                                                 </tr>
                                                 </tbody>
                                             </table>

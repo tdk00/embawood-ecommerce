@@ -52,16 +52,22 @@
                                     <div class="text-gray-600">{{$customer->phone}}</div>
                                     <!--begin::Details item-->
                                     <!--begin::Details item-->
-                                    <div class="fw-bold mt-5">Email</div>
-                                    <div class="text-gray-600">
-                                        <a href="#" class="text-gray-600 text-hover-primary">{{$customer->email}}</a>
-                                    </div>
-                                    <!--begin::Details item-->
-                                    <!--begin::Details item-->
                                     <div class="fw-bold mt-5">Ünvan</div>
                                     <div class="text-gray-600">
                                         {{$customer->deliveryAddresses?->first()?->address_line1 ?? ""}}
                                     </div>
+                                    <!--begin::Details item-->
+                                    <!--begin::Details item-->
+                                    <div class="fw-bold mt-5">Ümumi bonus miqdarı</div>
+                                    <div class="text-gray-600">{{$customer->total_bonus_amount}}</div>
+                                    <!--begin::Details item-->
+                                    <!--begin::Details item-->
+                                    <div class="fw-bold mt-5">İstifadə edilmiş bonus miqdarı</div>
+                                    <div class="text-gray-600">{{$customer->used_bonus_amount}}</div>
+                                    <!--begin::Details item-->
+                                    <!--begin::Details item-->
+                                    <div class="fw-bold mt-5">Qalan bonus miqdarı</div>
+                                    <div class="text-gray-600">{{$customer->remaining_bonus_amount}}</div>
                                     <!--begin::Details item-->
                                 </div>
                                 <!--end::Details content-->
