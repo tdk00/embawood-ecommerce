@@ -157,7 +157,17 @@ class IndividualProductController extends Controller
         $existingFiles = $product->images()
             ->where('is_main', '!=', 1)
             ->get(['id', 'image_path']);
-        return view('admin.pages.products.edit', compact('product', 'subcategories', 'existingFiles'));
+        $unTransformedIndividualProducts = Product::where('is_set', false)
+            ->whereNotNull('color')
+            ->where(function ($query) use ($id) {
+                $query->whereNull('parent_id')
+                    ->orWhere('parent_id', $id);
+            })->get();
+        $individualProducts = $unTransformedIndividualProducts->map(function ($individualProduct){
+            $individualProduct->image = url('storage/images/products/' . $individualProduct->main_image);
+            return $individualProduct;
+        });
+        return view('admin.pages.products.edit', compact('product', 'subcategories', 'existingFiles', 'individualProducts'));
     }
 
     /**
@@ -194,6 +204,8 @@ class IndividualProductController extends Controller
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2000',
             'main_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2000',
             'selected_sub_category_id' => 'exists:subcategories,id',
+            'selected_products' => 'nullable|array',
+            'selected_products.*' => 'nullable|integer|min:0',
         ], $messages);
 
         $validated['discount'] = $validated['discount'] ?? null;
@@ -269,6 +281,17 @@ class IndividualProductController extends Controller
                         $productImage->delete();
                     }
                 }
+            }
+            if (!empty($validated['selected_products'])) {
+                // Begin a transaction for better consistency
+                DB::transaction(function () use ($product, $validated) {
+                    // Remove the `parent_id` from all products that currently belong to the set
+                    Product::where('parent_id', $product->id)->update(['parent_id' => null]);
+
+                    // Set the `parent_id` for the selected products in one go
+                    Product::whereIn('id', $validated['selected_products'])
+                        ->update(['parent_id' => $product->id]);
+                });
             }
 
             DB::commit();

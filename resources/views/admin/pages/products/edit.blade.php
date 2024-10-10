@@ -165,7 +165,7 @@
                             <!--end:::Tab item-->
                             <!--begin:::Tab item-->
                             <li class="nav-item">
-                                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_reviews">Rənglər</a>
+                                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_modules">Rənglər</a>
                             </li>
                             <!--end:::Tab item-->
                             <li class="nav-item">
@@ -582,6 +582,136 @@
                                 </div>
                             </div>
                             <!--end::Tab pane-->
+
+                            <!--begin::Tab pane-->
+                            <div class="tab-pane fade" id="kt_ecommerce_add_product_modules" role="tab-panel">
+                                <div class="d-flex flex-column gap-7 gap-lg-10">
+                                    <!--begin::Reviews-->
+
+                                    <!--begin::Order details-->
+                                    <div class="card card-flush py-4">
+                                        <!--begin::Card header-->
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                <h2>Rəng Variasiyası</h2>
+                                            </div>
+                                        </div>
+                                        <!--end::Card header-->
+                                        <!--begin::Card body-->
+                                        <div class="card-body pt-0">
+                                            <div class="d-flex flex-column gap-10">
+                                                <!--begin::Input group-->
+                                                <div>
+                                                    <!--begin::Label-->
+                                                    <label class="form-label">Rəng Variasiyası seçin</label>
+                                                    <!--end::Label-->
+                                                    <!--begin::Selected products-->
+                                                    <div class="row row-cols-1 row-cols-xl-3 row-cols-md-2 border border-dashed rounded pt-3 pb-1 px-2 mb-5 mh-300px overflow-scroll" id="kt_ecommerce_edit_order_selected_products">
+                                                        <!--begin::Empty message-->
+                                                        <input type="hidden"  value="" id="product_ids"/>
+                                                        @foreach($product->colorVariations as $module)
+                                                            <div class="col my-2" data-column-product-id="product_{{$module->id}}" data-product-real-id="{{$module->id}}">
+                                                                <div class="d-flex align-items-center border border-dashed p-3 rounded bg-white">
+                                                                    <!--begin::Thumbnail-->
+                                                                    <a href="#" class="symbol symbol-50px">
+                                                                        <span class="symbol-label" style="background-image: url('{{ asset('storage/images/products/' . $module->main_image) }}')"></span>
+                                                                    </a>
+                                                                    <!--end::Thumbnail-->
+                                                                    <div class="ms-5">
+                                                                        <!--begin::Title-->
+                                                                        <a href="#" class="text-gray-800 text-hover-primary fs-5 fw-bold">{{$module->name}}</a>
+                                                                        <!--end::Title-->
+                                                                        <!--begin::Price-->
+                                                                        <div class="fw-semibold fs-7">Qiymət: {{$module->price}}</span></div>
+                                                                        <!--end::Price-->
+                                                                        <!--begin::Quantity-->
+                                                                        <div class="fw-semibold fs-7 column-quantity">Rəng: <span>{{$module->color}}</span></div>
+                                                                        <!--end::Quantity-->
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                    <!--begin::Selected products-->
+                                                </div>
+                                                <!--end::Input group-->
+                                                <!--begin::Separator-->
+                                                <div class="separator"></div>
+                                                <!--end::Separator-->
+                                                <!--begin::Search products-->
+                                                <div class="d-flex align-items-center position-relative mb-n7">
+                                                    <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-4">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                    </i>
+                                                    <input type="text" data-kt-ecommerce-edit-order-filter="search" class="form-control form-control-solid w-100 w-lg-50 ps-12" placeholder="Axtarış" />
+                                                </div>
+                                                <!--end::Search products-->
+                                                <!--begin::Table-->
+                                                <table class="table align-middle table-row-dashed fs-6 gy-5" id="kt_ecommerce_edit_order_product_table">
+                                                    <thead>
+                                                    <tr class="text-start text-gray-400 fw-bold fs-7 text-uppercase gs-0">
+                                                        <th class="w-25px pe-2"></th>
+                                                        <th class="min-w-200px">Məhsul</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody class="fw-semibold text-gray-600">
+                                                    @php
+                                                        $sortedProducts = $individualProducts->sortBy(function ($individualProduct) use ($product) {
+                                                            return $product->colorVariations->contains($individualProduct) ? 0 : 1;
+                                                        });
+                                                    @endphp
+
+                                                    @foreach($sortedProducts as $individualProduct)
+                                                        @php
+                                                            $isProductInColors = $product->colorVariations->contains($individualProduct);
+                                                        @endphp
+                                                        <tr data-list-product-id="product_{{ $individualProduct->id }}" data-list-product-real-id="{{ $individualProduct->id }}">
+                                                            <td>
+                                                                <div class="form-check form-check-sm form-check-custom form-check-solid">
+                                                                    <input class="form-check-input module-check-input" type="checkbox" value="1"
+                                                                           @if($isProductInColors) checked @endif />
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="d-flex align-items-center" data-kt-ecommerce-edit-order-filter="product">
+                                                                    <!--begin::Thumbnail-->
+                                                                    <a class="symbol symbol-50px">
+                                                                        <span class="symbol-label list-image" data-image="{{$individualProduct->image}}" style="background-image:url('{{$individualProduct->image}}');"></span>
+                                                                    </a>
+                                                                    <!--end::Thumbnail-->
+                                                                    <div class="ms-5">
+                                                                        <!--begin::Title-->
+                                                                        <a class="text-gray-800 text-hover-primary fs-5 fw-bold">{{$individualProduct->name}}</a>
+                                                                        <!--end::Title-->
+                                                                        <!--begin::Price-->
+                                                                        <div class="fw-semibold fs-7">Qiymət:
+                                                                            <span class="list-product-price" data-kt-ecommerce-edit-order-filter="price" data-price="{{$individualProduct->price}}">{{$individualProduct->price}}</span>
+                                                                        </div>
+                                                                        <!--end::Price-->
+                                                                        <!--begin::Price-->
+                                                                        <div class="fw-semibold fs-7">Rəng:
+                                                                            <span class="list-product-color" data-kt-ecommerce-edit-order-filter="color" data-color="{{$individualProduct->color}}">{{$individualProduct->color}}</span>
+                                                                        </div>
+                                                                        <!--end::Price-->
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+
+                                                    </tbody>
+                                                </table>
+                                                <!--end::Table-->
+                                            </div>
+                                        </div>
+                                        <!--end::Card header-->
+                                    </div>
+                                    <!--end::Order details-->
+                                    <!--end::Reviews-->
+                                </div>
+                            </div>
+                            <!--end::Tab pane-->
                         </div>
                         <!--end::Tab content-->
                         <div class="d-flex justify-content-end">
@@ -688,6 +818,61 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+
+            $('.module-check-input').change(function () {
+                let $productRow = $(this).closest('tr');
+                let productId = $productRow.data('list-product-id');
+                let productRealId = $productRow.data('list-product-real-id');
+                let productName = $productRow.find('.fs-5.fw-bold').text();
+                let productPrice = $productRow.find('.list-product-price').data('price');
+                let productColor = $productRow.find('.list-product-color').data('color');
+                let productSku = $productRow.find('.text-muted').text();
+                let productThumbnail = $productRow.find('.list-image').data('image');
+
+                if ($(this).is(':checked')) {
+                    addProductToSelectedList(productId, productName, productPrice, productSku, productThumbnail, productRealId, productColor);
+                } else {
+                    removeProductFromSelectedList(productId, productRealId);
+                }
+            });
+
+            // Function to add product to the selected list
+            function addProductToSelectedList(productId, productName, productPrice, productSku, productThumbnail, productRealId, productColor) {
+
+                // If product already exists, just update the quantity
+                let productHTML = `
+            <div class="col my-2" data-column-product-id="${productId}" data-product-real-id="${productRealId}">
+                <div class="d-flex align-items-center border border-dashed p-3 rounded bg-white">
+                    <!--begin::Thumbnail-->
+                    <a href="#" class="symbol symbol-50px">
+                        <span class="symbol-label" style="background-image: url('${productThumbnail}')"></span>
+                    </a>
+                    <!--end::Thumbnail-->
+                    <div class="ms-5">
+                        <!--begin::Title-->
+                        <a href="#" class="text-gray-800 text-hover-primary fs-5 fw-bold">${productName}</a>
+                        <!--end::Title-->
+                        <!--begin::Price-->
+                        <div class="fw-semibold fs-7">Qiymət: <span>${productPrice}</span></div>
+                        <!--end::Price-->
+                        <!--begin::Quantity-->
+                        <div class="fw-semibold fs-7 column-quantity">Rəng: <span>${productColor}</span></div>
+                        <!--end::Quantity-->
+                        <!--begin::SKU-->
+                        <div class="text-muted fs-7">${productSku}</div>
+                        <!--end::SKU-->
+                    </div>
+                </div>
+            </div>`;
+
+                $('#kt_ecommerce_edit_order_selected_products').append(productHTML);
+            }
+
+            // Function to remove product from the selected list
+            function removeProductFromSelectedList(productId, productRealId) {
+                $(`[data-column-product-id="${productId}"]`).remove();
+            }
 
             var myDropzone = new Dropzone("#kt_ecommerce_add_product_media_custom", {
                 url: "{{ route('admin.products.uploadMedia') }}",
@@ -815,6 +1000,12 @@
                 } else {
                     formData.append("images[]", ""); // Append an empty field for images if no files are selected
                 }
+
+
+                $('#kt_ecommerce_edit_order_selected_products > .col').each(function () {
+                    var productRealId = $(this).data('product-real-id');
+                    formData.append('selected_products[]', productRealId);
+                });
 
                 // Send AJAX request
                 $.ajax({
