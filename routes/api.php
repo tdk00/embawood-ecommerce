@@ -12,6 +12,9 @@ use App\Http\Controllers\Category\ApiSubcategoryController;
 use App\Http\Controllers\Category\ApiTopListController;
 use App\Http\Controllers\Checkout\ApiCheckoutDetailsController;
 use App\Http\Controllers\Checkout\ApiOrderController;
+use App\Http\Controllers\Company\ApiAboutUsController;
+use App\Http\Controllers\Company\ApiFaqPageController;
+use App\Http\Controllers\Company\ApiPageController;
 use App\Http\Controllers\Company\ApiStoresController;
 use App\Http\Controllers\HomeScreen\ApiHomeScreenSliderController;
 use App\Http\Controllers\Ideas\ApiIdeaController;
@@ -176,3 +179,13 @@ Route::post('search/search-results', [ApiProductSearchController::class, 'search
 
 Route::get('company/stores', [ApiStoresController::class, 'index']);
 
+Route::get('company/stores/nearest', [ApiStoresController::class, 'nearest']);
+
+
+Route::get('company/faq-page', [ApiFaqPageController::class, 'index']);
+
+
+Route::get('company/about-us', [ApiAboutUsController::class, 'index']);
+
+
+Route::get('company/pages', [ApiPageController::class, 'index']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Company;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company\Region;
 use App\Models\Company\Store;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -17,7 +18,8 @@ class StoreController extends Controller
 
     public function create()
     {
-        return view('admin.pages.company.stores.create');
+        $regions = Region::all();
+        return view('admin.pages.company.stores.create', compact('regions'));
     }
 
     public function store(Request $request)
@@ -30,6 +32,7 @@ class StoreController extends Controller
                 'city' => 'required|string|max:255',
                 'latitude' => 'required|numeric|between:-90,90',
                 'longitude' => 'required|numeric|between:-180,180',
+                'region_id' => 'required|exists:regions,id',
             ]);
 
             Store::create($request->all());
@@ -48,7 +51,8 @@ class StoreController extends Controller
 
     public function edit(Store $store)
     {
-        return view('admin.pages.company.stores.edit', compact('store'));
+        $regions = Region::all();
+        return view('admin.pages.company.stores.edit', compact('store', 'regions'));
     }
 
     public function update(Request $request, Store $store)
@@ -59,6 +63,7 @@ class StoreController extends Controller
             'city' => 'required|string|max:255',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
+            'region_id' => 'required|exists:regions,id',
         ]);
 
         $store->update($request->all());

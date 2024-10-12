@@ -5,6 +5,11 @@ use App\Http\Controllers\Admin\Bonus\BonusSettingController;
 use App\Http\Controllers\Admin\Category\CategoryController;
 use App\Http\Controllers\Admin\Category\SubCategoryController;
 use App\Http\Controllers\Admin\Category\TopListController;
+use App\Http\Controllers\Admin\Company\AboutUsController;
+use App\Http\Controllers\Admin\Company\FaqPageDetailController;
+use App\Http\Controllers\Admin\Company\FaqPageQuestionController;
+use App\Http\Controllers\Admin\Company\PageController;
+use App\Http\Controllers\Admin\Company\RegionController;
 use App\Http\Controllers\Admin\Company\StoreController;
 use App\Http\Controllers\Admin\Company\StorePhoneNumberController;
 use App\Http\Controllers\Admin\Customer\CustomerController;
@@ -91,6 +96,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('sliders-news/update-order', [SliderNewsController::class, 'updateOrder'])->name('sliders-news.updateOrder');
 
 
+
+    Route::resource('regions', RegionController::class);
     Route::resource('stores', StoreController::class);
     Route::resource('store-phone-numbers', StorePhoneNumberController::class);
 
@@ -123,6 +130,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('bonus-settings/edit', [BonusSettingController::class, 'editAll'])->name('bonus-settings.editAll');
     Route::put('bonus-settings/update', [BonusSettingController::class, 'updateAll'])->name('bonus-settings.updateAll');
 
+    Route::get('about-us/edit', [AboutUsController::class, 'edit'])->name('about-us.edit');
+    Route::put('about-us/update', [AboutUsController::class, 'update'])->name('about-us.update');
+
     Route::resource('ideas', IdeaController::class);
 
     Route::resource('sub-ideas', SubIdeaController::class);
@@ -149,6 +159,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
     Route::resource('badges', BadgeController::class);
+
+
+    Route::get('faq-page-detail/edit', [FaqPageDetailController::class, 'edit'])->name('faq-page-detail.edit');
+    Route::put('faq-page-detail/update', [FaqPageDetailController::class, 'update'])->name('faq-page-detail.update');
+
+    Route::resource('faq-page-questions', FaqPageQuestionController::class);
+
+    Route::resource('pages', PageController::class);
 
 });
 

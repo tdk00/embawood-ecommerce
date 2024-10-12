@@ -22,6 +22,7 @@
                         <th>Name</th>
                         <th>Address</th>
                         <th>City</th>
+                        <th>Region</th>
                         <th>Latitude</th>
                         <th>Longitude</th>
                         <th>Phone Numbers</th>
@@ -34,6 +35,7 @@
                             <td>{{ $store->name }}</td>
                             <td>{{ $store->address }}</td>
                             <td>{{ $store->city }}</td>
+                            <td>{{ $store->region->name ?? 'N/A' }}</td>
                             <td>{{ $store->latitude }}</td>
                             <td>{{ $store->longitude }}</td>
                             <td>

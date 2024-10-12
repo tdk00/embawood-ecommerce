@@ -40,8 +40,22 @@
 
                     <div class="mb-10 fv-row">
                         <label class="required form-label">City</label>
-                        <input type="text" name="city" class="form-control mb-2" value="{{ old('city', $store->city) }}" />
+                        <input type="text" name="city" class="form-select mb-2" value="{{ old('city', $store->city) }}" />
                         @error('city')
+                        <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-10 fv-row">
+                        <label class="required form-label">Region</label>
+                        <select name="region_id" class="form-control mb-2" data-control="select2" >
+                            @foreach ($regions as $region)
+                                <option value="{{ $region->id }}" {{ old('region_id', $store->region_id ?? '') == $region->id ? 'selected' : '' }}>
+                                    {{ $region->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('region_id')
                         <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
