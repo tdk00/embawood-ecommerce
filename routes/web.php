@@ -94,6 +94,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('sliders-news/{id}/edit', [SliderNewsController::class, 'edit'])->name('sliders-news.edit');
     Route::put('sliders-news/{id}', [SliderNewsController::class, 'update'])->name('sliders-news.update');
     Route::post('sliders-news/update-order', [SliderNewsController::class, 'updateOrder'])->name('sliders-news.updateOrder');
+    Route::delete('sliders-news/{id}', [SliderNewsController::class, 'destroy'])->name('sliders-news.destroy');
 
 
 

@@ -58,6 +58,12 @@
                             </td>
                             <td>
                                 <a href="{{ route('admin.sliders-news.edit', $slider->id) }}" class="btn btn-sm btn-primary">Redaktə</a>
+
+                                <form action="{{ route('admin.sliders-news.destroy', $slider->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Bu slideri və əlaqəli xəbəri silmək istədiyinizə əminsinizmi?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach

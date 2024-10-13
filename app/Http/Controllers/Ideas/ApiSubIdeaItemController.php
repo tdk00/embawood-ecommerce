@@ -27,7 +27,7 @@ class ApiSubIdeaItemController extends Controller
             'description' => $subIdeaItem->description,
             'images' => $subIdeaItem->images->map(function ($image) {
                 return [
-                    'image_url' => $image->image_url
+                    'image_url' => url('storage/images/ideas/' . $image->image_url),
                 ];
             }),
             'products' => $products->map(function ($product) {

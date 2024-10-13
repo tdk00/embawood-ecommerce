@@ -28,6 +28,7 @@ class User extends Authenticatable
         'name',
         'surname',
         'birthdate',
+        'gender',
         'phone',
         'phone_verified_at',
         'password',
@@ -55,6 +56,7 @@ class User extends Authenticatable
     protected $casts = [
         'phone_verified_at' => 'datetime',
         'password' => 'hashed',
+        'birthdate' => 'date',
         'last_product_view_bonus_achieved_at' => 'datetime',
     ];
 

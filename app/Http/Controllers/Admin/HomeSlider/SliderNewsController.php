@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HomeScreen\HomeScreenSlider;
 use App\Models\News\News;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SliderNewsController extends Controller
 {
@@ -166,5 +167,39 @@ class SliderNewsController extends Controller
         $slider->save();  // Save the updated slider
 
         return redirect()->route('admin.sliders-news.index')->with('success', 'Slider and News updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        // Find the slider by ID, along with its related news
+        $slider = HomeScreenSlider::with('news.translations')->findOrFail($id);
+
+        // Begin a database transaction to ensure atomicity
+        DB::transaction(function () use ($slider) {
+            // Get the associated news
+            $news = $slider->news;
+
+            // Delete banner image if it exists
+            if ($news->banner_image && file_exists(public_path('storage/images/news/' . $news->banner_image))) {
+                unlink(public_path('storage/images/news/' . $news->banner_image));
+            }
+
+            // Delete slider image if it exists
+            if ($slider->slider_image && file_exists(public_path('storage/images/home_screen/sliders/' . $slider->slider_image))) {
+                unlink(public_path('storage/images/home_screen/sliders/' . $slider->slider_image));
+            }
+
+            // Delete the news translations first (if applicable)
+            $news->translations()->delete();
+
+            // Delete the news record itself
+            $news->delete();
+
+            // Delete the slider
+            $slider->delete();
+        });
+
+        // Return success response
+        return redirect()->route('admin.sliders-news.index')->with('success', 'Slider and related News deleted successfully.');
     }
 }
