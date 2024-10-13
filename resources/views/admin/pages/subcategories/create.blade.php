@@ -125,46 +125,6 @@
                             @endif
                             <!--end::Input-->
                             </div>
-                            <!--end::Input group-->
-
-                            <!--begin::Input group for banner image-->
-                            <div class="mb-10 fv-row">
-                                <!--begin::Label-->
-                                <label class="form-label">Banner Image</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
-                                <input type="file" name="banner_image" class="form-control mb-2" />
-                                @if (isset($subcategory) && $subcategory->banner_image)
-                                    <img src="{{ asset('storage/images/subcategories/banner/' . $subcategory->banner_image) }}" alt="{{ $subcategory->name }}" width="100">
-                            @endif
-                            <!--end::Input-->
-                                <!--begin::Input group for banner image-->
-                                <div class="mb-10 fv-row">
-                                    <!--begin::Label-->
-                                    <label class="form-label">Əsas Səhifə Widget Şəkli</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <input type="file" name="widget_view_image" class="form-control mb-2" />
-                                    @if (isset($subcategory) && $subcategory->widget_view_image)
-                                        <img src="{{ asset('storage/images/subcategories/homescreen/' . $subcategory->widget_view_image) }}" alt="{{ $subcategory->name }}" width="100">
-                                @endif
-                                <!--end::Input-->
-                                </div>
-                                <!--end::Input group-->
-
-                                <!--begin::Input group for is_popular-->
-                                <div class="mb-10 fv-row">
-                                    <!--begin::Label-->
-                                    <label class="form-label">is Homescreen widget ?</label>
-                                    <!--end::Label-->
-                                    <!--begin::Input-->
-                                    <input type="checkbox" name="homescreen_widget" value="1" {{ isset($subcategory) && $subcategory->homescreen_widget ? 'checked' : '' }} />
-                                    <!--end::Input-->
-                                </div>
-                                <!--end::Input group-->
-
-                            <!-- Other fields like image, banner_image, widget_view_image -->
-
                             <!-- Submit Button -->
                             <button type="submit" class="btn btn-primary">{{ isset($subcategory) ? 'Update Subcategory' : 'Create Subcategory' }}</button>
                         </form>

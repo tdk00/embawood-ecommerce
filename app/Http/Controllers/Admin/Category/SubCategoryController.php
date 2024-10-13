@@ -40,9 +40,6 @@ class SubCategoryController extends Controller
             'description_en' => 'nullable',
             'description_ru' => 'nullable',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'widget_view_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'homescreen_widget' => 'boolean',
         ]);
 
         // Handle image uploads
@@ -52,17 +49,6 @@ class SubCategoryController extends Controller
             $request->file('image')->storeAs('images/subcategories/small', $image, 'public');
         }
 
-        $bannerImage = null;
-        if ($request->hasFile('banner_image')) {
-            $bannerImage = $request->file('banner_image')->getClientOriginalName();
-            $request->file('banner_image')->storeAs('images/subcategories/banner', $bannerImage, 'public');
-        }
-
-        $widgetViewImage = null;
-        if ($request->hasFile('widget_view_image')) {
-            $widgetViewImage = $request->file('widget_view_image')->getClientOriginalName();
-            $request->file('widget_view_image')->storeAs('images/subcategories/homescreen', $widgetViewImage, 'public');
-        }
 
         // Create the subcategory
         $subcategory = Subcategory::create([
@@ -70,9 +56,7 @@ class SubCategoryController extends Controller
             'name' => $request->name_az,
             'description' => $request->description_az,
             'image' => $image,
-            'banner_image' => $bannerImage,
-            'widget_view_image' => $widgetViewImage,
-            'homescreen_widget' => $request->has('homescreen_widget'),
+            'homescreen_widget' => 0,
         ]);
 
         // Create translations for each language
@@ -124,10 +108,7 @@ class SubCategoryController extends Controller
             'description_az' => 'nullable',
             'description_en' => 'nullable',
             'description_ru' => 'nullable',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'widget_view_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'homescreen_widget' => 'boolean',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
         // Handle image uploads
@@ -137,17 +118,6 @@ class SubCategoryController extends Controller
             $request->file('image')->storeAs('images/subcategories/small', $image, 'public');
         }
 
-        $bannerImage = $subcategory->banner_image;
-        if ($request->hasFile('banner_image')) {
-            $bannerImage = $request->file('banner_image')->getClientOriginalName();
-            $request->file('banner_image')->storeAs('images/subcategories/banner', $bannerImage, 'public');
-        }
-
-        $widgetViewImage = $subcategory->widget_view_image;
-        if ($request->hasFile('widget_view_image')) {
-            $widgetViewImage = $request->file('widget_view_image')->getClientOriginalName();
-            $request->file('widget_view_image')->storeAs('images/subcategories/homescreen', $widgetViewImage, 'public');
-        }
 
         // Update the subcategory
         $subcategory->update([
@@ -155,9 +125,7 @@ class SubCategoryController extends Controller
             'name' => $request->name_az,
             'description' => $request->description_az,
             'image' => $image,
-            'banner_image' => $bannerImage,
-            'widget_view_image' => $widgetViewImage,
-            'homescreen_widget' => $request->has('homescreen_widget'),
+            'homescreen_widget' => 0,
         ]);
 
         // Update or create translations for each language
