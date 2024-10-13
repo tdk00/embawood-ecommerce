@@ -87,12 +87,12 @@ class Product extends Model
         if ($this->is_set) {
             // Calculate the sum of the prices of the products within the set, considering the quantity
             return $this->products->sum(function ($product) {
-                return $product->price * $product->pivot->quantity;
+                return round(($product->price * $product->pivot->quantity));
             });
         }
 
         // Return the original price if it's not a set
-        return $value;
+        return round($value);
     }
 
     public function getFinalPriceAttribute()
@@ -100,15 +100,15 @@ class Product extends Model
         if ($this->is_set) {
             // Calculate the sum of the final prices of the products within the set, considering the quantity
             return $this->products->sum(function ($product) {
-                return $product->final_price * $product->pivot->quantity;
+                return round($product->final_price * $product->pivot->quantity);
             });
         }
 
         $discount = $this->discount;
         if ($discount > 0) {
-            return $this->price * (1 - $discount / 100);
+            return round($this->price * (1 - $discount / 100));
         }
-        return $this->price;
+        return round($this->price);
     }
 
     public function getDiscountAttribute($value)
@@ -118,7 +118,7 @@ class Product extends Model
             $finalPrice = $this->final_price;
 
             if ($originalPrice > 0) {
-                return (($originalPrice - $finalPrice) / $originalPrice) * 100;
+                return round((($originalPrice - $finalPrice) / $originalPrice) * 100);
             }
 
             return 0;
@@ -126,7 +126,7 @@ class Product extends Model
 
         // Check if the discount is active
         if (( $value && $this->discount_ends_at && now()->lessThanOrEqualTo($this->discount_ends_at) ) || ( $value && $this->discount_ends_at === null) ) {
-            return $value;
+            return round($value);
         }
 
         return 0;
