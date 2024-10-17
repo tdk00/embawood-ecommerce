@@ -46,6 +46,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::post('products/upload-media', [IndividualProductController::class, 'uploadMedia'])->name('products.uploadMedia');
     Route::post('products/delete-media', [IndividualProductController::class, 'deleteMedia'])->name('products.deleteMedia');
+    Route::post('products/bulk-discount', [IndividualProductController::class, 'bulkDiscount'])->name('products.bulk-discount');
 
 
     // Set Product routes

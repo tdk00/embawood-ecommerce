@@ -414,4 +414,32 @@ class IndividualProductController extends Controller
 
         return response()->json(['success' => false, 'message' => 'File not found'], 404);
     }
+
+    public function bulkDiscount(Request $request)
+    {
+        $request->validate([
+            'product_ids' => 'required|array',
+            'discount_percentage' => 'required|numeric|min:1|max:100',
+            'discount_end_time' => 'nullable|date|after:today',
+        ]);
+
+        $productIds = $request->input('product_ids');
+        $discountPercentage = $request->input('discount_percentage');
+        $discountEndTime = $request->discount_end_time ?? null;
+
+        foreach ($productIds as $productId) {
+            $product = Product::find($productId);
+            if ($product) {
+                $product->update([
+                    'discount' => $discountPercentage,
+                    'discount_ends_at' => $discountEndTime
+                ]);
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Discount applied to selected products.'
+        ]);
+    }
 }
