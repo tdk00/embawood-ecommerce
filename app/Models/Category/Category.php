@@ -2,6 +2,7 @@
 
 namespace App\Models\Category;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +11,14 @@ class Category extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'banner_image', 'widget_view_image', 'homescreen_widget', 'description', 'is_active' ];
+
+
+    protected static function booted()
+    {
+        static::addGlobalScope('active', function (Builder $builder) {
+            $builder->where('is_active', true);
+        });
+    }
 
     public function translations()
     {

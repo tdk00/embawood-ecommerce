@@ -3,6 +3,7 @@
 namespace App\Models\Category;
 
 use App\Models\Product\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +16,15 @@ class Subcategory extends Model
     protected $casts = [
         'homescreen_widget' => 'boolean',
     ];
+
+
+
+    protected static function booted()
+    {
+        static::addGlobalScope('active', function (Builder $builder) {
+            $builder->where('is_active', true);
+        });
+    }
 
     protected $appends = ['full_widget_view_image'];
 

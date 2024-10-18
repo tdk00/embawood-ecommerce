@@ -7,6 +7,7 @@ use App\Models\Category\Subcategory;
 use App\Models\Category\TopList;
 use App\Models\Ideas\SubIdea;
 use App\Models\Ideas\SubIdeaItem;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +17,17 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'parent_id', 'name', 'sku', 'description', 'price', 'stock', 'discount', 'discount_ends_at', 'is_set', 'color'
+        'parent_id', 'name', 'sku', 'description', 'price', 'stock', 'discount', 'discount_ends_at', 'is_set', 'color', 'is_active'
     ];
+
+
+
+    protected static function booted()
+    {
+        static::addGlobalScope('active', function (Builder $builder) {
+            $builder->where('is_active', true);
+        });
+    }
 
 
     protected $appends = ['is_in_basket', 'is_favorite', 'final_price', 'remaining_discount_seconds'];

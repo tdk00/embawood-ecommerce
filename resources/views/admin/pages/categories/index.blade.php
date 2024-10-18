@@ -42,13 +42,21 @@
                             <!--end::Search-->
                         </div>
                         <!--end::Card title-->
-                        <!--begin::Card toolbar-->
-                        <div class="card-toolbar">
-                            <!--begin::Add customer-->
-                            <a href="{{route('admin.categories.create')}}" class="btn btn-primary">Yeni Kateqoriya</a>
-                            <!--end::Add customer-->
+                        <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
+                            <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
+                        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
+                            <!--begin::Menu item-->
+                            <div class="menu-item px-3">
+                                <a href="{{route('admin.categories.create')}}" class="menu-link px-3">Yeni Kateqoriya</a>
+                            </div>
+                            <!--end::Menu item-->
+                            <div class="menu-item px-3">
+                                <a id="bulkDeactivate" class="menu-link px-3">
+                                    Toplu deaktiv etmə
+                                </a>
+                            </div>
+                            <!--end::Menu item-->
                         </div>
-                        <!--end::Card toolbar-->
                     </div>
                     <!--end::Card header-->
                     <!--begin::Card body-->
@@ -72,7 +80,7 @@
                                 <tr>
                                     <td>
                                         <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                            <input class="form-check-input" type="checkbox" value="1" />
+                                            <input class="form-check-input" type="checkbox" value="{{ $category->id }}" />
                                         </div>
                                     </td>
                                     <td>
@@ -172,5 +180,81 @@
                 }
             });
         });
+    </script>
+    <script>
+        $("#bulkDeactivate").on('click', function () {
+            let selectedCategoryIds = new Set();
+            document.querySelectorAll('#kt_ecommerce_category_table .form-check-input:checked').forEach(function (checkbox) {
+                selectedCategoryIds.add(checkbox.value);
+            });
+
+            // Set-i yenidən array-ə çevirin
+            selectedCategoryIds = Array.from(selectedCategoryIds);
+
+            // Ən azı bir kateqoriyanın seçildiyinə əmin olun
+            if (selectedCategoryIds.length === 0) {
+                alert('Zəhmət olmasa, ən azı bir kateqoriya seçin.');
+                return;
+            }
+
+            // SweetAlert2 istifadə edərək təsdiq dialoqunu göstərin
+            Swal.fire({
+                title: 'Əminsiniz ?',
+                html: "<b>Kateqoriya deaktiv ediləcək və siyahılarda görünməyəcək</b> </span>",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Bəli!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // İstifadəçi təsdiqləyirsə, AJAX sorğusu ilə davam edin
+
+                    let data = {
+                        category_ids: selectedCategoryIds,
+                        _token: '{{ csrf_token() }}'
+                    };
+
+                    // Kateqoriyaları deaktiv etmək üçün AJAX sorğusu göndərin
+                    fetch('{{ route('admin.categories.bulk-deactivate') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deaktiv edildi!',
+                                    'Seçilmiş kateqoriyalar deaktiv edilib',
+                                    'success'
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            } else if (data.undeletable_categories && data.undeletable_categories.length > 0) {
+                                let undeletableCategories = data.undeletable_categories.join(', ');
+
+                                Swal.fire({
+                                    title: 'Bəzi Kateqoriyalar Deaktiv Edilə Bilmədi',
+                                    html: `Aşağıdakı kateqoriyalar aktiv alt kateqoriyalar olduğu üçün deaktiv edilə bilmədi: <br><br> ${undeletableCategories}`,
+                                    icon: 'warning'
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Xəta!', 'Xəta baş verdi: ' + data.message, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire('Xəta!', 'Gözlənilməyən xəta baş verdi. Zəhmət olmasa yenidən cəhd edin.', 'error');
+                        });
+                }
+            });
+        });
+
     </script>
 @endpush

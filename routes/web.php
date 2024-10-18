@@ -65,6 +65,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('categories/store', [CategoryController::class, 'store'])->name('categories.store');
     Route::post('categories/update/{category}', [CategoryController::class, 'update'])->name('categories.update');
     Route::post('categories/update-order', [CategoryController::class, 'updateOrder'])->name('categories.updateOrder');
+    Route::post('categories/bulk-deactivate', [CategoryController::class, 'bulkDeactivate'])->name('categories.bulk-deactivate');
 
 
     // Subcategory routes
@@ -75,6 +76,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('subcategories/update/{subcategory}', [SubCategoryController::class, 'update'])->name('subcategories.update');
     Route::post('subcategories/update-order', [SubcategoryController::class, 'updateSubcategoryOrder'])->name('subcategories.updateOrder');
     Route::post('subcategories/{id}/apply-discount', [SubCategoryController::class, 'applyDiscountToProducts'])->name('subcategories.apply_discount');
+    Route::post('subcategories/bulk-deactivate', [SubCategoryController::class, 'bulkDeactivate'])->name('subcategories.bulk-deactivate');
 
 
     // Customer routes

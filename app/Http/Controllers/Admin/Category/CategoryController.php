@@ -160,10 +160,46 @@ class CategoryController extends Controller
         return response()->json(['success' => false, 'message' => 'Category not found.']);
     }
 
-    public function destroy(Category $category)
+    public function bulkDeactivate(Request $request)
     {
-        $category->delete();
-        return redirect()->route('admin.categories.index')
-            ->with('success', 'Category deleted successfully.');
+        // Validate the incoming category IDs
+        $request->validate([
+            'category_ids' => 'required|array',
+            'category_ids.*' => 'exists:categories,id'
+        ]);
+
+        $categories = Category::with('subcategories')->whereIn('id', $request->category_ids)->get();
+
+        // Array to store categories that can't be deactivated
+        $undeletableCategories = [];
+
+        foreach ($categories as $category) {
+            // Check if the category has any active subcategories
+            $activeSubcategories = $category->subcategories()->where('is_active', true)->get();
+
+            if ($activeSubcategories->isNotEmpty()) {
+                // If the category has active subcategories, mark it as undeletable
+                $undeletableCategories[] = $category->name;
+            } else {
+                // Deactivate the category as it has no active subcategories
+                $category->is_active = 0;
+                $category->save();
+            }
+        }
+
+        // If there are categories that couldn't be deactivated, return them
+        if (!empty($undeletableCategories)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Some categories could not be deactivated due to active subcategories.',
+                'undeletable_categories' => $undeletableCategories
+            ]);
+        }
+
+        // If all categories were successfully deactivated, return success
+        return response()->json([
+            'success' => true,
+            'message' => 'Selected categories have been deactivated.'
+        ]);
     }
 }

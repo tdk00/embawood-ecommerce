@@ -176,14 +176,46 @@ class SubCategoryController extends Controller
         return redirect()->route('admin.subcategories.index')->with('success', 'Discount applied successfully.');
     }
 
-    /**
-     * Remove the specified subcategory from the database.
-     */
-    public function destroy(Subcategory $subcategory)
+    public function bulkDeactivate(Request $request)
     {
-        // Delete the subcategory
-        $subcategory->delete();
-        return redirect()->route('admin.subcategories.index')
-            ->with('success', 'Subcategory deleted successfully.');
+        // Validate the input
+        $request->validate([
+            'migrate_to_subcategory_id' => 'required|exists:subcategories,id',
+            'selected_subcategories' => 'required|array',
+            'selected_subcategories.*' => 'exists:subcategories,id'
+        ]);
+
+        if (in_array($request->migrate_to_subcategory_id, $request->selected_subcategories)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The subcategory to migrate products to cannot be one of the subcategories being deactivated.'
+            ], 400);
+        }
+
+        // Get the target subcategory for migration
+        $targetSubcategory = Subcategory::findOrFail($request->migrate_to_subcategory_id);
+
+        // Get the selected subcategories for deactivation
+        $subcategories = Subcategory::whereIn('id', $request->selected_subcategories)->get();
+
+        foreach ($subcategories as $subcategory) {
+            // Get products associated with the current subcategory
+            $products = $subcategory->products;
+
+            foreach ($products as $product) {
+                // Sync (replace) the product's subcategories with the target subcategory
+                // This will detach the product from all other subcategories except the new target subcategory
+                $product->subcategories()->sync([$targetSubcategory->id]);
+            }
+
+            // Deactivate the subcategory after migration
+            $subcategory->is_active = 0;
+            $subcategory->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Products migrated and selected subcategories deactivated successfully.'
+        ]);
     }
 }
