@@ -41,13 +41,22 @@
                         <!--end::Search-->
                     </div>
                     <!--end::Card title-->
-                    <!--begin::Card toolbar-->
-                    <div class="card-toolbar flex-row-fluid justify-content-end gap-5">
-                        <!--begin::Add product-->
-                        <a href="{{route('admin.set_products.create')}}" class="btn btn-primary">Yeni Dəst</a>
-                        <!--end::Add product-->
+
+                    <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
+                        <i class="ki-duotone ki-down fs-5 ms-1"></i></a>
+                    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4" data-kt-menu="true">
+                        <!--begin::Menu item-->
+                        <div class="menu-item px-3">
+                            <a href="{{route('admin.set_products.create')}}" class="menu-link px-3">Yeni Dəst</a>
+                        </div>
+                        <!--end::Menu item-->
+                        <div class="menu-item px-3">
+                            <a id="bulkDeactivate" class="menu-link px-3">
+                                Toplu deaktiv etmə
+                            </a>
+                        </div>
+                        <!--end::Menu item-->
                     </div>
-                    <!--end::Card toolbar-->
                 </div>
                 <!--end::Card header-->
                 <!--begin::Card body-->
@@ -75,7 +84,7 @@
                             <tr>
                                 <td>
                                     <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                        <input class="form-check-input" type="checkbox" value="1" />
+                                        <input class="form-check-input" type="checkbox" value="{{$product->id}}" />
                                     </div>
                                 </td>
                                 <td>
@@ -159,6 +168,72 @@
 
 
     <script src="{{ asset('assets/admin/js/custom/apps/ecommerce/catalog/products.js') }}"></script>
+
+    <script>
+        $("#bulkDeactivate").on('click', function () {
+            let selectedProductIds = new Set();
+            document.querySelectorAll('#kt_ecommerce_products_table .form-check-input:checked').forEach(function (checkbox) {
+                selectedProductIds.add(checkbox.value);
+            });
+
+            // Convert the Set back to an array
+            selectedProductIds = Array.from(selectedProductIds);
+
+            // Ensure at least one product is selected
+            if (selectedProductIds.length === 0) {
+                alert('Please select at least one product.');
+                return;
+            }
+
+            // Show confirmation dialog using SweetAlert2
+            Swal.fire({
+                title: 'Əminsiniz ?',
+                html: "<b>Məhsulu deaktiv etmək: </b> <br>  <span style='color: red'> Məhsulun bütün mövcud əlaqələrini ləğv edəcək ( dəst, məhsul widget'lar və s. ) </span>",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Bəli, Deaktive et!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If the user confirms, proceed with the AJAX request
+
+                    let data = {
+                        product_ids: selectedProductIds,    // This will be null if unlimited discount is checked
+                        _token: '{{ csrf_token() }}'
+                    };
+
+                    // Send AJAX request to deactivate the products
+                    fetch('{{ route('admin.set_products.bulk-deactivate') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deaktiv edildi!',
+                                    'Seçilmiş məhsullar deaktiv edildi',
+                                    'success'
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error!', 'An error occurred: ' + data.message, 'error');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire('Error!', 'An unexpected error occurred. Please try again.', 'error');
+                        });
+                }
+            });
+        });
+    </script>
 
 
 @endpush

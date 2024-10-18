@@ -442,4 +442,61 @@ class IndividualProductController extends Controller
             'message' => 'Discount applied to selected products.'
         ]);
     }
+
+
+
+    public function bulkDeactivate(Request $request)
+    {
+        $request->validate([
+            'product_ids' => 'required|array',
+        ]);
+
+        $productIds = $request->input('product_ids');
+
+        foreach ($productIds as $productId) {
+
+            DB::table('basket_items')
+                ->where('product_id', $productId)
+                ->orWhere('set_id', $productId)
+                ->delete();
+
+            DB::table('favorites')->where('product_id', $productId)->delete();
+
+            // Remove from most_viewed_products
+            DB::table('most_viewed_products')->where('product_id', $productId)->delete();
+
+            // Remove from new_products
+            DB::table('new_products')->where('product_id', $productId)->delete();
+
+            // Remove from product_purchased_together (both product_id and purchased_together_product_id)
+            DB::table('product_purchased_together')
+                ->where('product_id', $productId)
+                ->orWhere('purchased_together_product_id', $productId)
+                ->delete();
+
+            // Remove from product_set
+            DB::table('product_set')->where('product_id', $productId)->delete();
+
+            // Remove from product_similar (both product_id and similar_product_id)
+            DB::table('product_similar')
+                ->where('product_id', $productId)
+                ->orWhere('similar_product_id', $productId)
+                ->delete();
+
+            // Remove from product_subcategory
+            DB::table('product_subcategory')->where('product_id', $productId)->delete();
+
+            // Remove from product_sub_idea
+            DB::table('product_sub_idea')->where('product_id', $productId)->delete();
+
+            DB::table('product_sub_idea_item')->where('product_id', $productId)->delete();
+
+            DB::table('products')->where('id', $productId)->update(['is_active' => 0]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Selected products have been deactivated and associated data removed.'
+        ]);
+    }
 }

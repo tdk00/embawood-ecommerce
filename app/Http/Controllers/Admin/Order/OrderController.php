@@ -63,8 +63,13 @@ class OrderController extends Controller
             ->get();
 
         $orderItems = $orderItems->map(function ($item) {
-            $item->product->image = url('storage/images/products/' . $item->product->main_image);
+            $productWithoutScope = Product::withoutGlobalScope('active')->find($item->product_id);
+
+            $productWithoutScope->image = url('storage/images/products/' . $productWithoutScope->main_image);
+
+            $item->product = $productWithoutScope;
             return $item;
+
         });
 
         // Pass both the order and filtered orderItems to the view

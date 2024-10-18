@@ -47,6 +47,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('products/upload-media', [IndividualProductController::class, 'uploadMedia'])->name('products.uploadMedia');
     Route::post('products/delete-media', [IndividualProductController::class, 'deleteMedia'])->name('products.deleteMedia');
     Route::post('products/bulk-discount', [IndividualProductController::class, 'bulkDiscount'])->name('products.bulk-discount');
+    Route::post('products/bulk-deactivate', [IndividualProductController::class, 'bulkDeactivate'])->name('products.bulk-deactivate');
 
 
     // Set Product routes
@@ -57,6 +58,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('set-products/update/{product}', [SetProductController::class, 'update'])->name('set_products.update');
     Route::post('set-products/upload-media', [SetProductController::class, 'uploadMedia'])->name('set_products.uploadMedia');
     Route::post('set-products/delete-media', [SetProductController::class, 'deleteMedia'])->name('set_products.deleteMedia');
+    Route::post('set-products/bulk-deactivate', [SetProductController::class, 'bulkDeactivate'])->name('set_products.bulk-deactivate');
 
 
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');

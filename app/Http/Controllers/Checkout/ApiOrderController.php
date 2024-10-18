@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Checkout;
 
 use App\Http\Controllers\Controller;
 use App\Models\Checkout\Order;
+use App\Models\Product\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -66,11 +67,14 @@ class ApiOrderController extends Controller
         }
 
         $items = $order->items->map(function ($item) {
-            $item->image = url('storage/images/ideas/' . $item->product->main_image);
+            $productWithoutScope = Product::withoutGlobalScope('active')->find($item->product_id);
+
+            // Set the image for the item
+            $item->image = url('storage/images/ideas/' . $productWithoutScope->main_image);
             return [
                 'id' => $item->id,
                 'product_id' => $item->product_id,
-                'product_name' => $item->product->name,
+                'product_name' => $productWithoutScope->name,
                 'quantity' => $item->quantity,
                 'price' => $item->price,
                 'discount_amount' => $item->discount_amount,
