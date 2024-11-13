@@ -15,8 +15,8 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $user = User::find(37); // Get the user to notify
-        $user->notify(new PushNotificationMobile('Title', 'Message body'));
+//        $user = User::find(37); // Get the user to notify
+//        $user->notify(new PushNotificationMobile('Title', 'Message body'));
         $fcmMessage = FcmMessage::create()
             ->token('f51aZHmERcadEZi6TaDFoC:APA91bH_bMFrjV_Wsep5w7G7BRQ_s-wRh5vn2xVNBc_r55eVtGv5ZxsEavhQVz3xeA23CD4l3maBLuD5oOyStw6YEZhhz071CEoE9uD6o8_7mVh_l6nnsPg')
             ->notification(
