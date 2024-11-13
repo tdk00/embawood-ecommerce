@@ -865,7 +865,7 @@ class BasketController extends Controller
     private function handleSet(&$basket, $set, $setProducts)
     {
 
-        $mainImage = url('storage/images/products/' . $set->product->getMainImageAttribute());
+        $mainImage = url('storage/images/products/' . $set->product->main_image);
         $setItem = [
             "basket_item_id" => $set->id,
             "quantity" => $set->quantity,
@@ -889,7 +889,7 @@ class BasketController extends Controller
 
         foreach ($setProducts as $setProduct) {
             if ($setProduct->set_id == $set->product_id) {
-                $mainImage = url('storage/images/products/' . $setProduct->product->getMainImageAttribute());
+                $mainImage = url('storage/images/products/' . $setProduct->product->main_image);
                 $productData = [
                     "basket_item_id" => $setProduct->id,
                     "quantity" => $setProduct->quantity,
@@ -954,7 +954,7 @@ class BasketController extends Controller
     private function handleIndividualProduct(&$basket, $item)
     {
 
-        $mainImage = url('storage/images/products/' . $item->product->getMainImageAttribute());
+        $mainImage = url('storage/images/products/' . $item->product->main_image);
         $productData = [
             "basket_item_id" => $item->id,
             "quantity" => $item->quantity,
