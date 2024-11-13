@@ -10,7 +10,6 @@ class UserController extends Controller
 {
     public function storeFcmToken(Request $request)
     {
-        return response()->json(['message' => 'FCM token saved successfully'], 201);
         $request->validate([
             'fcm_token' => 'required|string',
         ]);
