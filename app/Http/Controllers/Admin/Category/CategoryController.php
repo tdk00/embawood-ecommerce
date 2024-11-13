@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category\Category;
 use App\Models\User\User;
 use App\Notifications\PushNotificationMobile;
+use App\Services\PushNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Kreait\Laravel\Firebase\Facades\Firebase;
@@ -13,18 +14,19 @@ use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
 class CategoryController extends Controller
 {
+    protected $pushNotificationService;
+    public function __construct(PushNotificationService $pushNotificationService)
+    {
+        $this->pushNotificationService = $pushNotificationService;
+    }
     public function index()
     {
-        $user = User::find(39); // Get the user to notify
-        $user->notify(new PushNotificationMobile('Title', 'Message body'));
-//        $fcmMessage = FcmMessage::create()
-//            ->token('f51aZHmERcadEZi6TaDFoC:APA91bH_bMFrjV_Wsep5w7G7BRQ_s-wRh5vn2xVNBc_r55eVtGv5ZxsEavhQVz3xeA23CD4l3maBLuD5oOyStw6YEZhhz071CEoE9uD6o8_7mVh_l6nnsPg')
-//            ->notification(
-//                FcmNotification::create()
-//                    ->title("aaaa")
-//                    ->body("ddddd")
-//            );
+        $title = 'Your Notification Title';
+        $body = 'This is the notification body.';
 
+        $user = User::find(39);
+
+        $this->pushNotificationService->sendPushNotification($user, $title, $body);
 
         $categories = Category::orderBy('id', 'desc')->get();
         return view('admin.pages.categories.index', compact('categories'));
