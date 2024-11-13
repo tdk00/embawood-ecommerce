@@ -32,4 +32,17 @@ class PushNotificationService
             Firebase::messaging()->send($fcmMessage);
         }
     }
+
+    public function sendPushNotificationToTopic(string $topic, string $title, string $body): void
+    {
+        // Create the FCM Notification with title and body
+        $notification = Notification::create($title, $body);
+
+        // Create the CloudMessage with the target topic and notification
+        $fcmMessage = CloudMessage::withTarget('topic', $topic)
+            ->withNotification($notification);
+
+        // Send the message to the topic through Firebase
+        Firebase::messaging()->send($fcmMessage);
+    }
 }

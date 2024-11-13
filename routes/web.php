@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\Idea\IdeaWidgetItemController;
 use App\Http\Controllers\Admin\Idea\IdeaWidgetTabController;
 use App\Http\Controllers\Admin\Idea\SubIdeaController;
 use App\Http\Controllers\Admin\Idea\SubIdeaItemController;
+use App\Http\Controllers\Admin\Notification\NotificationController;
 use App\Http\Controllers\Admin\Order\OrderController;
 use App\Http\Controllers\Admin\Product\BadgeController;
 use App\Http\Controllers\Admin\Product\IndividualProductController;
@@ -193,6 +194,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Delete a video call request
     Route::delete('video_call_requests/{video_call_request}', [VideoCallRequestController::class, 'destroy'])->name('video_call_requests.destroy');
+
+    Route::resource('notifications', NotificationController::class);
+    Route::post('notifications/{notification}/send', [NotificationController::class, 'sendNotification'])->name('notifications.send');
 
 });
 
