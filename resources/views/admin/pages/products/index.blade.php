@@ -76,9 +76,7 @@
                                 </div>
                             </th>
                             <th class="min-w-200px">Ad</th>
-                            <th class="text-end min-w-100px">SKU</th>
                             <th class="text-end min-w-100px">Sub Kateqoriya</th>
-                            <th class="text-end min-w-70px">Stok</th>
                             <th class="text-end min-w-100px">Qiymət</th>
                             <th class="text-end min-w-100px">Rating</th>
                             <th class="text-end min-w-70px">Əməliyyat</th>
@@ -108,13 +106,7 @@
                                     </div>
                                 </td>
                                 <td class="text-end pe-0">
-                                    <span class="fw-bold">{{$product->sku}}</span>
-                                </td>
-                                <td class="text-end pe-0">
                                     <span class="fw-bold">{{$product->subcategories?->first()?->name}}</span>
-                                </td>
-                                <td class="text-end pe-0" data-order="0">
-                                    <span class="fw-bold text-primary ms-3">{{$product->stock}}</span>
                                 </td>
                                 <td class="text-end pe-0">{{$product->price}}</td>
                                 <td class="text-end pe-0" data-order="rating-{{floor($product->average_rating)}}">

@@ -26,6 +26,9 @@ class BonusService
 
     public function handleProductView($user, $productId)
     {
+        if (!$user || !$user->id) {
+            return; // Do nothing if the user is not authenticated
+        }
         $now = Carbon::now();
         $today = $now->toDateString();
 

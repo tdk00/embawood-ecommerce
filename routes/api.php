@@ -30,8 +30,10 @@ use App\Http\Controllers\ProductWidgets\ApiMostViewedProductController;
 use App\Http\Controllers\ProductWidgets\ApiNewProductController;
 use App\Http\Controllers\ProductWidgets\ApiSelectedProductController;
 use App\Http\Controllers\Search\ApiProductSearchController;
+use App\Http\Controllers\Support\ApiVideoCallRequestController;
 use App\Http\Controllers\User\ApiAccountController;
 use App\Http\Controllers\User\AuthController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -118,6 +120,8 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::get('user/account', [ApiAccountController::class, 'getDetails']);
         Route::post('user/account', [ApiAccountController::class, 'update']);
 
+        Route::post('user/save-fcm-token', [UserController::class, 'storeFcmToken']);
+
     });
 //Route::get('products', [ApiProductController::class, 'index']);
     Route::get('products/{id}', [ApiProductController::class, 'show']);
@@ -178,6 +182,7 @@ Route::post('auth/login', [AuthController::class, 'login']);
     Route::get('/reviews/{productId}', [ApiReviewController::class, 'getReviews']);
 
 
+    Route::get('search/autocomplete', [ApiProductSearchController::class, 'autocomplete']);
     Route::post('search/search-results', [ApiProductSearchController::class, 'searchResults']);
 
 
@@ -193,3 +198,8 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 
     Route::get('company/pages', [ApiPageController::class, 'index']);
+
+
+Route::get('/category/{slug}', [ApiCategoryController::class, 'showBySlug']);
+
+Route::post('video_call_requests', [ApiVideoCallRequestController::class, 'store']);

@@ -28,6 +28,14 @@
                 @csrf
                 @method('PUT')
 
+                    <div class="form-group">
+                        <label for="slug">Slug</label>
+                        <input type="text" name="slug" id="slug" class="form-control"
+                               value="{{ old('slug', $slider->news->slug) }}" placeholder="Enter the slug" required>
+                        @error('slug')
+                        <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
                 <!-- Title for Azerbaijani (AZ) -->
                     <div class="form-group">
                         <label for="title_az">Xəbər başlığı (AZ)</label>
@@ -69,6 +77,65 @@
                     <div class="form-group">
                         <label for="content_ru" class="required form-label">Xəbər Content (RU)</label>
                         <textarea name="content_ru" class="form-control" placeholder="Введите Описание (RU)">{{ $slider->news->translations->where('locale', 'ru')->first()->content ?? '' }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meta_title_az">Meta Başlıq (AZ)</label>
+                        <input type="text" name="meta_title_az" value="{{ old('meta_title_az', $slider->news->translations->where('locale', 'az')->first()->meta_title ?? '') }}" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meta_title_en">Meta Title (EN)</label>
+                        <input type="text" name="meta_title_en" value="{{ old('meta_title_en', $slider->news->translations->where('locale', 'en')->first()->meta_title ?? '') }}" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meta_title_ru">Meta Заголовок (RU)</label>
+                        <input type="text" name="meta_title_ru" value="{{ old('meta_title_ru', $slider->news->translations->where('locale', 'ru')->first()->meta_title ?? '') }}" class="form-control">
+                    </div>
+
+                    <!-- Meta Description for each language -->
+                    <div class="form-group">
+                        <label for="meta_description_az">Meta Təsvir (AZ)</label>
+                        <textarea name="meta_description_az" class="form-control">{{ old('meta_description_az', $slider->news->translations->where('locale', 'az')->first()->meta_description ?? '') }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meta_description_en">Meta Description (EN)</label>
+                        <textarea name="meta_description_en" class="form-control">{{ old('meta_description_en', $slider->news->translations->where('locale', 'en')->first()->meta_description ?? '') }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="meta_description_ru">Meta Описание (RU)</label>
+                        <textarea name="meta_description_ru" class="form-control">{{ old('meta_description_ru', $slider->news->translations->where('locale', 'ru')->first()->meta_description ?? '') }}</textarea>
+                    </div>
+
+                    <!-- Content Web with Quill Editor for each language -->
+                    <div class="form-group">
+                        <label for="content_web_az" class="form-label">Web Content (AZ)</label>
+                        <div id="content_web_az_quill" style="height: 200px;">{!! old('content_web_az', $slider->news->translations->where('locale', 'az')->first()->content_web ?? '') !!}</div>
+                        <input type="hidden" name="content_web_az" id="content_web_az">
+                        @error('content_web_az')
+                        <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content_web_en" class="form-label">Web Content (EN)</label>
+                        <div id="content_web_en_quill" style="height: 200px;">{!! old('content_web_en', $slider->news->translations->where('locale', 'en')->first()->content_web ?? '') !!}</div>
+                        <input type="hidden" name="content_web_en" id="content_web_en">
+                        @error('content_web_en')
+                        <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content_web_ru" class="form-label">Веб-контент (RU)</label>
+                        <div id="content_web_ru_quill" style="height: 200px;">{!! old('content_web_ru', $slider->news->translations->where('locale', 'ru')->first()->content_web ?? '') !!}</div>
+                        <input type="hidden" name="content_web_ru" id="content_web_ru">
+                        @error('content_web_ru')
+                        <div class="text-danger">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Banner Image -->
@@ -127,4 +194,52 @@
 
     <script src="{{ asset('assets/admin/js/custom/apps/ecommerce/sales/save-order.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var quillAz = new Quill('#content_web_az_quill', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'link'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }]
+                ]
+            },
+            placeholder: 'Məhsul haqqında (AZ)...'
+        });
+
+        var quillEn = new Quill('#content_web_en_quill', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'link'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }]
+                ]
+            },
+            placeholder: 'Product Description (EN)...'
+        });
+
+        var quillRu = new Quill('#content_web_ru_quill', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'link'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }]
+                ]
+            },
+            placeholder: 'Описание продукта (RU)...'
+        });
+
+        // Capture Quill content into hidden input fields on form submission
+        document.getElementById('newsEditForm').onsubmit = function() {
+            document.getElementById('content_web_az').value = quillAz.root.innerHTML;
+            document.getElementById('content_web_en').value = quillEn.root.innerHTML;
+            document.getElementById('content_web_ru').value = quillRu.root.innerHTML;
+        };
+    </script>
 @endpush

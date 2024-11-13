@@ -9,7 +9,14 @@ class SubcategoryTranslation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['subcategory_id', 'locale', 'name', 'description'];
+    protected $fillable = [
+        'subcategory_id',
+        'locale',
+        'name',
+        'description',
+        'meta_title',
+        'meta_description',
+        'description_web'];
 
     public function subcategory()
     {

@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'fcm' => [
+        'credentials' => storage_path('app/firebase/embawood-app-firebase-adminsdk-5mfyh-0facddf866.json'),
+    ],
+
 ];

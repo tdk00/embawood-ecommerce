@@ -9,7 +9,15 @@ class NewsTranslation extends Model
 {
     protected $table = 'news_translations'; // Specify the table name
 
-    protected $fillable = ['news_id', 'locale', 'title', 'content'];
+    protected $fillable = [
+        'news_id',
+        'locale',
+        'title',
+        'content',
+        'meta_title',
+        'meta_description',
+        'content_web'
+    ];
 
     public function news()
     {

@@ -10,8 +10,15 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'banner_image', 'widget_view_image', 'homescreen_widget', 'description', 'is_active' ];
-
+    protected $fillable = [
+        'name',
+        'banner_image',
+        'widget_view_image',
+        'homescreen_widget',
+        'description',
+        'is_active',
+        'slug'
+    ];
 
     protected static function booted()
     {
@@ -31,7 +38,6 @@ class Category extends Model
         $locale = app()->getLocale();
         $translation = $this->translations->where('locale', $locale)->first();
 
-        // Return the translation if available, otherwise default to the original name
         return $translation ? $translation->name : $this->attributes['name'];
     }
 
@@ -42,6 +48,33 @@ class Category extends Model
         $translation = $this->translations->where('locale', $locale)->first();
 
         return $translation ? $translation->description : $this->attributes['description'];
+    }
+
+    // Accessor to return the translated meta title
+    public function getMetaTitleAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->meta_title : null;
+    }
+
+    // Accessor to return the translated meta description
+    public function getMetaDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->meta_description : null;
+    }
+
+    // Accessor to return the translated description for the web
+    public function getDescriptionWebAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->description_web : null;
     }
 
     public function subcategories()

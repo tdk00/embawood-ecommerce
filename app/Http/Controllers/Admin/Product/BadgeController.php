@@ -23,7 +23,7 @@ class BadgeController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'badge_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'badge_image' => 'required|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'is_active' => 'required|boolean',
         ]);
 
@@ -52,7 +52,7 @@ class BadgeController extends Controller
     public function update(Request $request, Badge $badge)
     {
         $validated = $request->validate([
-            'badge_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'badge_image' => 'image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'is_active' => 'required|boolean',
         ]);
 

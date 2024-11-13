@@ -17,7 +17,8 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'parent_id', 'name', 'sku', 'description', 'price', 'stock', 'discount', 'discount_ends_at', 'is_set', 'color', 'is_active'
+        'parent_id', 'name', 'sku', 'description', 'price', 'stock', 'discount',
+        'discount_ends_at', 'is_set', 'color', 'is_active', 'slug'
     ];
 
 
@@ -53,6 +54,32 @@ class Product extends Model
         return $translation ? $translation->description : $this->attributes['description'];
     }
 
+    public function getMetaTitleAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->meta_title : null;
+    }
+
+    // Accessor for meta_description
+    public function getMetaDescriptionAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->meta_description : null;
+    }
+
+    // Accessor for description_web
+    public function getDescriptionWebAttribute()
+    {
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+
+        return $translation ? $translation->description_web : null;
+    }
+
 
     public function images()
     {
@@ -75,20 +102,6 @@ class Product extends Model
     public function getCreditCardsAttribute()
     {
         return CreditCard::getCreditCards();
-    }
-
-    public function getMainImageAttribute()
-    {
-        // Fetch the main image using the allImages() method
-        $mainImage = $this->allImages()->where('is_main', true)->first();
-
-        // If no main image, fetch the first image from all images
-        if (!$mainImage) {
-            $mainImage = $this->allImages()->first();
-        }
-
-        // Return the URL/path of the main image or null if no images exist
-        return $mainImage ? $mainImage->image_path : null;
     }
 
     public function getPriceAttribute($value)
@@ -254,6 +267,12 @@ class Product extends Model
     public function scopeMain($query)
     {
         return $query->whereNull('parent_id');
+    }
+
+    public function scopeSearchByName($query, $term)
+    {
+        $term = "%{$term}%";
+        return $query->main()->where('name', 'like', $term);
     }
 
     public function products()

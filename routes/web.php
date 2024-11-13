@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Company\FaqPageDetailController;
 use App\Http\Controllers\Admin\Company\FaqPageQuestionController;
 use App\Http\Controllers\Admin\Company\PageController;
 use App\Http\Controllers\Admin\Company\RegionController;
+use App\Http\Controllers\Admin\Company\SocialMediaController;
 use App\Http\Controllers\Admin\Company\StoreController;
 use App\Http\Controllers\Admin\Company\StorePhoneNumberController;
 use App\Http\Controllers\Admin\Customer\CustomerController;
@@ -24,12 +25,14 @@ use App\Http\Controllers\Admin\Idea\SubIdeaItemController;
 use App\Http\Controllers\Admin\Order\OrderController;
 use App\Http\Controllers\Admin\Product\BadgeController;
 use App\Http\Controllers\Admin\Product\IndividualProductController;
+use App\Http\Controllers\Admin\Product\ProductImageController;
 use App\Http\Controllers\Admin\Product\PurchasedTogetherProductsController;
 use App\Http\Controllers\Admin\Product\RelatedProductsController;
 use App\Http\Controllers\Admin\Product\SetProductController;
 use App\Http\Controllers\Admin\ProductWidgets\MostViewedProductController;
 use App\Http\Controllers\Admin\ProductWidgets\NewProductController;
 use App\Http\Controllers\Admin\Review\ReviewControllerAdmin;
+use App\Http\Controllers\Admin\Support\VideoCallRequestController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -44,10 +47,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::put('/products/update/{product}', [IndividualProductController::class, 'update'])->name('products.update');
 
-    Route::post('products/upload-media', [IndividualProductController::class, 'uploadMedia'])->name('products.uploadMedia');
-    Route::post('products/delete-media', [IndividualProductController::class, 'deleteMedia'])->name('products.deleteMedia');
     Route::post('products/bulk-discount', [IndividualProductController::class, 'bulkDiscount'])->name('products.bulk-discount');
     Route::post('products/bulk-deactivate', [IndividualProductController::class, 'bulkDeactivate'])->name('products.bulk-deactivate');
+
+    Route::prefix('products/{product}/images')->group(function () {
+        Route::get('/', [ProductImageController::class, 'index'])->name('products.images.index');
+        Route::post('/', [ProductImageController::class, 'store'])->name('products.images.store');
+        Route::get('/create', [ProductImageController::class, 'create'])->name('products.images.create');
+        Route::get('/{productImage}/edit', [ProductImageController::class, 'edit'])->name('products.images.edit');
+        Route::patch('/{productImage}', [ProductImageController::class, 'update'])->name('products.images.update');
+        Route::delete('/{productImage}', [ProductImageController::class, 'destroy'])->name('products.images.destroy');
+    });
 
 
     // Set Product routes
@@ -56,8 +66,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('set-products/store', [SetProductController::class, 'store'])->name('set_products.store');
     Route::get('set-products/edit/{id}', [SetProductController::class, 'edit'])->name('set_products.edit');
     Route::put('set-products/update/{product}', [SetProductController::class, 'update'])->name('set_products.update');
-    Route::post('set-products/upload-media', [SetProductController::class, 'uploadMedia'])->name('set_products.uploadMedia');
-    Route::post('set-products/delete-media', [SetProductController::class, 'deleteMedia'])->name('set_products.deleteMedia');
+
     Route::post('set-products/bulk-deactivate', [SetProductController::class, 'bulkDeactivate'])->name('set_products.bulk-deactivate');
 
 
@@ -113,6 +122,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('new-products/{newProduct}/edit', [NewProductController::class, 'edit'])->name('new-products.edit');
     Route::put('new-products/{newProduct}', [NewProductController::class, 'update'])->name('new-products.update');
     Route::delete('new-products/{newProduct}', [NewProductController::class, 'destroy'])->name('new-products.destroy');
+
 
     // Most Viewed Product routes
     Route::get('most-viewed-products', [MostViewedProductController::class, 'index'])->name('most-viewed-products.index');
@@ -173,6 +183,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('faq-page-questions', FaqPageQuestionController::class);
 
     Route::resource('pages', PageController::class);
+
+    Route::resource('social_media', SocialMediaController::class);
+
+    Route::get('video_call_requests', [VideoCallRequestController::class, 'index'])->name('video_call_requests.index');
+
+    // Update the status of a video call request
+    Route::post('video_call_requests/{video_call_request}', [VideoCallRequestController::class, 'update'])->name('video_call_requests.update');
+
+    // Delete a video call request
+    Route::delete('video_call_requests/{video_call_request}', [VideoCallRequestController::class, 'destroy'])->name('video_call_requests.destroy');
 
 });
 

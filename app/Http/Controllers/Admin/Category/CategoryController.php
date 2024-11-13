@@ -3,12 +3,38 @@ namespace App\Http\Controllers\Admin\Category;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category\Category;
+use App\Models\User\User;
+use App\Notifications\PushNotificationMobile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Kreait\Laravel\Firebase\Facades\Firebase;
+use NotificationChannels\Fcm\FcmMessage;
+use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
 class CategoryController extends Controller
 {
     public function index()
     {
+        $user = User::find(37); // Get the user to notify
+        $user->notify(new PushNotificationMobile('Title', 'Message body'));
+        $fcmMessage = FcmMessage::create()
+            ->token('f51aZHmERcadEZi6TaDFoC:APA91bH_bMFrjV_Wsep5w7G7BRQ_s-wRh5vn2xVNBc_r55eVtGv5ZxsEavhQVz3xeA23CD4l3maBLuD5oOyStw6YEZhhz071CEoE9uD6o8_7mVh_l6nnsPg')
+            ->notification(
+                FcmNotification::create()
+                    ->title("aaaa")
+                    ->body("ddddd")
+            );
+
+
+// Try sending the message and log any potential errors
+        try {
+            $response = Firebase::messaging()->send($fcmMessage);
+//            $response = app('fcm')->send($fcmMessage);
+            Log::info('FCM Response:', ['response' => $response]);
+        } catch (\Exception $e) {
+            Log::error('FCM Notification failed', ['error' => $e->getMessage()]);
+        }
+
         $categories = Category::orderBy('id', 'desc')->get();
         return view('admin.pages.categories.index', compact('categories'));
     }
@@ -24,11 +50,21 @@ class CategoryController extends Controller
             'name_az' => 'required|max:255',
             'name_en' => 'required|max:255',
             'name_ru' => 'required|max:255',
-            'banner_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'widget_view_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'slug' => 'required|unique:categories,slug|max:255',
+            'banner_image' => 'required|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
+            'widget_view_image' => 'required|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'description_az' => 'nullable',
             'description_en' => 'nullable',
             'description_ru' => 'nullable',
+            'meta_title_az' => 'nullable|max:255',
+            'meta_title_en' => 'nullable|max:255',
+            'meta_title_ru' => 'nullable|max:255',
+            'meta_description_az' => 'nullable|max:1000',
+            'meta_description_en' => 'nullable|max:1000',
+            'meta_description_ru' => 'nullable|max:1000',
+            'description_web_az' => 'nullable',
+            'description_web_en' => 'nullable',
+            'description_web_ru' => 'nullable',
             'homescreen_widget' => 'boolean'
         ]);
 
@@ -46,12 +82,13 @@ class CategoryController extends Controller
             $request->file('widget_view_image')->storeAs('images/category/widget_images', $widgetViewImageName, 'public');
         }
 
-        // Create the category, storing the 'az' language name in the 'name' field
+        // Create the category with 'az' language default values
         $category = Category::create([
             'name' => $request->name_az,
             'banner_image' => $bannerImageName,
+            'slug' => $request->slug,
             'widget_view_image' => $widgetViewImageName,
-            'description' => $request->description_az, // Store 'description_az' in the 'description' field
+            'description' => $request->description_az,
             'homescreen_widget' => $request->has('homescreen_widget')
         ]);
 
@@ -60,18 +97,27 @@ class CategoryController extends Controller
             'locale' => 'az',
             'name' => $request->name_az,
             'description' => $request->description_az,
+            'meta_title' => $request->meta_title_az,
+            'meta_description' => $request->meta_description_az,
+            'description_web' => $request->description_web_az
         ]);
 
         $category->translations()->create([
             'locale' => 'en',
             'name' => $request->name_en,
             'description' => $request->description_en,
+            'meta_title' => $request->meta_title_en,
+            'meta_description' => $request->meta_description_en,
+            'description_web' => $request->description_web_en
         ]);
 
         $category->translations()->create([
             'locale' => 'ru',
             'name' => $request->name_ru,
             'description' => $request->description_ru,
+            'meta_title' => $request->meta_title_ru,
+            'meta_description' => $request->meta_description_ru,
+            'description_web' => $request->description_web_ru
         ]);
 
         return redirect()->route('admin.categories.index')
@@ -93,11 +139,21 @@ class CategoryController extends Controller
             'name_az' => 'required|max:255',
             'name_en' => 'required|max:255',
             'name_ru' => 'required|max:255',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'widget_view_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'slug' => 'required|unique:categories,slug,' . $category->id . '|max:255',
+            'banner_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
+            'widget_view_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'description_az' => 'nullable',
             'description_en' => 'nullable',
             'description_ru' => 'nullable',
+            'meta_title_az' => 'nullable|max:255',
+            'meta_title_en' => 'nullable|max:255',
+            'meta_title_ru' => 'nullable|max:255',
+            'meta_description_az' => 'nullable|max:1000',
+            'meta_description_en' => 'nullable|max:1000',
+            'meta_description_ru' => 'nullable|max:1000',
+            'description_web_az' => 'nullable',
+            'description_web_en' => 'nullable',
+            'description_web_ru' => 'nullable',
             'homescreen_widget' => 'boolean'
         ]);
 
@@ -120,27 +176,46 @@ class CategoryController extends Controller
 
         // Update the category with 'az' language values
         $category->update([
-            'name' => $request->name_az, // Storing the 'az' name in the main 'name' field
+            'name' => $request->name_az,
+            'slug' => $request->slug,
             'banner_image' => $bannerImageName,
             'widget_view_image' => $widgetViewImageName,
-            'description' => $request->description_az, // Storing 'az' description in the main 'description' field
+            'description' => $request->description_az,
             'homescreen_widget' => $request->has('homescreen_widget'),
         ]);
 
         // Update or create translations for each language
         $category->translations()->updateOrCreate(
             ['locale' => 'az'],
-            ['name' => $request->name_az, 'description' => $request->description_az]
+            [
+                'name' => $request->name_az,
+                'description' => $request->description_az,
+                'meta_title' => $request->meta_title_az,
+                'meta_description' => $request->meta_description_az,
+                'description_web' => $request->description_web_az
+            ]
         );
 
         $category->translations()->updateOrCreate(
             ['locale' => 'en'],
-            ['name' => $request->name_en, 'description' => $request->description_en]
+            [
+                'name' => $request->name_en,
+                'description' => $request->description_en,
+                'meta_title' => $request->meta_title_en,
+                'meta_description' => $request->meta_description_en,
+                'description_web' => $request->description_web_en
+            ]
         );
 
         $category->translations()->updateOrCreate(
             ['locale' => 'ru'],
-            ['name' => $request->name_ru, 'description' => $request->description_ru]
+            [
+                'name' => $request->name_ru,
+                'description' => $request->description_ru,
+                'meta_title' => $request->meta_title_ru,
+                'meta_description' => $request->meta_description_ru,
+                'description_web' => $request->description_web_ru
+            ]
         );
 
         return redirect()->route('admin.categories.index')

@@ -67,32 +67,27 @@ class ApiProductSearchController extends Controller
     {
         $term = $request->get('term', '');
 
-        // Use the searchByName scope to find matching main products
-        $products = Product::searchByName($term)
-            ->take(10) // Limit the number of results
-            ->get(['id', 'name', 'price', 'discount', 'discount_ends_at', 'is_set']); // Fetch necessary fields
+        // Fetch the top 5 matching products and get the total count in a single query
+        $productsQuery = Product::searchByName($term);
 
-        // Include the final_price attribute
-        $products = $products->map(function($product) {
-            $product->image = url('storage/images/products/' . $product->main_image);
-            $product->image_hover = url('storage/images/products/' . $product->hover_image);
+        // Get the limited results for display
+        $products = $productsQuery->take(5)->get(['id', 'name']);
+
+        // Get the total count without running an additional query
+        $totalCount = $productsQuery->count();
+
+        // Transform the results to match the expected Flutter structure
+        $transformedProducts = $products->map(function ($product) {
             return [
                 'id' => $product->id,
                 'name' => $product->name,
-                'category_name' => $product?->subcategories?->first()?->name ?? "",
-                'image' => $product->image,
-                'discount' => $product->discount,
-                'discount_ends_at' => $product->discount_ends_at,
-                'price' => $product->price,
-                'final_price' => $product->final_price,
-                'average_rating' => $product->average_rating,
-                'image_hover' => $product->image_hover,
-                'is_in_basket' => $product->is_in_basket,
-                'is_favorite' => $product->is_favorite,
             ];
         });
 
-        return response()->json($products);
+        return response()->json([
+            'count' => $totalCount, // Total count of all matching products
+            'items' => $transformedProducts->toArray(), // Top 5 matching items
+        ]);
     }
 
     /**

@@ -60,6 +60,11 @@ class User extends Authenticatable
         'last_product_view_bonus_achieved_at' => 'datetime',
     ];
 
+    public function fcmTokens()
+    {
+        return $this->hasMany(FcmToken::class);
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);

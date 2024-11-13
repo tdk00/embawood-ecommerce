@@ -61,7 +61,7 @@
 
                     <div class="mb-10 fv-row">
                         <label class="required form-label">Latitude</label>
-                        <input type="text" name="latitude" class="form-control mb-2" value="{{ old('latitude') }}" />
+                        <input type="text" id="latitude" name="latitude" class="form-control mb-2" value="{{ old('latitude') }}" />
                         @error('latitude')
                         <div class="text-danger">{{ $message }}</div>
                         @enderror
@@ -69,14 +69,38 @@
 
                     <div class="mb-10 fv-row">
                         <label class="required form-label">Longitude</label>
-                        <input type="text" name="longitude" class="form-control mb-2" value="{{ old('longitude') }}" />
+                        <input type="text" id="longitude" name="longitude" class="form-control mb-2" value="{{ old('longitude') }}" />
                         @error('longitude')
                         <div class="text-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
+                    <div class="mb-10 fv-row">
+                        <label class="form-label">Google Maps Link</label>
+                        <input type="text" id="maps_link" class="form-control mb-2" placeholder="Enter Google Maps link" />
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Create Store</button>
                 </form>
+
+                <script>
+                    document.getElementById('maps_link').addEventListener('input', function () {
+                        const mapsLink = this.value;
+
+                        // Regex to capture the decimal coordinates from "3dLATITUDE!4dLONGITUDE" in the URL
+                        const regex = /3d([-+]?\d*\.\d+)!4d([-+]?\d*\.\d+)/;
+
+                        const match = mapsLink.match(regex);
+                        if (match) {
+                            const latitude = match[1];
+                            const longitude = match[2];
+
+                            // Set values in the latitude and longitude input fields
+                            document.getElementById('latitude').value = latitude;
+                            document.getElementById('longitude').value = longitude;
+                        }
+                    });
+                </script>
             </div>
         </div>
     </div>

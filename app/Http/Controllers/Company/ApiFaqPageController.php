@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company\FaqPageDetail;
+use App\Models\Company\SocialMedia;
 use App\Models\Company\Store;
 use App\Models\News\News;
 use Illuminate\Http\Request;
@@ -19,6 +20,14 @@ class ApiFaqPageController extends Controller
             return response()->json(['message' => 'No FAQ details available'], 404);
         }
 
+        $socialMediaLinks = SocialMedia::all()->map(function ($socialMedia) {
+            return [
+                'icon_path' => asset('storage/images/social_media_icons/' . $socialMedia->svg_icon),
+                'url' => $socialMedia->url,
+                'type' => $socialMedia->type,
+            ];
+        });
+
         // Create a response with only the translated fields
         $response = [
             'email' => $faqPageDetail->email_address,
@@ -32,7 +41,8 @@ class ApiFaqPageController extends Controller
                       'question' => $question->question,
                       'answer' => $question->answer,
                   ];
-            }) // Include related questions
+            }),
+            'social_media_links' => $socialMediaLinks,
         ];
 
         // Return the response as JSON

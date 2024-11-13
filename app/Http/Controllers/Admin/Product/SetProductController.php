@@ -66,21 +66,10 @@ class SetProductController extends Controller
         // Custom validation messages in Azerbaijani
         $messages = [
             'name.required' => 'Məhsul adı tələb olunur.',
-            'sku.required' => 'SKU tələb olunur.',
-            'sku.unique' => 'Bu SKU artıq mövcuddur.',
-            'stock.required' => 'Stok miqdarı tələb olunur.',
-            'stock.integer' => 'Stok düzgün rəqəm olmalıdır.',
-            'stock.min' => 'Stok sıfırdan az ola bilməz.',
             'main_image.required' => 'Əsas şəkil tələb olunur.',
             'main_image.image' => 'Əsas şəkil düzgün formatda olmalıdır (jpg, jpeg, png, bmp).',
             'main_image.mimes' => 'Əsas şəkil formatı yalnız jpg, jpeg, png, bmp ola bilər.',
             'main_image.max' => 'Şəklin ölçüsü maksimum 2MB ola bilər.',
-            'hover_image.required' => 'Əsas şəkil tələb olunur.',
-            'hover_image.image' => 'Əsas şəkil düzgün formatda olmalıdır (jpg, jpeg, png, bmp).',
-            'hover_image.mimes' => 'Əsas şəkil formatı yalnız jpg, jpeg, png, bmp ola bilər.',
-            'hover_image.max' => 'Şəklin ölçüsü maksimum 2MB ola bilər.',
-            'images.*.image' => 'Yüklənmiş şəkillər yalnız jpg, jpeg, png və ya bmp formatında olmalıdır.',
-            'images.*.mimes' => 'Şəkillər yalnız jpg, jpeg, png və ya bmp formatında ola bilər.',
             'images.*.max' => 'Şəklin ölçüsü maksimum 2MB ola bilər.',
             'color.string' => 'Rənglər yalnız mətn ola bilər.',
             'selected_sub_category_id' => 'Kateqoriya düzgün seçilməlidir',
@@ -88,17 +77,24 @@ class SetProductController extends Controller
 
         // Validation
         $validated = $request->validate([
+            'slug' => 'required|unique:products,slug|max:255',
             'name_az' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
             'name_ru' => 'required|string|max:255',
             'description_az' => 'nullable|string',
             'description_en' => 'nullable|string',
             'description_ru' => 'nullable|string',
-            'sku' => 'required|string|max:255|unique:products',
+            'meta_title_az' => 'nullable|string|max:255',
+            'meta_title_en' => 'nullable|string|max:255',
+            'meta_title_ru' => 'nullable|string|max:255',
+            'meta_description_az' => 'nullable|string',
+            'meta_description_en' => 'nullable|string',
+            'meta_description_ru' => 'nullable|string',
+            'description_web_az' => 'nullable|string',
+            'description_web_en' => 'nullable|string',
+            'description_web_ru' => 'nullable|string',
             'color' => 'nullable|string',
-            'stock' => 'required|integer|min:0',
-            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2000',
-            'main_image' => 'required|image|mimes:jpg,jpeg,png,bmp|max:2000',
+            'main_image' => 'required|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'selected_sub_category_id' => 'exists:subcategories,id',
             'selected_products' => 'nullable|array', // Validation for selected products
             'selected_products.*' => 'nullable|integer|min:0', // Each selected product must have a quantity
@@ -108,12 +104,11 @@ class SetProductController extends Controller
         try {
             // Create the base product
             $product = Product::create([
+                'slug' => $request->slug,
                 'name' => $request->name_az,
                 'description' => $request->description_az,
-                'sku' => $request->sku,
                 'color' => $request->color ?? null,
                 'price' => $request->price,
-                'stock' => $request->stock,
                 'discount' => $request->discount ?? null,
                 'discount_ends_at' => $request->discount_ends_at ?? null,
             ]);
@@ -124,48 +119,37 @@ class SetProductController extends Controller
                 [
                     'locale' => 'az',
                     'name' => $request->name_az,
-                    'description' => $request->description_az
+                    'description' => $request->description_az,
+                    'meta_title' => $request->meta_title_az,
+                    'meta_description' => $request->meta_description_az,
+                    'description_web' => $request->description_web_az,
                 ],
                 [
                     'locale' => 'en',
                     'name' => $request->name_en,
-                    'description' => $request->description_en
+                    'description' => $request->description_en,
+                    'meta_title' => $request->meta_title_en,
+                    'meta_description' => $request->meta_description_en,
+                    'description_web' => $request->description_web_en,
                 ],
                 [
                     'locale' => 'ru',
                     'name' => $request->name_ru,
-                    'description' => $request->description_ru
+                    'description' => $request->description_ru,
+                    'meta_title' => $request->meta_title_ru,
+                    'meta_description' => $request->meta_description_ru,
+                    'description_web' => $request->description_web_ru,
                 ],
             ]);
 
 
-            // Handling the main image
             if ($request->hasFile('main_image')) {
                 $file = $request->file('main_image');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $file->storeAs('public/images/products/', $filename);
-
-                ProductImage::create([
-                    'is_main' => 1,
-                    'product_id' => $product->id,
-                    'image_path' => $filename,
-                ]);
+                $product->main_image = $filename;
             }
 
-            if ($request->hasFile('images')) {
-                // Loop through the uploaded files and save them
-                foreach ($request->file('images') as $image) {
-                    // Store the image in the desired path (e.g., 'public/storage/images/products')
-                    $filename = $image->store('images/products', 'public');
-                    $filenameOnly = basename($filename); // Get only the file name
-
-                    // Save the file name (without the path) into the database
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $filenameOnly, // Save only the file name
-                    ]);
-                }
-            }
 
             if (!empty($validated['selected_products'])) {
                 foreach ($validated['selected_products'] as $productRealId => $quantity) {
@@ -223,33 +207,32 @@ class SetProductController extends Controller
     {
         // Custom validation messages in Azerbaijani
         $messages = [
-            'sku.required' => 'SKU tələb olunur.',
-            'sku.unique' => 'Bu SKU artıq mövcuddur.',
-            'stock.required' => 'Stok miqdarı tələb olunur.',
-            'stock.integer' => 'Stok düzgün rəqəm olmalıdır.',
-            'stock.min' => 'Stok sıfırdan az ola bilməz.',
             'main_image.image' => 'Əsas şəkil düzgün formatda olmalıdır (jpg, jpeg, png, bmp).',
             'main_image.mimes' => 'Əsas şəkil formatı yalnız jpg, jpeg, png, bmp ola bilər.',
             'main_image.max' => 'Şəklin ölçüsü maksimum 2MB ola bilər.',
-            'images.*.image' => 'Yüklənmiş şəkillər yalnız jpg, jpeg, png və ya bmp formatında olmalıdır.',
-            'images.*.mimes' => 'Şəkillər yalnız jpg, jpeg, png və ya bmp formatında ola bilər.',
-            'images.*.max' => 'Şəklin ölçüsü maksimum 2MB ola bilər.',
             'color.string' => 'Rəng yalnız mətn ola bilər.',
             'selected_sub_category_id' => 'Kateqoriya düzgün seçilməlidir',
         ];
 
         // Validation
         $validated = $request->validate([
+            'slug' => 'required|unique:products,slug,' . $product->id . '|max:255',
             'name_az' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
             'name_ru' => 'required|string|max:255',
             'description_az' => 'nullable|string',
             'description_en' => 'nullable|string',
             'description_ru' => 'nullable|string',
-            'sku' => 'required|string|max:255|unique:products,sku,' . $product->id,
-            'stock' => 'required|integer|min:0',
-            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2000',
-            'main_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2000',
+            'meta_title_az' => 'nullable|string|max:255',
+            'meta_title_en' => 'nullable|string|max:255',
+            'meta_title_ru' => 'nullable|string|max:255',
+            'meta_description_az' => 'nullable|string',
+            'meta_description_en' => 'nullable|string',
+            'meta_description_ru' => 'nullable|string',
+            'description_web_az' => 'nullable|string',
+            'description_web_en' => 'nullable|string',
+            'description_web_ru' => 'nullable|string',
+            'main_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'color' => 'nullable|string',
             'selected_sub_category_id' => 'exists:subcategories,id',
             'selected_products' => 'nullable|array', // Validation for selected products
@@ -263,11 +246,10 @@ class SetProductController extends Controller
 
             // Update the base product
             $product->update([
+                'slug' => $request->slug,
                 'name' => $request->name_az,
                 'description' => $request->description_az,
-                'sku' => $request->sku,
                 'price' => $request->price,
-                'stock' => $request->stock,
                 'color' => $request->color ?? null,
                 'discount' => $request->discount ?? null,
                 'discount_ends_at' => $request->discount_ends_at ?? null,
@@ -278,73 +260,44 @@ class SetProductController extends Controller
             $product->subcategories()->sync([$validated['selected_sub_category_id']]);
 
             $product->translations()->updateOrCreate(
-                ['locale' => 'az'], [
+                ['locale' => 'az'],
+                [
                     'name' => $request->name_az,
-                    'description' => $request->description_az
+                    'description' => $request->description_az,
+                    'meta_title' => $request->meta_title_az,
+                    'meta_description' => $request->meta_description_az,
+                    'description_web' => $request->description_web_az,
                 ]
             );
             $product->translations()->updateOrCreate(
-                ['locale' => 'en'], [
+                ['locale' => 'en'],
+                [
                     'name' => $request->name_en,
-                    'description' => $request->description_en
+                    'description' => $request->description_en,
+                    'meta_title' => $request->meta_title_en,
+                    'meta_description' => $request->meta_description_en,
+                    'description_web' => $request->description_web_en,
                 ]
             );
             $product->translations()->updateOrCreate(
-                ['locale' => 'ru'], [
+                ['locale' => 'ru'],
+                [
                     'name' => $request->name_ru,
-                    'description' => $request->description_ru
+                    'description' => $request->description_ru,
+                    'meta_title' => $request->meta_title_ru,
+                    'meta_description' => $request->meta_description_ru,
+                    'description_web' => $request->description_web_ru,
                 ]
             );
 
-            // Handle main image update if provided
             if ($request->hasFile('main_image')) {
-                $this->updateMainImage($request, $product);
+                $file = $request->file('main_image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/images/products/', $filename);
+                $product->main_image = $filename;
+                $product->save();
             }
 
-
-            if ($request->filled('existing_images')) {
-
-                $existingImagesIds = $request->input('existing_images_ids');
-
-                $productImagesIds = $product->allImages()->pluck('id')->toArray();
-
-
-                $imageIdsToDelete = array_diff($productImagesIds, $existingImagesIds);
-
-                // Loop through the images to delete
-                foreach ($imageIdsToDelete as $imageId) {
-                    // Find the image record in the database
-                    $productImage = ProductImage::where('id', $imageId)->first();
-
-                    // Check if the image is marked as 'is_main' before attempting deletion
-                    if ($productImage && $productImage->is_main != 1 && $productImage->is_hover != 1) {
-                        // Construct the full path of the image to delete from storage
-                        $fullImagePath = 'images/products/' . $productImage->image_path;
-
-                        // Delete the file from storage
-                        Storage::disk('public')->delete($fullImagePath);
-
-                        // Remove the image record from the database
-                        $productImage->delete();
-                    }
-                }
-            }
-
-
-            if ($request->hasFile('images')) {
-                // Loop through the uploaded files and save them
-                foreach ($request->file('images') as $image) {
-                    // Store the image in the desired path (e.g., 'public/storage/images/products')
-                    $filename = $image->store('images/products', 'public');
-                    $filenameOnly = basename($filename); // Get only the file name
-
-                    // Save the file name (without the path) into the database
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $filenameOnly, // Save only the file name
-                    ]);
-                }
-            }
 
             if (!empty($validated['selected_products'])) {
                 // Delete all existing entries for this set_id before inserting new ones
@@ -375,64 +328,6 @@ class SetProductController extends Controller
         }
     }
 
-    /**
-     * Handle updating the main image.
-     */
-    protected function updateMainImage(Request $request, Product $product)
-    {
-        // Delete the old main image if exists
-        $mainImage = $product->allImages()->where('is_main', 1)->first();
-
-        // Delete the old main image if it exists
-        if ($mainImage) {
-            // Delete the image file from storage
-            Storage::delete('public/images/products/' . $mainImage->image_path);
-
-            // Remove the main image record from the database
-            $mainImage->delete();
-        }
-
-        // Store the new main image
-        $file = $request->file('main_image');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->storeAs('public/images/products/', $filename);
-
-        // Create a new product image record for the main image
-        ProductImage::create([
-            'is_main' => 1,
-            'product_id' => $product->id,
-            'image_path' => $filename,
-        ]);
-    }
-
-
-    protected function updateHoverImage(Request $request, Product $product)
-    {
-        // Delete the old main image if exists
-        $hoverImage = $product->allImages()->where('is_hover', 1)->first();
-
-        // Delete the old main image if it exists
-        if ($hoverImage) {
-            // Delete the image file from storage
-            Storage::delete('public/images/products/' . $hoverImage->image_path);
-
-            // Remove the main image record from the database
-            $hoverImage->delete();
-        }
-
-        // Store the new main image
-        $file = $request->file('hover_image');
-        $filename = time() . '_h_' . $file->getClientOriginalName();
-        $file->storeAs('public/images/products/', $filename);
-
-        // Create a new product image record for the main image
-        ProductImage::create([
-            'is_hover' => 1,
-            'product_id' => $product->id,
-            'image_path' => $filename,
-        ]);
-    }
-
     public function destroy(Product $product)
     {
         // Handle product deletion
@@ -442,36 +337,6 @@ class SetProductController extends Controller
             ->with('success', 'Product deleted successfully!');
     }
 
-
-
-    public function uploadMedia(Request $request)
-    {
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            // Store file temporarily
-            $path = $file->storeAs('public/uploads/temp', $filename);
-
-            // Return the file path to the frontend
-            return response()->json(['success' => true, 'filepath' => $path]);
-        }
-
-        return response()->json(['success' => false]);
-    }
-
-    public function deleteMedia(Request $request)
-    {
-        $filepath = $request->input('filepath');
-
-        // Check if file exists and delete it
-        if (Storage::exists($filepath)) {
-            Storage::delete($filepath);
-            return response()->json(['success' => true, 'message' => 'File deleted successfully']);
-        }
-
-        return response()->json(['success' => false, 'message' => 'File not found'], 404);
-    }
 
     public function bulkDeactivate(Request $request)
     {

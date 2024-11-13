@@ -34,7 +34,7 @@ class SubIdeaItemController extends Controller
             'translations.az.description' => 'required|string',
             'translations.en.description' => 'required|string',
             'translations.ru.description' => 'required|string',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'products' => 'nullable|array',
             'is_active' => 'required|boolean',
         ]);
@@ -93,7 +93,7 @@ class SubIdeaItemController extends Controller
             'translations.az.description' => 'required|string',
             'translations.en.description' => 'required|string',
             'translations.ru.description' => 'required|string',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'products' => 'nullable|array',
             'is_active' => 'required|boolean',
         ]);

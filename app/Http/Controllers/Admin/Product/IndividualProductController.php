@@ -21,6 +21,27 @@ class IndividualProductController extends Controller
         $products = Product::where('is_set', false)
             ->get(); // Adjust per page limit as needed
 
+        $products->map(function ($product) {
+
+            $product->image = url('storage/images/products/' . $product->main_image);
+            $productData = [
+                'id' => $product->id,
+                'name' => $product->name,
+                'image' => $product->image,
+                'category_name' => $product->subcategories()?->first()?->name ?? "",
+                'discount' => $product->discount,
+                'discount_ends_at' => $product->discount_ends_at,
+                'price' => $product->price,
+                'final_price' => $product->final_price,
+                'average_rating' => $product->average_rating,
+                'is_in_basket' => $product->is_in_basket,
+                'is_favorite' => $product->is_favorite,
+                'badge' => url('storage/images/badge/' . $product->badge),
+                'credit_cards' => $product->credit_cards
+            ];
+            return $productData;
+        });
+
         return view('admin.pages.products.index', compact('products'));
     }
 
@@ -52,32 +73,38 @@ class IndividualProductController extends Controller
 
         // Validation
         $validated = $request->validate([
+            'slug' => 'required|unique:products,slug|max:255',
             'name_az' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
             'name_ru' => 'required|string|max:255',
             'description_az' => 'nullable|string',
             'description_en' => 'nullable|string',
             'description_ru' => 'nullable|string',
+            'meta_title_az' => 'nullable|string|max:255',
+            'meta_title_en' => 'nullable|string|max:255',
+            'meta_title_ru' => 'nullable|string|max:255',
+            'meta_description_az' => 'nullable|string',
+            'meta_description_en' => 'nullable|string',
+            'meta_description_ru' => 'nullable|string',
+            'description_web_az' => 'nullable|string',
+            'description_web_en' => 'nullable|string',
+            'description_web_ru' => 'nullable|string',
             'color' => 'nullable|string',
-            'sku' => 'required|string|max:255|unique:products',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
             'discount' => 'nullable|numeric|min:0|max:100',
             'discount_ends_at' => 'nullable|date|after:today',
-            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2000',
-            'main_image' => 'required|image|mimes:jpg,jpeg,png,bmp|max:2000',
+            'main_image' => 'required|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'selected_sub_category_id' => 'exists:subcategories,id',
         ], $messages);
 
         try {
             // Create the base product
             $product = Product::create([
+                'slug' => $request->slug,
                 'name' => $request->name_az,
                 'description' => $request->description_az,
-                'sku' => $request->sku,
                 'color' => $request->color ?? null,
                 'price' => $request->price,
-                'stock' => $request->stock,
                 'discount' => $request->discount ?? null,
                 'discount_ends_at' => $request->discount_ends_at ?? null,
             ]);
@@ -90,16 +117,25 @@ class IndividualProductController extends Controller
                     'locale' => 'az',
                     'name' => $request->name_az,
                     'description' => $request->description_az,
+                    'meta_title' => $request->meta_title_az,
+                    'meta_description' => $request->meta_description_az,
+                    'description_web' => $request->description_web_az,
                 ],
                 [
                     'locale' => 'en',
                     'name' => $request->name_en,
                     'description' => $request->description_en,
+                    'meta_title' => $request->meta_title_en,
+                    'meta_description' => $request->meta_description_en,
+                    'description_web' => $request->description_web_en,
                 ],
                 [
                     'locale' => 'ru',
                     'name' => $request->name_ru,
                     'description' => $request->description_ru,
+                    'meta_title' => $request->meta_title_ru,
+                    'meta_description' => $request->meta_description_ru,
+                    'description_web' => $request->description_web_ru,
                 ],
             ]);
 
@@ -108,26 +144,10 @@ class IndividualProductController extends Controller
                 $file = $request->file('main_image');
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $file->storeAs('public/images/products/', $filename);
-
-                ProductImage::create([
-                    'is_main' => 1,
-                    'product_id' => $product->id,
-                    'image_path' => $filename,
-                ]);
+                $product->main_image = $filename;
+                $product->save();
             }
 
-            // Handle multiple images
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $filename = $image->store('images/products', 'public');
-                    $filenameOnly = basename($filename);
-
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $filenameOnly,
-                    ]);
-                }
-            }
 
             return response()->json(['message' => 'Məhsul uğurla yaradıldı!']);
 
@@ -189,20 +209,27 @@ class IndividualProductController extends Controller
 
         // Validation
         $validated = $request->validate([
+            'slug' => 'required|unique:products,slug,' . $product->id . '|max:255',
             'name_az' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
             'name_ru' => 'required|string|max:255',
             'description_az' => 'nullable|string',
             'description_en' => 'nullable|string',
             'description_ru' => 'nullable|string',
+            'meta_title_az' => 'nullable|string|max:255',
+            'meta_title_en' => 'nullable|string|max:255',
+            'meta_title_ru' => 'nullable|string|max:255',
+            'meta_description_az' => 'nullable|string',
+            'meta_description_en' => 'nullable|string',
+            'meta_description_ru' => 'nullable|string',
+            'description_web_az' => 'nullable|string',
+            'description_web_en' => 'nullable|string',
+            'description_web_ru' => 'nullable|string',
             'color' => 'nullable|string',
-            'sku' => 'required|string|max:255|unique:products,sku,' . $product->id,
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
             'discount' => 'nullable|numeric|min:0|max:100',
             'discount_ends_at' => 'nullable|date|after:today',
-            'images.*' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2000',
-            'main_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp|max:2000',
+            'main_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'selected_sub_category_id' => 'exists:subcategories,id',
             'selected_products' => 'nullable|array',
             'selected_products.*' => 'nullable|integer|min:0',
@@ -217,11 +244,10 @@ class IndividualProductController extends Controller
 
             // Update the base product
             $product->update([
+                'slug' => $request->slug,
                 'name' => $request->name_az,
                 'description' => $request->description_az,
-                'sku' => $request->sku,
                 'price' => $request->price,
-                'stock' => $request->stock,
                 'color' => $request->color ?? null,
                 'discount' => $request->discount,
                 'discount_ends_at' => $request->discount_ends_at,
@@ -232,56 +258,45 @@ class IndividualProductController extends Controller
 
             // Handle main image update if provided
             $product->translations()->updateOrCreate(
-                ['locale' => 'az'], [
+                ['locale' => 'az'],
+                [
                     'name' => $request->name_az,
-                    'description' => $request->description_az
+                    'description' => $request->description_az,
+                    'meta_title' => $request->meta_title_az,
+                    'meta_description' => $request->meta_description_az,
+                    'description_web' => $request->description_web_az,
                 ]
             );
             $product->translations()->updateOrCreate(
-                ['locale' => 'en'], [
+                ['locale' => 'en'],
+                [
                     'name' => $request->name_en,
-                    'description' => $request->description_en
+                    'description' => $request->description_en,
+                    'meta_title' => $request->meta_title_en,
+                    'meta_description' => $request->meta_description_en,
+                    'description_web' => $request->description_web_en,
                 ]
             );
             $product->translations()->updateOrCreate(
-                ['locale' => 'ru'], [
+                ['locale' => 'ru'],
+                [
                     'name' => $request->name_ru,
-                    'description' => $request->description_ru
+                    'description' => $request->description_ru,
+                    'meta_title' => $request->meta_title_ru,
+                    'meta_description' => $request->meta_description_ru,
+                    'description_web' => $request->description_web_ru,
                 ]
             );
 
-            // Handle main image update if provided
             if ($request->hasFile('main_image')) {
-                $this->updateMainImage($request, $product);
+                $file = $request->file('main_image');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/images/products/', $filename);
+                $product->main_image = $filename;
+                $product->save();
             }
 
-            // Handle multiple images
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $filename = $image->store('images/products', 'public');
-                    $filenameOnly = basename($filename);
 
-                    ProductImage::create([
-                        'product_id' => $product->id,
-                        'image_path' => $filenameOnly,
-                    ]);
-                }
-            }
-
-            // Handle deleting existing images if necessary
-            if ($request->filled('existing_images')) {
-                $existingImagesIds = $request->input('existing_images_ids');
-                $productImagesIds = $product->allImages()->pluck('id')->toArray();
-                $imageIdsToDelete = array_diff($productImagesIds, $existingImagesIds);
-
-                foreach ($imageIdsToDelete as $imageId) {
-                    $productImage = ProductImage::find($imageId);
-                    if ($productImage && !$productImage->is_main) {
-                        Storage::disk('public')->delete('images/products/' . $productImage->image_path);
-                        $productImage->delete();
-                    }
-                }
-            }
             if (!empty($validated['selected_products'])) {
                 // Begin a transaction for better consistency
                 DB::transaction(function () use ($product, $validated) {
@@ -305,35 +320,6 @@ class IndividualProductController extends Controller
         }
     }
 
-    /**
-     * Handle updating the main image.
-     */
-    protected function updateMainImage(Request $request, Product $product)
-    {
-        // Retrieve all existing main images
-        $mainImages = $product->allImages()->where('is_main', 1)->get();
-
-        // Delete all existing main images if any
-        foreach ($mainImages as $mainImage) {
-            // Delete the image file from storage
-            Storage::delete('public/images/products/' . $mainImage->image_path);
-
-            // Remove the main image record from the database
-            $mainImage->delete();
-        }
-
-        // Store the new main image
-        $file = $request->file('main_image');
-        $filename = time() . '_' . $file->getClientOriginalName();
-        $file->storeAs('public/images/products/', $filename);
-
-        // Create a new product image record for the main image
-        ProductImage::create([
-            'is_main' => 1,
-            'product_id' => $product->id,
-            'image_path' => $filename,
-        ]);
-    }
 
     /**
      * Handle updating color variations.
@@ -348,7 +334,7 @@ class IndividualProductController extends Controller
                 ],
                 [
                     'name' => $product->name . ' (' . $color . ')',
-                    'sku' => $product->sku . '-' . strtolower($color),
+//                    'sku' => $product->sku . '-' . strtolower($color),
                     'description' => $product->description,
 //                    'price' => $product->price,
 //                    'stock' => $product->stock,
@@ -384,36 +370,6 @@ class IndividualProductController extends Controller
             ->with('success', 'Product deleted successfully!');
     }
 
-
-
-    public function uploadMedia(Request $request)
-    {
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $filename = time() . '_' . $file->getClientOriginalName();
-
-            // Store file temporarily
-            $path = $file->storeAs('public/uploads/temp', $filename);
-
-            // Return the file path to the frontend
-            return response()->json(['success' => true, 'filepath' => $path]);
-        }
-
-        return response()->json(['success' => false]);
-    }
-
-    public function deleteMedia(Request $request)
-    {
-        $filepath = $request->input('filepath');
-
-        // Check if file exists and delete it
-        if (Storage::exists($filepath)) {
-            Storage::delete($filepath);
-            return response()->json(['success' => true, 'message' => 'File deleted successfully']);
-        }
-
-        return response()->json(['success' => false, 'message' => 'File not found'], 404);
-    }
 
     public function bulkDiscount(Request $request)
     {

@@ -36,10 +36,14 @@ class SubCategoryController extends Controller
             'name_az' => 'required|max:255',
             'name_en' => 'required|max:255',
             'name_ru' => 'required|max:255',
+            'slug' => 'required|unique:subcategories,slug|max:255',
             'description_az' => 'nullable',
             'description_en' => 'nullable',
             'description_ru' => 'nullable',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'meta_title_az' => 'nullable|max:255',
+            'meta_description_az' => 'nullable',
+            'description_web_az' => 'nullable',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
         ]);
 
         // Handle image uploads
@@ -49,34 +53,27 @@ class SubCategoryController extends Controller
             $request->file('image')->storeAs('images/subcategories/small', $image, 'public');
         }
 
-
         // Create the subcategory
         $subcategory = Subcategory::create([
             'category_id' => $request->category_id,
             'name' => $request->name_az,
+            'slug' => $request->slug,
             'description' => $request->description_az,
             'image' => $image,
             'homescreen_widget' => 0,
         ]);
 
         // Create translations for each language
-        $subcategory->translations()->create([
-            'locale' => 'az',
-            'name' => $request->name_az,
-            'description' => $request->description_az,
-        ]);
-
-        $subcategory->translations()->create([
-            'locale' => 'en',
-            'name' => $request->name_en,
-            'description' => $request->description_en,
-        ]);
-
-        $subcategory->translations()->create([
-            'locale' => 'ru',
-            'name' => $request->name_ru,
-            'description' => $request->description_ru,
-        ]);
+        foreach (['az', 'en', 'ru'] as $locale) {
+            $subcategory->translations()->create([
+                'locale' => $locale,
+                'name' => $request->input("name_{$locale}"),
+                'description' => $request->input("description_{$locale}"),
+                'meta_title' => $request->input("meta_title_{$locale}"),
+                'meta_description' => $request->input("meta_description_{$locale}"),
+                'description_web' => $request->input("description_web_{$locale}"),
+            ]);
+        }
 
         return redirect()->route('admin.subcategories.index')
             ->with('success', 'Subcategory created successfully.');
@@ -105,10 +102,14 @@ class SubCategoryController extends Controller
             'name_az' => 'required|max:255',
             'name_en' => 'required|max:255',
             'name_ru' => 'required|max:255',
+            'slug' => 'required|unique:subcategories,slug,' . $subcategory->id . '|max:255',
             'description_az' => 'nullable',
             'description_en' => 'nullable',
             'description_ru' => 'nullable',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'meta_title_az' => 'nullable|max:255',
+            'meta_description_az' => 'nullable',
+            'description_web_az' => 'nullable',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240'
         ]);
 
         // Handle image uploads
@@ -118,31 +119,29 @@ class SubCategoryController extends Controller
             $request->file('image')->storeAs('images/subcategories/small', $image, 'public');
         }
 
-
         // Update the subcategory
         $subcategory->update([
             'category_id' => $request->category_id,
             'name' => $request->name_az,
+            'slug' => $request->slug,
             'description' => $request->description_az,
             'image' => $image,
             'homescreen_widget' => 0,
         ]);
 
         // Update or create translations for each language
-        $subcategory->translations()->updateOrCreate(
-            ['locale' => 'az'],
-            ['name' => $request->name_az, 'description' => $request->description_az]
-        );
-
-        $subcategory->translations()->updateOrCreate(
-            ['locale' => 'en'],
-            ['name' => $request->name_en, 'description' => $request->description_en]
-        );
-
-        $subcategory->translations()->updateOrCreate(
-            ['locale' => 'ru'],
-            ['name' => $request->name_ru, 'description' => $request->description_ru]
-        );
+        foreach (['az', 'en', 'ru'] as $locale) {
+            $subcategory->translations()->updateOrCreate(
+                ['locale' => $locale],
+                [
+                    'name' => $request->input("name_{$locale}"),
+                    'description' => $request->input("description_{$locale}"),
+                    'meta_title' => $request->input("meta_title_{$locale}"),
+                    'meta_description' => $request->input("meta_description_{$locale}"),
+                    'description_web' => $request->input("description_web_{$locale}"),
+                ]
+            );
+        }
 
         return redirect()->route('admin.subcategories.index')
             ->with('success', 'Subcategory updated successfully.');

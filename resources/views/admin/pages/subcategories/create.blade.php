@@ -57,77 +57,100 @@
                         <!-- Parent Category -->
                             <div class="mb-10 fv-row">
                                 <label class="required form-label">Parent Category</label>
-                                <select class="form-select mb-2" id="subcategorySelect"
-                                        name="category_id"
-                                        data-control="select2"
-                                        data-placeholder="Select a category"
-                                        data-allow-clear="true">
+                                <select class="form-select mb-2" id="subcategorySelect" name="category_id" data-control="select2" data-placeholder="Select a category" data-allow-clear="true">
                                     <option></option>
                                     @foreach($categories as $category)
-                                        <option value="{{ $category->id }}"
-                                                @if (old('category_id', $subcategory->category_id ?? '') == $category->id) selected @endif>
+                                        <option value="{{ $category->id }}" @if (old('category_id', $subcategory->category_id ?? '') == $category->id) selected @endif>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('category_id')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
-                            <!-- Name for each language -->
-                            <div class="mb-10 fv-row">
-                                <label class="required form-label">Subcategory Name (AZ)</label>
-                                <input type="text" name="name_az" class="form-control mb-2"
-                                       placeholder="Subcategory Name (AZ)"
-                                       value="{{ old('name_az', isset($subcategory) ? $subcategory->translations->where('locale', 'az')->first()->name ?? '' : '') }}" />
-                            </div>
+                            <!-- Meta Title for each language -->
+                            @foreach(['az' => 'AZ', 'en' => 'EN', 'ru' => 'RU'] as $locale => $label)
+                                <div class="mb-10 fv-row">
+                                    <label class="form-label">Meta Title ({{ $label }})</label>
+                                    <input type="text" name="meta_title_{{ $locale }}" class="form-control mb-2" placeholder="Meta Title ({{ $label }})"
+                                           value="{{ old('meta_title_' . $locale, isset($subcategory) ? $subcategory->translations->where('locale', $locale)->first()->meta_title ?? '' : '') }}" />
+                                    @error("meta_title_{$locale}")
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                            <div class="mb-10 fv-row">
-                                <label class="required form-label">Subcategory Name (EN)</label>
-                                <input type="text" name="name_en" class="form-control mb-2"
-                                       placeholder="Subcategory Name (EN)"
-                                       value="{{ old('name_en', isset($subcategory) ? $subcategory->translations->where('locale', 'en')->first()->name ?? '' : '') }}" />
-                            </div>
+                                <div class="mb-10 fv-row">
+                                    <label class="form-label">Meta Description ({{ $label }})</label>
+                                    <textarea name="meta_description_{{ $locale }}" class="form-control mb-2" placeholder="Meta Description ({{ $label }})">{{ old('meta_description_' . $locale, isset($subcategory) ? $subcategory->translations->where('locale', $locale)->first()->meta_description ?? '' : '') }}</textarea>
+                                    @error("meta_description_{$locale}")
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @endforeach
 
+                        <!-- Name for each language -->
+                            @foreach(['az' => 'AZ', 'en' => 'EN', 'ru' => 'RU'] as $locale => $label)
+                                <div class="mb-10 fv-row">
+                                    <label class="required form-label">Subcategory Name ({{ $label }})</label>
+                                    <input type="text" name="name_{{ $locale }}" class="form-control mb-2" placeholder="Subcategory Name ({{ $label }})"
+                                           value="{{ old('name_' . $locale, isset($subcategory) ? $subcategory->translations->where('locale', $locale)->first()->name ?? '' : '') }}" />
+                                    @error("name_{$locale}")
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @endforeach
+
+                        <!-- Slug -->
                             <div class="mb-10 fv-row">
-                                <label class="required form-label">Название Подкатегории (RU)</label>
-                                <input type="text" name="name_ru" class="form-control mb-2"
-                                       placeholder="Subcategory Name (RU)"
-                                       value="{{ old('name_ru', isset($subcategory) ? $subcategory->translations->where('locale', 'ru')->first()->name ?? '' : '') }}" />
+                                <label class="form-label">Slug</label>
+                                <input type="text" name="slug" class="form-control mb-2" placeholder="Slug"
+                                       value="{{ old('slug', isset($subcategory) ? $subcategory->slug : '') }}" />
+                                @error('slug')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Description for each language -->
-                            <div class="mb-10 fv-row">
-                                <label class="form-label">Description (AZ)</label>
-                                <textarea name="description_az" class="min-h-200px mb-2 form-control"
-                                          placeholder="Enter description (AZ)">{{ old('description_az', isset($subcategory) ? $subcategory->translations->where('locale', 'az')->first()->description ?? '' : '') }}</textarea>
-                            </div>
+                            @foreach(['az' => 'AZ', 'en' => 'EN', 'ru' => 'RU'] as $locale => $label)
+                                <div class="mb-10 fv-row">
+                                    <label class="form-label">Description ({{ $label }})</label>
+                                    <textarea name="description_{{ $locale }}" class="min-h-200px mb-2 form-control" placeholder="Enter description ({{ $label }})">{{ old('description_' . $locale, isset($subcategory) ? $subcategory->translations->where('locale', $locale)->first()->description ?? '' : '') }}</textarea>
+                                    @error("description_{$locale}")
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            @endforeach
 
-                            <div class="mb-10 fv-row">
-                                <label class="form-label">Description (EN)</label>
-                                <textarea name="description_en" class="min-h-200px mb-2 form-control"
-                                          placeholder="Enter description (EN)">{{ old('description_en', isset($subcategory) ? $subcategory->translations->where('locale', 'en')->first()->description ?? '' : '') }}</textarea>
-                            </div>
+                        <!-- Description Web for each language (with Quill) -->
+                            @foreach(['az' => 'AZ', 'en' => 'EN', 'ru' => 'RU'] as $locale => $label)
+                                <div class="form-group">
+                                    <label for="description_web_{{ $locale }}" class="form-label">Web Description ({{ $label }})</label>
+                                    <div id="description_web_{{ $locale }}_quill" style="height: 200px;">{!! old('description_web_' . $locale, isset($subcategory) ? $subcategory->translations->where('locale', $locale)->first()->description_web ?? '' : '') !!}</div>
+                                    <input type="hidden" name="description_web_{{ $locale }}" id="description_web_{{ $locale }}">
+                                    @error("description_web_{$locale}")
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                        @endforeach
 
+                        <!-- Input group for image -->
                             <div class="mb-10 fv-row">
-                                <label class="form-label">Описание (RU)</label>
-                                <textarea name="description_ru" class="min-h-200px mb-2 form-control"
-                                          placeholder="Введите Описание">{{ old('description_ru', isset($subcategory) ? $subcategory->translations->where('locale', 'ru')->first()->description ?? '' : '') }}</textarea>
-                            </div>
-
-                            <!--begin::Input group for image-->
-                            <div class="mb-10 fv-row">
-                                <!--begin::Label-->
-                                <label class="form-label">Kiçik Şəkil ( menu )</label>
-                                <!--end::Label-->
-                                <!--begin::Input-->
+                                <label class="form-label">Thumbnail Image</label>
                                 <input type="file" name="image" class="form-control mb-2" />
                                 @if (isset($subcategory) && $subcategory->image)
                                     <img src="{{ asset('storage/images/subcategories/small/' . $subcategory->image) }}" alt="{{ $subcategory->name }}" width="100">
-                            @endif
-                            <!--end::Input-->
+                                @endif
+                                @error('image')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
+
                             <!-- Submit Button -->
                             <button type="submit" class="btn btn-primary">{{ isset($subcategory) ? 'Update Subcategory' : 'Create Subcategory' }}</button>
                         </form>
+
                     </div>
                     <!--end::Card body-->
                 </div>
@@ -155,4 +178,28 @@
     <script src="{{ asset('assets/admin/js/custom/apps/ecommerce/customers/listing/listing.js') }}"></script>
     <script src="{{ asset('assets/admin/js/custom/apps/ecommerce/customers/listing/add.js') }}"></script>
     <script src="{{ asset('assets/admin/js/custom/apps/ecommerce/customers/listing/export.js') }}"></script>
+    <script>
+        var quillInstances = {};
+        @foreach(['az', 'en', 'ru'] as $locale)
+            quillInstances['{{ $locale }}'] = new Quill('#description_web_{{ $locale }}_quill', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'link'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }]
+                ]
+            },
+            placeholder: 'Enter Web Description ({{ strtoupper($locale) }})...'
+        });
+        @endforeach
+
+        // On form submit, save Quill contents to hidden inputs
+        document.querySelector('form').onsubmit = function() {
+            @foreach(['az', 'en', 'ru'] as $locale)
+            document.getElementById('description_web_{{ $locale }}').value = quillInstances['{{ $locale }}'].root.innerHTML;
+            @endforeach
+        };
+    </script>
 @endpush

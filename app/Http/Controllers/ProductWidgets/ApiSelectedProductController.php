@@ -36,6 +36,7 @@ class ApiSelectedProductController extends Controller
             $productData = [
                 'id' => $product->id,
                 'name' => $product->name,
+                'slug' => $product->slug,
                 'is_set' => $product->is_set,
                 'price' => $product->price,
                 'discount' => $product->discount,

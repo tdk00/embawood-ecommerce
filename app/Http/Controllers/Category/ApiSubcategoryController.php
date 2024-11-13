@@ -21,12 +21,20 @@ class ApiSubcategoryController extends Controller
             'sort_by' => 'in:price,name',
             'sort_direction' => 'in:asc,desc,default',
             'per_page' => 'integer|min:1|max:100',
-            'id' => 'required|integer'
+            'id' => 'required_without:slug|integer',
+            'slug' => 'required_without:id|string'
         ]);
 
-        // Fetch the subcategory with its category
+        // Fetch the subcategory by ID or slug
         $subcategory = Subcategory::with('category')
-            ->find($request->id);
+            ->where(function ($query) use ($request) {
+                if ($request->filled('id')) {
+                    $query->where('id', $request->id);
+                } elseif ($request->filled('slug')) {
+                    $query->where('slug', $request->slug);
+                }
+            })
+            ->first();
 
         // Check if subcategory exists
         if (!$subcategory) {
@@ -40,7 +48,11 @@ class ApiSubcategoryController extends Controller
         $subCategoryData = [
             'category_id' => $subcategory->category_id,
             'name' => $subcategory->name,
+            'slug' => $subcategory->slug, // Include slug here
             'description' => $subcategory->description,
+            'meta_title' => $subcategory->meta_title,
+            'meta_description' => $subcategory->meta_description,
+            'description_web' => $subcategory->description_web,
             'banner_image' => $subcategory->banner_image,
         ];
 
@@ -57,6 +69,7 @@ class ApiSubcategoryController extends Controller
             $product->image = url('storage/images/products/' . $product->main_image);
             return [
                 'id' => $product->id,
+                'slug' => $product->slug,
                 'name' => $product->name,
                 'is_set' => $product->is_set,
                 'price' => $product->price,
@@ -70,7 +83,7 @@ class ApiSubcategoryController extends Controller
                 'remaining_discount_seconds' => $product->remaining_discount_seconds,
                 'has_unlimited_discount' => $product->has_unlimited_discount,
                 'has_limited_discount' => $product->has_limited_discount,
-                'badge' => url('storage/images/badge/' . $product->badge)
+                'badge' => url('storage/images/badge/' . $product->badge),
             ];
         });
 
@@ -90,12 +103,13 @@ class ApiSubcategoryController extends Controller
         $homescreenSubcategories = Subcategory::where('homescreen_widget', true)->get();
 
         $transformedHomescreenSubcategories = $homescreenSubcategories->map(function ($subcategory) {
-            $subcategory->image = url('storage/images/subcategories/small' . $subcategory->image);
-            $subcategory->banner_image = url('storage/images/subcategories/banner' . $subcategory->banner_image);
-            $subcategory->widget_view_image = url('storage/images/subcategories/homescreen' . $subcategory->widget_view_image);
+            $subcategory->image = url('storage/images/subcategories/small/' . $subcategory->image);
+            $subcategory->banner_image = url('storage/images/subcategories/banner/' . $subcategory->banner_image);
+            $subcategory->widget_view_image = url('storage/images/subcategories/homescreen/' . $subcategory->widget_view_image);
             return [
                 'id' => $subcategory->id,
                 'name' => $subcategory->name,
+                'slug' => $subcategory->slug, // Include slug here
                 'description' => $subcategory->description,
                 'image' => $subcategory->image,
                 'banner_image' => $subcategory->banner_image,

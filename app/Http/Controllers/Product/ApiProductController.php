@@ -50,10 +50,12 @@ class ApiProductController extends Controller
         return response()->json($progress);
     }
 
-    public function show($id)
+    public function show($identifier)
     {
-
-        $product = $this->getProductWithRelations( $id );
+        // Determine if the identifier is a numeric ID or a slug
+        $product = is_numeric($identifier)
+            ? $this->getProductWithRelations($identifier)
+            : $this->getProductWithRelationsBySlug($identifier);
 
         if (!$product) {
             return $this->productNotFoundResponse();
@@ -63,14 +65,25 @@ class ApiProductController extends Controller
 
         $user = Auth::guard('api')->user();
 
-        $this->bonusService->handleProductView($user, $id);
+        $this->bonusService->handleProductView($user, $product->id);
 
         // Return the product details in JSON format
         return response()->json([
             'success' => true,
             'data' => $productDetails
         ], 200);
+    }
 
+    protected function getProductWithRelationsBySlug($slug)
+    {
+        return Product::where('slug', $slug)
+            ->with([
+                'images',
+                'products',
+                'colorVariations.images',
+                'topLists',
+            ])
+            ->first();
     }
 
     private function getProductWithRelations($id)
@@ -95,7 +108,7 @@ class ApiProductController extends Controller
     {
         return [
             'product' => $product->only([
-                'id', 'name', 'sku', 'description', 'price', 'final_price', 'stock', 'discount',
+                'id', 'name', 'sku', 'slug', 'description', 'price', 'final_price', 'stock', 'discount',
                 'discount_ends_at', 'is_set', 'is_in_basket', 'is_favorite', 'remaining_discount_seconds',
                 'has_unlimited_discount', 'has_limited_discount', 'average_rating', 'badge'
             ]),
@@ -110,12 +123,13 @@ class ApiProductController extends Controller
     }
     private function getImages( $product )
     {
-        return $product->images->map(function ($image) {
+        return $product->images()->orderBy('order')->get()->map(function ($image) {
             return [
                 'id' => $image->id,
                 'product_id' => $image->product_id,
                 'image_path' => url('storage/images/products/' . $image->image_path),
                 'is_main' => $image->is_main,
+                'alt_text' => $image->alt_text,
             ];
         });
     }
@@ -127,6 +141,7 @@ class ApiProductController extends Controller
                 return [
                     'id' => $module->id,
                     'name' => $module->name,
+                    'slug' => $module->slug,
                     'subcategory_name' => $module->subcategories->first()?->name ?? "",
                     'image' => url('storage/images/products/' . $module->main_image),
                     'discount' => $module->discount,
@@ -179,6 +194,7 @@ class ApiProductController extends Controller
             return [
                 'id' => $similiarProduct->id,
                 'name' => $similiarProduct->name,
+                'slug' => $similiarProduct->slug,
                 'subcategory_name' => $similiarProduct->subcategories->first()?->name ?? "",
                 'main_image' => url('storage/images/products/' . $similiarProduct->main_image),
                 'discount' => $similiarProduct->discount,
@@ -202,6 +218,7 @@ class ApiProductController extends Controller
             return [
                 'id' => $purchasedTogetherProduct->id,
                 'name' => $purchasedTogetherProduct->name,
+                'slug' => $purchasedTogetherProduct->slug,
                 'subcategory_name' => $purchasedTogetherProduct->subcategories->first()?->name ?? "",
                 'main_image' => url('storage/images/products/' . $purchasedTogetherProduct->main_image),
                 'discount' => $purchasedTogetherProduct->discount,
@@ -228,6 +245,7 @@ class ApiProductController extends Controller
                 return [
                     'id' => $topListProduct->product->id,
                     'name' => $topListProduct->product->name,
+                    'slug' => $topListProduct->product->slug,
                     'subcategory_name' => $topListProduct->product->subcategories->first()?->name ?? "",
                     'main_image' => url('storage/images/products/' . $topListProduct->product->main_image),
                     'discount' => $topListProduct->product->discount,
@@ -303,6 +321,7 @@ class ApiProductController extends Controller
             return [
                 'id' => $product->id,
                 'name' => $product->name,
+                'slug' => $product->slug,
                 'is_set' => $product->is_set,
                 'price' => $product->price,
                 'discount' => $product->discount,

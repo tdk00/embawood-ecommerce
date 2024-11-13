@@ -71,8 +71,6 @@
                                 </div>
                             </th>
                             <th class="min-w-200px">Ad</th>
-                            <th class="text-end min-w-100px">SKU</th>
-                            <th class="text-end min-w-70px">Stok</th>
                             <th class="text-end min-w-100px">Qiymət</th>
                             <th class="text-end min-w-100px">Rating</th>
                             <th class="text-end min-w-70px">Əməliyyat</th>
@@ -100,12 +98,6 @@
                                             <!--end::Title-->
                                         </div>
                                     </div>
-                                </td>
-                                <td class="text-end pe-0">
-                                    <span class="fw-bold">{{$product->sku}}</span>
-                                </td>
-                                <td class="text-end pe-0" data-order="0">
-                                    <span class="fw-bold text-primary ms-3">{{$product->stock}}</span>
                                 </td>
                                 <td class="text-end pe-0">{{$product->price}}</td>
                                 <td class="text-end pe-0" data-order="rating-{{floor($product->average_rating)}}">
@@ -167,7 +159,7 @@
     <!--end::Vendors Javascript-->
 
 
-    <script src="{{ asset('assets/admin/js/custom/apps/ecommerce/catalog/products.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/custom/apps/ecommerce/catalog/set-products.js') }}"></script>
 
     <script>
         $("#bulkDeactivate").on('click', function () {

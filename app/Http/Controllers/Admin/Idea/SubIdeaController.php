@@ -29,8 +29,8 @@ class SubIdeaController extends Controller
             'translations.az.title' => 'required|string',
             'translations.en.title' => 'required|string',
             'translations.ru.title' => 'required|string',
-            'image_category_view' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'image_homepage_tab_view' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'image_category_view' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
+            'image_homepage_tab_view' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'is_active' => 'required|boolean',
         ]);
 
@@ -81,8 +81,8 @@ class SubIdeaController extends Controller
             'translations.az.title' => 'required|string',
             'translations.en.title' => 'required|string',
             'translations.ru.title' => 'required|string',
-            'image_category_view' => 'nullable|image|mimes:jpeg,png,jpg,gif',
-            'image_homepage_tab_view' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+            'image_category_view' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
+            'image_homepage_tab_view' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'is_active' => 'required|boolean',
         ]);
 

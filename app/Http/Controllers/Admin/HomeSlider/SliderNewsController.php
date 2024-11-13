@@ -41,22 +41,31 @@ class SliderNewsController extends Controller
             'title_az' => 'required|string',
             'title_en' => 'required|string',
             'title_ru' => 'required|string',
+            'slug' => 'required|unique:news,slug|max:255',
             'content_az' => 'required|string',
             'content_en' => 'required|string',
             'content_ru' => 'required|string',
+            'meta_title_az' => 'nullable|string',
+            'meta_title_en' => 'nullable|string',
+            'meta_title_ru' => 'nullable|string',
+            'meta_description_az' => 'nullable|string',
+            'meta_description_en' => 'nullable|string',
+            'meta_description_ru' => 'nullable|string',
+            'content_web_az' => 'nullable|string',
+            'content_web_en' => 'nullable|string',
+            'content_web_ru' => 'nullable|string',
             'banner_image' => 'required|image',
             'slider_image' => 'required|image',
             'is_active' => 'required|boolean',
         ]);
 
         try {
-
             $news = new News();
-
-
             $news->title = $request->input('title_az');
-            $news->content = $request->input('content_az'); // Now the content from Quill is passed correctly
+            $news->content = $request->input('content_az');
+            $news->slug = $request->input('slug');
 
+            // Handle banner image upload
             $banner_image = $request->file('banner_image');
             $banner_image_name = time() . '_' . $banner_image->getClientOriginalName();
             $banner_image->move(public_path('storage/images/news/'), $banner_image_name);
@@ -64,10 +73,31 @@ class SliderNewsController extends Controller
 
             $news->save();
 
-            // Save translations
-            $news->translations()->create(['locale' => 'az', 'title' => $request->input('title_az'), 'content' => $request->input('content_az')]);
-            $news->translations()->create(['locale' => 'en', 'title' => $request->input('title_en'), 'content' => $request->input('content_en')]);
-            $news->translations()->create(['locale' => 'ru', 'title' => $request->input('title_ru'), 'content' => $request->input('content_ru')]);
+            // Save translations for each locale
+            $news->translations()->create([
+                'locale' => 'az',
+                'title' => $request->input('title_az'),
+                'content' => $request->input('content_az'),
+                'meta_title' => $request->input('meta_title_az'),
+                'meta_description' => $request->input('meta_description_az'),
+                'content_web' => $request->input('content_web_az'),
+            ]);
+            $news->translations()->create([
+                'locale' => 'en',
+                'title' => $request->input('title_en'),
+                'content' => $request->input('content_en'),
+                'meta_title' => $request->input('meta_title_en'),
+                'meta_description' => $request->input('meta_description_en'),
+                'content_web' => $request->input('content_web_en'),
+            ]);
+            $news->translations()->create([
+                'locale' => 'ru',
+                'title' => $request->input('title_ru'),
+                'content' => $request->input('content_ru'),
+                'meta_title' => $request->input('meta_title_ru'),
+                'meta_description' => $request->input('meta_description_ru'),
+                'content_web' => $request->input('content_web_ru'),
+            ]);
 
             // Save the slider
             $slider = new HomeScreenSlider();
@@ -99,72 +129,93 @@ class SliderNewsController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Find the slider with its related news and translations
         $slider = HomeScreenSlider::with('news.translations')->findOrFail($id);
 
-        // Validate the incoming request
         $request->validate([
             'title_az' => 'required|string',
             'title_en' => 'required|string',
             'title_ru' => 'required|string',
+            'slug' => 'required|unique:news,slug,' . $slider->news->id . '|max:255',
             'content_az' => 'required|string',
             'content_en' => 'required|string',
             'content_ru' => 'required|string',
-            'banner_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',  // Banner image is optional
-            'slider_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'meta_title_az' => 'nullable|string',
+            'meta_title_en' => 'nullable|string',
+            'meta_title_ru' => 'nullable|string',
+            'meta_description_az' => 'nullable|string',
+            'meta_description_en' => 'nullable|string',
+            'meta_description_ru' => 'nullable|string',
+            'content_web_az' => 'nullable|string',
+            'content_web_en' => 'nullable|string',
+            'content_web_ru' => 'nullable|string',
+            'banner_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
+            'slider_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
             'is_active' => 'required|boolean',
         ]);
 
-        // Update news data
         $news = $slider->news;
+        $news->slug = $request->input('slug');
 
         // Handle optional banner image upload
         if ($request->hasFile('banner_image')) {
-            // Delete the old banner image if it exists
             if ($news->banner_image && file_exists(public_path('storage/images/news/' . $news->banner_image))) {
                 unlink(public_path('storage/images/news/' . $news->banner_image));
             }
 
-            // Save the new banner image
             $banner_image = $request->file('banner_image');
             $banner_image_name = time() . '_' . $banner_image->getClientOriginalName();
             $banner_image->move(public_path('storage/images/news/'), $banner_image_name);
             $news->banner_image = $banner_image_name;
         }
 
-        $news->save();  // Save the updated news
+        $news->save();
 
         // Update translations for each language
         $news->translations()->updateOrCreate(
             ['locale' => 'az'],
-            ['title' => $request->input('title_az'), 'content' => $request->input('content_az')]
+            [
+                'title' => $request->input('title_az'),
+                'content' => $request->input('content_az'),
+                'meta_title' => $request->input('meta_title_az'),
+                'meta_description' => $request->input('meta_description_az'),
+                'content_web' => $request->input('content_web_az'),
+            ]
         );
         $news->translations()->updateOrCreate(
             ['locale' => 'en'],
-            ['title' => $request->input('title_en'), 'content' => $request->input('content_en')]
+            [
+                'title' => $request->input('title_en'),
+                'content' => $request->input('content_en'),
+                'meta_title' => $request->input('meta_title_en'),
+                'meta_description' => $request->input('meta_description_en'),
+                'content_web' => $request->input('content_web_en'),
+            ]
         );
         $news->translations()->updateOrCreate(
             ['locale' => 'ru'],
-            ['title' => $request->input('title_ru'), 'content' => $request->input('content_ru')]
+            [
+                'title' => $request->input('title_ru'),
+                'content' => $request->input('content_ru'),
+                'meta_title' => $request->input('meta_title_ru'),
+                'meta_description' => $request->input('meta_description_ru'),
+                'content_web' => $request->input('content_web_ru'),
+            ]
         );
 
         // Handle optional slider image upload
         if ($request->hasFile('slider_image')) {
-            // Delete the old slider image if it exists
             if ($slider->slider_image && file_exists(public_path('storage/images/home_screen/sliders/' . $slider->slider_image))) {
                 unlink(public_path('storage/images/home_screen/sliders/' . $slider->slider_image));
             }
 
-            // Save the new slider image
             $slider_image = $request->file('slider_image');
             $slider_image_name = time() . '_' . $slider_image->getClientOriginalName();
             $slider_image->move(public_path('storage/images/home_screen/sliders/'), $slider_image_name);
             $slider->slider_image = $slider_image_name;
         }
 
-        // Update slider activation status
         $slider->is_active = $request->input('is_active');
-        $slider->save();  // Save the updated slider
+        $slider->save();
 
         return redirect()->route('admin.sliders-news.index')->with('success', 'Slider and News updated successfully.');
     }
