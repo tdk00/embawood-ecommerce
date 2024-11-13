@@ -120,7 +120,7 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::get('user/account', [ApiAccountController::class, 'getDetails']);
         Route::post('user/account', [ApiAccountController::class, 'update']);
 
-        Route::post('user/save-fcm-token', [UserController::class, 'storeFcmToken']);
+        Route::post('notifications/save-fcm-token', [UserController::class, 'storeFcmToken']);
 
     });
 //Route::get('products', [ApiProductController::class, 'index']);
