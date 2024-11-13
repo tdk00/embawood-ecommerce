@@ -14,7 +14,7 @@ class UserController extends Controller
             'fcm_token' => 'required|string',
         ]);
 
-        $user = Auth::user();
+        $user = Auth::guard('api')->user();
 
         // Check if the FCM token already exists in the database
         $existingToken = FcmToken::where('fcm_token', $request->fcm_token)->first();
