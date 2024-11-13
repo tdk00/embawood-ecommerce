@@ -3,31 +3,12 @@ namespace App\Http\Controllers\Admin\Category;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category\Category;
-use App\Models\User\User;
-use App\Notifications\PushNotificationMobile;
-use App\Services\PushNotificationService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Kreait\Laravel\Firebase\Facades\Firebase;
-use NotificationChannels\Fcm\FcmMessage;
-use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
 
 class CategoryController extends Controller
 {
-    protected $pushNotificationService;
-    public function __construct(PushNotificationService $pushNotificationService)
-    {
-        $this->pushNotificationService = $pushNotificationService;
-    }
     public function index()
     {
-        $title = 'Your Notification Title';
-        $body = 'This is the notification body.';
-
-        $user = User::find(39);
-
-        $this->pushNotificationService->sendPushNotification($user, $title, $body);
-
         $categories = Category::orderBy('id', 'desc')->get();
         return view('admin.pages.categories.index', compact('categories'));
     }

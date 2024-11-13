@@ -10,6 +10,7 @@ use App\Models\Product\Favorite;
 use App\Models\Product\Product;
 use App\Models\Product\ProductImage;
 use App\Models\User\User;
+use App\Services\PushNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,12 @@ class OrderController extends Controller
         'shipping',
         'delivered'
     ];
+
+    protected $pushNotificationService;
+    public function __construct(PushNotificationService $pushNotificationService)
+    {
+        $this->pushNotificationService = $pushNotificationService;
+    }
     public function index()
     {
         // You can add filtering and pagination here
@@ -112,6 +119,23 @@ class OrderController extends Controller
             'status' => $validated['status'],
             'changed_at' => now(),
         ]);
+
+        // Define the notification title and body in Azerbaijani
+        $statusMessages = [
+            'pending' => 'Sifarişiniz gözləyir.',
+            'preparing' => 'Sifarişiniz hazırlanır.',
+            'shipping' => 'Sifarişiniz çatdırılma yolundadır.',
+            'delivered' => 'Sifarişiniz çatdırıldı.',
+        ];
+
+        $title = 'Sifariş vəziyyəti yeniləndi';
+        $body = $statusMessages[$validated['status']] ?? 'Sifarişinizin statusu yeniləndi.';
+
+        // Find the user associated with the order
+        $user = $order->user; // Assuming the Order model has a relationship with User
+
+        // Send the notification
+        $this->pushNotificationService->sendPushNotification($user, $title, $body);
 
         // Return a JSON response indicating success
         return response()->json(['success' => true, 'message' => 'Order status updated successfully!']);
