@@ -7,6 +7,7 @@ use App\Http\Requests\Product\ProductFilterRequest;
 use App\Models\Product\Product;
 use App\Models\Product\ProductImage;
 use App\Services\Bonus\BonusService;
+use App\Services\CreditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -14,10 +15,12 @@ use Illuminate\Validation\ValidationException;
 class ApiProductController extends Controller
 {
     protected $bonusService;
+    protected $creditService;
 
-    public function __construct(BonusService $bonusService)
+    public function __construct(BonusService $bonusService, CreditService $creditService)
     {
         $this->bonusService = $bonusService;
+        $this->creditService = $creditService;
     }
 
     public function viewProduct(Request $request)
@@ -106,6 +109,7 @@ class ApiProductController extends Controller
 
     private function prepareProductDetails($product)
     {
+        $creditOptions = $this->creditService->getOptions($product->final_price);
         return [
             'product' => $product->only([
                 'id', 'name', 'sku', 'slug', 'description', 'price', 'final_price', 'stock', 'discount',
@@ -119,6 +123,7 @@ class ApiProductController extends Controller
             'similar_products' => $this->getSimilarProducts($product),
             'purchased_together_products' => $this->getPurchasedTogetherProducts($product),
             'top_list' => $this->getTopList($product),
+            'credit_options' => $creditOptions,
         ];
     }
     private function getImages( $product )

@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\Product\SetProductController;
 use App\Http\Controllers\Admin\ProductWidgets\MostViewedProductController;
 use App\Http\Controllers\Admin\ProductWidgets\NewProductController;
 use App\Http\Controllers\Admin\Review\ReviewControllerAdmin;
+use App\Http\Controllers\Admin\Settings\SettingsController;
 use App\Http\Controllers\Admin\Support\VideoCallRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -197,6 +198,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('notifications', NotificationController::class);
     Route::post('notifications/{notification}/send', [NotificationController::class, 'sendNotification'])->name('notifications.send');
+
+    Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
+    Route::post('settings', [SettingsController::class, 'update'])->name('settings.update');
 
 });
 

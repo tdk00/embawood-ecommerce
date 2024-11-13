@@ -30,6 +30,7 @@ use App\Http\Controllers\ProductWidgets\ApiMostViewedProductController;
 use App\Http\Controllers\ProductWidgets\ApiNewProductController;
 use App\Http\Controllers\ProductWidgets\ApiSelectedProductController;
 use App\Http\Controllers\Search\ApiProductSearchController;
+use App\Http\Controllers\Settings\ApiSettingsController;
 use App\Http\Controllers\Support\ApiVideoCallRequestController;
 use App\Http\Controllers\User\ApiAccountController;
 use App\Http\Controllers\User\AuthController;
@@ -121,6 +122,11 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::post('user/account', [ApiAccountController::class, 'update']);
 
         Route::get('notifications/save-fcm-token', [UserController::class, 'storeFcmToken']);
+
+
+        Route::get('settings', [ApiSettingsController::class, 'index']);
+
+
 
     });
 //Route::get('products', [ApiProductController::class, 'index']);
