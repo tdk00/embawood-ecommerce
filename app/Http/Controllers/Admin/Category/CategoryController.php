@@ -15,25 +15,16 @@ class CategoryController extends Controller
 {
     public function index()
     {
-//        $user = User::find(37); // Get the user to notify
-//        $user->notify(new PushNotificationMobile('Title', 'Message body'));
-        $fcmMessage = FcmMessage::create()
-            ->token('f51aZHmERcadEZi6TaDFoC:APA91bH_bMFrjV_Wsep5w7G7BRQ_s-wRh5vn2xVNBc_r55eVtGv5ZxsEavhQVz3xeA23CD4l3maBLuD5oOyStw6YEZhhz071CEoE9uD6o8_7mVh_l6nnsPg')
-            ->notification(
-                FcmNotification::create()
-                    ->title("aaaa")
-                    ->body("ddddd")
-            );
+        $user = User::find(39); // Get the user to notify
+        $user->notify(new PushNotificationMobile('Title', 'Message body'));
+//        $fcmMessage = FcmMessage::create()
+//            ->token('f51aZHmERcadEZi6TaDFoC:APA91bH_bMFrjV_Wsep5w7G7BRQ_s-wRh5vn2xVNBc_r55eVtGv5ZxsEavhQVz3xeA23CD4l3maBLuD5oOyStw6YEZhhz071CEoE9uD6o8_7mVh_l6nnsPg')
+//            ->notification(
+//                FcmNotification::create()
+//                    ->title("aaaa")
+//                    ->body("ddddd")
+//            );
 
-
-// Try sending the message and log any potential errors
-        try {
-            $response = Firebase::messaging()->send($fcmMessage);
-//            $response = app('fcm')->send($fcmMessage);
-            Log::info('FCM Response:', ['response' => $response]);
-        } catch (\Exception $e) {
-            Log::error('FCM Notification failed', ['error' => $e->getMessage()]);
-        }
 
         $categories = Category::orderBy('id', 'desc')->get();
         return view('admin.pages.categories.index', compact('categories'));

@@ -31,11 +31,11 @@ class PushNotificationMobile extends Notification
         // Loop through each FCM token and create a message
         foreach ($notifiable->fcmTokens as $token) {
             $messages[] = FcmMessage::create()
-                ->setToken($token->token)
-                ->setNotification(
+                ->token($token->fcm_token)
+                ->notification(
                     FcmNotification::create()
-                        ->setTitle($this->title)
-                        ->setBody($this->body)
+                        ->title($this->title)
+                        ->body($this->body)
                 );
         }
 
