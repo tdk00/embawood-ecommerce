@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\Product\RelatedProductsController;
 use App\Http\Controllers\Admin\Product\SetProductController;
 use App\Http\Controllers\Admin\ProductWidgets\MostViewedProductController;
 use App\Http\Controllers\Admin\ProductWidgets\NewProductController;
+use App\Http\Controllers\Admin\ProductWidgets\SpecialOfferProductController;
 use App\Http\Controllers\Admin\Review\ReviewControllerAdmin;
 use App\Http\Controllers\Admin\Settings\SettingsController;
 use App\Http\Controllers\Admin\Support\VideoCallRequestController;
@@ -133,6 +134,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('most-viewed-products/{mostViewedProduct}/edit', [MostViewedProductController::class, 'edit'])->name('most-viewed-products.edit');
     Route::put('most-viewed-products/{mostViewedProduct}', [MostViewedProductController::class, 'update'])->name('most-viewed-products.update');
     Route::delete('most-viewed-products/{mostViewedProduct}', [MostViewedProductController::class, 'destroy'])->name('most-viewed-products.destroy');
+
+    Route::get('special-offer-products', [SpecialOfferProductController::class, 'index'])->name('special-offer-products.index');
+    Route::get('special-offer-products/create', [SpecialOfferProductController::class, 'create'])->name('special-offer-products.create');
+    Route::post('special-offer-products', [SpecialOfferProductController::class, 'store'])->name('special-offer-products.store');
+    Route::get('special-offer-products/{specialOfferProduct}/edit', [SpecialOfferProductController::class, 'edit'])->name('special-offer-products.edit');
+    Route::put('special-offer-products/{specialOfferProduct}', [SpecialOfferProductController::class, 'update'])->name('special-offer-products.update');
+    Route::delete('special-offer-products/{specialOfferProduct}', [SpecialOfferProductController::class, 'destroy'])->name('special-offer-products.destroy');
+
+
 
     Route::resource('coupons', CouponController::class);
 

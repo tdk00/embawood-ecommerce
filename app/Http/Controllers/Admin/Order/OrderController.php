@@ -6,6 +6,7 @@ use App\Models\Basket\BasketItem;
 use App\Models\Category\Subcategory;
 use App\Models\Checkout\Order;
 use App\Models\Checkout\OrderStatusHistory;
+use App\Models\Notification\Notification;
 use App\Models\Product\Favorite;
 use App\Models\Product\Product;
 use App\Models\Product\ProductImage;
@@ -135,6 +136,13 @@ class OrderController extends Controller
         $user = $order->user; // Assuming the Order model has a relationship with User
 
         // Send the notification
+        Notification::create([
+            'title' => $title,
+            'message' => $body,
+            'status' => 'sent',
+            'sent_at' => now(),
+            'user_id' => $user->id,
+        ]);
         $this->pushNotificationService->sendPushNotification($user, $title, $body);
 
         // Return a JSON response indicating success

@@ -23,12 +23,14 @@ use App\Http\Controllers\Ideas\ApiIdeaWidgetTabController;
 use App\Http\Controllers\Ideas\ApiSubIdeaController;
 use App\Http\Controllers\Ideas\ApiSubIdeaItemController;
 use App\Http\Controllers\News\ApiNewsController;
+use App\Http\Controllers\Notification\ApiNotificationController;
 use App\Http\Controllers\Product\ApiFavoriteController;
 use App\Http\Controllers\Product\ApiProductController;
 use App\Http\Controllers\Product\ApiReviewController;
 use App\Http\Controllers\ProductWidgets\ApiMostViewedProductController;
 use App\Http\Controllers\ProductWidgets\ApiNewProductController;
 use App\Http\Controllers\ProductWidgets\ApiSelectedProductController;
+use App\Http\Controllers\ProductWidgets\ApiSpecialOfferProductController;
 use App\Http\Controllers\Search\ApiProductSearchController;
 use App\Http\Controllers\Settings\ApiSettingsController;
 use App\Http\Controllers\Support\ApiVideoCallRequestController;
@@ -123,6 +125,8 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
         Route::get('notifications/save-fcm-token', [UserController::class, 'storeFcmToken']);
 
+        Route::get('user/notifications', [ApiNotificationController::class, 'getUserNotifications']);
+
 
         Route::get('settings', [ApiSettingsController::class, 'index']);
 
@@ -147,6 +151,9 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
     Route::get('most-viewed-products', [ApiMostViewedProductController::class, 'index']);
     Route::get('most-viewed-products/{id}', [ApiMostViewedProductController::class, 'show']);
+
+    Route::get('special-offer-products', [ApiSpecialOfferProductController::class, 'index']);
+    Route::get('special-offer-products/{id}', [ApiSpecialOfferProductController::class, 'show']);
 
     Route::get('selected-products', [ApiSelectedProductController::class, 'index']);
     Route::get('selected-products/{id}', [ApiSelectedProductController::class, 'show']);
