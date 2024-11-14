@@ -208,4 +208,4 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 Route::get('/category/{slug}', [ApiCategoryController::class, 'showBySlug']);
 
-Route::post('video_call_requests', [ApiVideoCallRequestController::class, 'store']);
+Route::get('video_call_requests', [ApiVideoCallRequestController::class, 'store']);
