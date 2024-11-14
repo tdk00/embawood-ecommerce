@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AboutUs extends Model
 {
-    protected $fillable = [];
+    protected $fillable = ['banner_image', 'description_web']; // Add new fields here
 
     public function translations()
     {
@@ -25,5 +25,14 @@ class AboutUs extends Model
         $locale = app()->getLocale();
         $translation = $this->translations->where('locale', $locale)->first();
         return $translation ? $translation->description : "";
+    }
+
+    // Optionally, add accessor for description_web if translations are needed
+    public function getDescriptionWebAttribute($value)
+    {
+        // Check if translations are necessary, if so, retrieve from translations table
+        $locale = app()->getLocale();
+        $translation = $this->translations->where('locale', $locale)->first();
+        return $translation ? $translation->description_web : $value;
     }
 }
