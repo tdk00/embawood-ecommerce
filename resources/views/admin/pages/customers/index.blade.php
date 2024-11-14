@@ -97,6 +97,8 @@
                                 </th>
                                 <th class="min-w-125px">Ad</th>
                                 <th class="min-w-125px">Telefon</th>
+                                <th class="min-w-100px sortable" data-sort="order_count">Sifariş sayı</th>
+                                <th class="min-w-100px sortable" data-sort="order_total">Sifariş məbləği</th>
                                 <th class="min-w-125px">Tarix</th>
                                 <th class="text-end min-w-70px">Əməliyyat</th>
                             </tr>
@@ -116,6 +118,8 @@
                                     <td>
                                         <a href="#" class="text-gray-600 text-hover-primary mb-1">{{$customer->phone}}</a>
                                     </td>
+                                    <td>{{ $customer->orders_count }}</td>
+                                    <td>{{ number_format($customer->orders_sum_total, 2) }}</td>
                                     <td>{{$customer->created_at}}</td>
                                     <td class="text-end">
                                         <a href="#" class="btn btn-sm btn-light btn-flex btn-center btn-active-light-primary" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions

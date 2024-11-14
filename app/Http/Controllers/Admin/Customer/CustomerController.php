@@ -20,30 +20,10 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        // You can add filtering and pagination here
-        $customers = User::orderBy('id', 'desc')->get();
-//
-//        $transformedNewProducts = $products->map(function ($product) {
-//
-//            $product->image = url('storage/images/products/' . $product->main_image);
-//            $product->image_hover = url('storage/images/products/' . $product->hover_image);
-//            $productData = [
-//                'id' => $product->id,
-//                'name' => $product->name,
-//                'image' => $product->image,
-//                'category_name' => $product->subcategories()?->first()?->name ?? "",
-//                'discount' => $product->discount,
-//                'discount_ends_at' => $product->discount_ends_at,
-//                'price' => $product->price,
-//                'final_price' => $product->final_price,
-//                'average_rating' => $product->average_rating,
-//                'image_hover' => $product->image_hover,
-//                'is_in_basket' => $product->is_in_basket,
-//                'is_favorite' => $product->is_favorite,
-//                'slug' => $product->slug,
-//            ];
-//            return $productData;
-//        });
+        $customers = User::withCount('orders')
+            ->withSum('orders', 'total')
+            ->orderBy('id', 'desc')
+            ->get();
 
         return view('admin.pages.customers.index', compact('customers'));
     }
