@@ -714,8 +714,20 @@ class BasketController extends Controller
 
             // If coupon is valid, apply discount
             if ($basket['coupon_valid']) {
-                // Calculate the discount amount based on the coupon's discount percentage
-                $basket['coupon_discount_amount'] = ($basket['final_total'] * $coupon->discount_percentage) / 100;
+                // Initialize the discount amount
+                $basket['coupon_discount_amount'] = 0;
+
+                // Check the type of discount and calculate accordingly
+                if ($coupon->type === 'percentage') {
+                    // Calculate the discount amount based on the coupon's discount percentage
+                    $basket['coupon_discount_amount'] = ($basket['final_total'] * $coupon->discount_percentage) / 100;
+                } elseif ($coupon->type === 'amount') {
+                    // Use the fixed discount amount
+                    $basket['coupon_discount_amount'] = $coupon->amount;
+                }
+
+                // Ensure that the discount doesn't exceed the final total
+                $basket['coupon_discount_amount'] = min($basket['coupon_discount_amount'], $basket['final_total']);
 
                 // Subtract the discount from the final total
                 $basket['final_total'] -= $basket['coupon_discount_amount'];

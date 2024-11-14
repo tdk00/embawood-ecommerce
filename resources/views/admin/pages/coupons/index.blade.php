@@ -20,7 +20,7 @@
                     <thead>
                     <tr>
                         <th>Code</th>
-                        <th>Discount (%)</th>
+                        <th>Discount</th>
                         <th>Usage Limit</th>
                         <th>Usage Count</th>
                         <th>Status</th>
@@ -31,7 +31,13 @@
                     @foreach($coupons as $coupon)
                         <tr>
                             <td>{{ $coupon->code }}</td>
-                            <td>{{ $coupon->discount_percentage }}</td>
+                            <td>
+                                @if($coupon->type === 'percentage')
+                                    {{ $coupon->discount_percentage }}%
+                                @elseif($coupon->type === 'amount')
+                                    {{ number_format($coupon->amount, 2) }} AZN
+                                @endif
+                            </td>
                             <td>{{ $coupon->usage_limit }}</td>
                             <td>{{ $coupon->usage_count }}</td>
                             <td>{{ $coupon->is_active ? 'Active' : 'Inactive' }}</td>
@@ -48,7 +54,6 @@
                     </tbody>
                 </table>
 
-            {{ $coupons->links() }} <!-- Pagination -->
             </div>
         </div>
     </div>

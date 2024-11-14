@@ -42,15 +42,19 @@ class SettingsService
     public function initializeDefaults()
     {
         $defaultSettings = [
-            'show_bonus_in_app' => 'false', // Default value as a string (can also be "true")
+            'show_bonus_in_app' => 'false',
+            'whatsapp_number' => '1234567890', // Default value as a string (can also be "true")
         ];
 
-        foreach ($defaultSettings as $key => $value) {
-            Setting::firstOrCreate(
-                ['key' => $key],
-                ['value' => $value, 'type' => 'boolean']
-            );
-        }
+        Setting::firstOrCreate(
+            ['key' => 'show_bonus_in_app'],
+            ['value' => 'false', 'type' => 'boolean']
+        );
+
+        Setting::firstOrCreate(
+            ['key' => 'whatsapp_number'],
+            ['value' => '1234567890', 'type' => 'text']
+        );
 
         // Clear cache to ensure defaults are immediately available
         $this->clearCache();

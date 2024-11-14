@@ -17,6 +17,7 @@ class ApiSettingsController extends Controller
         // Convert any values to appropriate types, e.g., boolean
         $formattedSettings = [
             'show_bonus_in_app' => filter_var($settings['show_bonus_in_app'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'whatsapp_number' => $settings['whatsapp_number'] ?? '',
             // Add more settings as needed
         ];
 
