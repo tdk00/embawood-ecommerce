@@ -233,6 +233,8 @@ class SetProductController extends Controller
             'description_web_en' => 'nullable|string',
             'description_web_ru' => 'nullable|string',
             'main_image' => 'nullable|image|mimes:jpg,jpeg,png,bmp,webp,svg|max:10240',
+            'badge_file' => 'nullable|image|mimes:svg|max:2000',
+            'badge_file_2' => 'nullable|image|mimes:svg|max:2000',
             'color' => 'nullable|string',
             'selected_sub_category_id' => 'exists:subcategories,id',
             'selected_products' => 'nullable|array', // Validation for selected products
@@ -296,6 +298,30 @@ class SetProductController extends Controller
                 $file->storeAs('public/images/products/', $filename);
                 $product->main_image = $filename;
                 $product->save();
+            }
+
+
+
+            if ($request->hasFile('badge_file')) {
+//                Storage::delete('public/images/badge/' . $product->badge_1);
+                $file = $request->file('badge_file');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/images/badge/', $filename);
+                $product->update([
+                    'badge_1' => $filename
+                ]);
+
+            }
+
+            // Handle hover image update if provided
+            if ($request->hasFile('badge_file_2')) {
+//                Storage::delete('public/images/badge/' . $product->badge_1);
+                $file = $request->file('badge_file_2');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('public/images/badge/', $filename);
+                $product->update([
+                    'badge_2' => $filename
+                ]);
             }
 
 

@@ -74,6 +74,7 @@
                                 <th class="min-w-250px">Kateqoriya</th>
                                 <th class="min-w-250px">Sıra</th>
                                 <th class="min-w-250px">Discount</th>
+                                <th class="min-w-100px">Stiker</th>
                                 <th class="text-end min-w-70px">Əməliyyatlar</th>
                             </tr>
                             </thead>
@@ -113,6 +114,10 @@
                                     <td>
                                         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#applyDiscountModal"
                                                 data-subcategory-id="{{ $subcategory->id }}">Apply Discount</button>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#applyBadgeModal"
+                                                data-badge-subcategory-id="{{ $subcategory->id }}">Stiker tətbiqi</button>
                                     </td>
                                     <td class="text-end">
                                         <a href="#" class="btn btn-sm btn-light btn-active-light-primary btn-flex btn-center" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">Actions
@@ -161,6 +166,123 @@
                             <input type="date" class="form-control" name="discount_ends_at" id="discount_ends_at">
                         </div>
                         <input type="hidden" name="subcategory_id" id="subcategory_id">
+                        <button type="submit" class="btn btn-primary">Tətbiq Et</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="applyBadgeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Alt Kateqoriya Məhsullarına Stiker Tətbiq Edin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Bağla"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="applyBadgeForm" action="" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="card card-flush py-4">
+                            <!--begin::Card header-->
+                            <div class="card-header">
+                                <!--begin::Card title-->
+                                <div class="card-title">
+                                    <h2>Stiker 1</h2>
+                                </div>
+                                <!--end::Card title-->
+                            </div>
+                            <!--end::Card header-->
+                            <!--begin::Card body-->
+                            <div class="card-body text-center pt-0">
+                                <!--begin::Image input-->
+                                <!--begin::Image input placeholder-->
+                                <style>
+                                    .image-input-placeholder { background-image: url('{{ asset('assets/media/svg/files/blank-image.svg') }}'); }
+                                    [data-bs-theme="dark"] .image-input-placeholder { background-image: url('{{ asset('assets/media/svg/files/blank-image-dark.svg') }}'); }
+                                </style>
+                                <!--end::Image input placeholder-->
+                                <div class="image-input image-input-outline
+                                image-input-placeholder mb-3"
+                                     data-kt-image-input="true">
+                                    <!--begin::Preview existing avatar-->
+                                    <div class="image-input-wrapper w-150px h-150px">
+                                    </div>
+                                    <!--end::Preview existing avatar-->
+                                    <!--begin::Label-->
+                                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                           data-kt-image-input-action="change"
+                                           data-bs-toggle="tooltip"
+                                           title="Change avatar">
+                                        <i class="ki-duotone ki-pencil fs-7">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <!--begin::Inputs-->
+                                        <input type="file" name="badge_file" accept=".svg" />
+                                        <input type="hidden" name="badge_file_remove" />
+                                        <!--end::Inputs-->
+                                    </label>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Image input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Yükləmək üçün şəkili seçin.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Card body-->
+                        </div>
+                        <div class="card card-flush py-4">
+                            <!--begin::Card header-->
+                            <div class="card-header">
+                                <!--begin::Card title-->
+                                <div class="card-title">
+                                    <h2>Stiker 2</h2>
+                                </div>
+                                <!--end::Card title-->
+                            </div>
+                            <!--end::Card header-->
+                            <!--begin::Card body-->
+                            <div class="card-body text-center pt-0">
+                                <!--begin::Image input-->
+                                <!--begin::Image input placeholder-->
+                                <style>
+                                    .image-input-placeholder { background-image: url('{{ asset('assets/media/svg/files/blank-image.svg') }}'); }
+                                    [data-bs-theme="dark"] .image-input-placeholder { background-image: url('{{ asset('assets/media/svg/files/blank-image-dark.svg') }}'); }
+                                </style>
+                                <!--end::Image input placeholder-->
+                                <div class="image-input image-input-outline
+                                image-input-placeholder mb-3"
+                                     data-kt-image-input="true">
+                                    <!--begin::Preview existing avatar-->
+                                    <div class="image-input-wrapper w-150px h-150px">
+                                    </div>
+                                    <!--end::Preview existing avatar-->
+                                    <!--begin::Label-->
+                                    <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                           data-kt-image-input-action="change"
+                                           data-bs-toggle="tooltip"
+                                           title="Change avatar">
+                                        <i class="ki-duotone ki-pencil fs-7">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        <!--begin::Inputs-->
+                                        <input type="file" name="badge_file_2" accept=".svg" />
+                                        <input type="hidden" name="badge_file_2_remove" />
+                                        <!--end::Inputs-->
+                                    </label>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Image input-->
+                                <!--begin::Description-->
+                                <div class="text-muted fs-7">Yükləmək üçün şəkili seçin.</div>
+                                <!--end::Description-->
+                            </div>
+                            <!--end::Card body-->
+                        </div>
+                        <input type="hidden" name="badge_subcategory_id" id="badge_subcategory_id">
                         <button type="submit" class="btn btn-primary">Tətbiq Et</button>
                     </form>
                 </div>
@@ -266,6 +388,26 @@
 
                 // Set the hidden subcategory_id field value
                 document.getElementById('subcategory_id').value = subcategoryId;
+            });
+        });
+    </script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var applyBadgeModal = document.getElementById('applyBadgeModal');
+            applyBadgeModal.addEventListener('show.bs.modal', function (event) {
+
+                var badgeButton = event.relatedTarget;
+                var badgeSubcategoryId = badgeButton.getAttribute('data-badge-subcategory-id');
+
+                var badgeForm = document.getElementById('applyBadgeForm');
+
+                badgeForm.action = "/admin/subcategories/" + badgeSubcategoryId + "/apply-badge";
+
+                // Set the hidden subcategory_id field value
+                document.getElementById('badge_subcategory_id').value = badgeSubcategoryId;
             });
         });
     </script>

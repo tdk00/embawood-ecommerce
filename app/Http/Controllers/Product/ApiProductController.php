@@ -114,7 +114,7 @@ class ApiProductController extends Controller
             'product' => $product->only([
                 'id', 'name', 'sku', 'slug', 'description', 'price', 'final_price', 'stock', 'discount',
                 'discount_ends_at', 'is_set', 'is_in_basket', 'is_favorite', 'remaining_discount_seconds',
-                'has_unlimited_discount', 'has_limited_discount', 'average_rating', 'badge'
+                'has_unlimited_discount', 'has_limited_discount', 'average_rating', 'badge_1', 'badge_2'
             ]),
             'set_modules' => $this->getSetModules($product),
             'images' => $this->getImages($product) ,
@@ -124,6 +124,8 @@ class ApiProductController extends Controller
             'purchased_together_products' => $this->getPurchasedTogetherProducts($product),
             'top_list' => $this->getTopList($product),
             'credit_options' => $creditOptions,
+            'badge' => $product->badge_1 ? url('storage/images/badge/' . $product->badge_1) : null,
+            'badge2' => $product->badge_2 ? url('storage/images/badge/' . $product->badge_2) : null,
         ];
     }
     private function getImages( $product )
@@ -159,7 +161,8 @@ class ApiProductController extends Controller
                     'has_unlimited_discount' => $module->has_unlimited_discount,
                     'has_limited_discount' => $module->has_limited_discount,
                     'quantity' => $module?->pivot?->quantity ?? 0,
-                    'badge' => url('storage/images/badge/' . $module->badge)
+                    'badge' => $module->badge_1 ? url('storage/images/badge/' . $module->badge_1) : null,
+                    'badge2' => $module->badge_2 ? url('storage/images/badge/' . $module->badge_2) : null,
                 ];
             });
         }
@@ -212,7 +215,8 @@ class ApiProductController extends Controller
                 'remaining_discount_seconds' => $similiarProduct->remaining_discount_seconds,
                 'has_unlimited_discount' => $similiarProduct->has_unlimited_discount,
                 'has_limited_discount' => $similiarProduct->has_limited_discount,
-                'badge' => url('storage/images/badge/' . $similiarProduct->badge)
+                'badge' => $similiarProduct->badge_1 ? url('storage/images/badge/' . $similiarProduct->badge_1) : null,
+                'badge2' => $similiarProduct->badge_2 ? url('storage/images/badge/' . $similiarProduct->badge_2) : null,
             ];
         });
     }
@@ -236,7 +240,8 @@ class ApiProductController extends Controller
                 'remaining_discount_seconds' => $purchasedTogetherProduct->remaining_discount_seconds,
                 'has_unlimited_discount' => $purchasedTogetherProduct->has_unlimited_discount,
                 'has_limited_discount' => $purchasedTogetherProduct->has_limited_discount,
-                'badge' => url('storage/images/badge/' . $purchasedTogetherProduct->badge)
+                'badge' => $purchasedTogetherProduct->badge_1 ? url('storage/images/badge/' . $purchasedTogetherProduct->badge_1) : null,
+                'badge2' => $purchasedTogetherProduct->badge_2 ? url('storage/images/badge/' . $purchasedTogetherProduct->badge_2) : null,
             ];
         });
     }
@@ -263,7 +268,8 @@ class ApiProductController extends Controller
                     'remaining_discount_seconds' => $topListProduct->product->remaining_discount_seconds,
                     'has_unlimited_discount' => $topListProduct->product->has_unlimited_discount,
                     'has_limited_discount' => $topListProduct->product->has_limited_discount,
-                    'badge' => url('storage/images/badge/' . $topListProduct->product->badge)
+                    'badge' => $topListProduct->badge_1 ? url('storage/images/badge/' . $topListProduct->badge_1) : null,
+                    'badge2' => $topListProduct->badge_2 ? url('storage/images/badge/' . $topListProduct->badge_2) : null,
                 ];
             });
 
@@ -339,7 +345,8 @@ class ApiProductController extends Controller
                 'remaining_discount_seconds' => $product->remaining_discount_seconds,
                 'has_unlimited_discount' => $product->has_unlimited_discount,
                 'has_limited_discount' => $product->has_limited_discount,
-                'badge' => url('storage/images/badge/' . $product->badge)
+                'badge' => $product->badge_1 ? url('storage/images/badge/' . $product->badge_1) : null,
+                'badge2' => $product->badge_2 ? url('storage/images/badge/' . $product->badge_2) : null,
             ];
         });
 

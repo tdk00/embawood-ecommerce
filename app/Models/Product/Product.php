@@ -18,7 +18,7 @@ class Product extends Model
 
     protected $fillable = [
         'parent_id', 'name', 'sku', 'description', 'price', 'stock', 'discount',
-        'discount_ends_at', 'is_set', 'color', 'is_active', 'slug'
+        'discount_ends_at', 'is_set', 'color', 'badge_1', 'badge_2', 'is_active', 'slug'
     ];
 
 
@@ -92,12 +92,12 @@ class Product extends Model
         return $this->hasMany(ProductImage::class);
     }
 
-    public function getBadgeAttribute()
-    {
-        // Get the active badge from the Badge model
-        $activeBadge = Badge::getActiveBadge();
-        return $activeBadge ? $activeBadge->badge_image : null;
-    }
+//    public function getBadgeAttribute()
+//    {
+//        // Get the active badge from the Badge model
+//        $activeBadge = Badge::getActiveBadge();
+//        return $activeBadge ? $activeBadge->badge_image : null;
+//    }
 
     public function getCreditCardsAttribute()
     {

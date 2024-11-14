@@ -175,6 +175,42 @@ class SubCategoryController extends Controller
         return redirect()->route('admin.subcategories.index')->with('success', 'Discount applied successfully.');
     }
 
+    public function applyBadgeToProducts(Request $request, $subcategoryId)
+    {
+        $messages = [
+        ];
+
+        $validated = $request->validate([
+            'badge_file' => 'nullable|image|mimes:svg|max:2000',
+            'badge_file_2' => 'nullable|image|mimes:svg|max:2000',
+        ], $messages);
+        $subcategory = Subcategory::findOrFail($subcategoryId);
+
+        if ($request->hasFile('badge_file')) {
+//                Storage::delete('public/images/badge/' . $product->badge_1);
+            $file = $request->file('badge_file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/images/badge/', $filename);
+            $subcategory->products()->update([
+                'badge_1' => $filename, // Will be null if not provided
+            ]);
+
+        }
+
+        // Handle hover image update if provided
+        if ($request->hasFile('badge_file_2')) {
+//                Storage::delete('public/images/badge/' . $product->badge_1);
+            $file = $request->file('badge_file_2');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/images/badge/', $filename);
+            $subcategory->products()->update([
+                'badge_2' => $filename, // Will be null if not provided
+            ]);
+        }
+
+        return redirect()->route('admin.subcategories.index')->with('success', 'Stiker şəkli yeniləndi.');
+    }
+
     public function bulkDeactivate(Request $request)
     {
         // Validate the input

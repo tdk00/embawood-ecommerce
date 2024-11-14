@@ -90,6 +90,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('subcategories/update/{subcategory}', [SubCategoryController::class, 'update'])->name('subcategories.update');
     Route::post('subcategories/update-order', [SubcategoryController::class, 'updateSubcategoryOrder'])->name('subcategories.updateOrder');
     Route::post('subcategories/{id}/apply-discount', [SubCategoryController::class, 'applyDiscountToProducts'])->name('subcategories.apply_discount');
+    Route::post('subcategories/{id}/apply-badge', [SubCategoryController::class, 'applyBadgeToProducts'])->name('subcategories.apply_badge');
     Route::post('subcategories/bulk-deactivate', [SubCategoryController::class, 'bulkDeactivate'])->name('subcategories.bulk-deactivate');
 
 

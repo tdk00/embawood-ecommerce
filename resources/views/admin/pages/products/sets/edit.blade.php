@@ -163,6 +163,11 @@
                             <li class="nav-item">
                                 <a  target="_blank" class="nav-link text-active-primary pb-4" href="{{  route('admin.products.images.index', $product->id) }}">Şəkillər</a>
                             </li>
+                            <!--begin:::Tab item-->
+                            <li class="nav-item">
+                                <a class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_badges">Stiker şəkillər</a>
+                            </li>
+                            <!--end:::Tab item-->
                             <!--end:::Tab item-->
                             <li class="nav-item">
                                 <a target="_blank" class="nav-link text-active-primary pb-4" data-bs-toggle="tab" href="#kt_ecommerce_add_product_modules">Modullar</a>
@@ -312,6 +317,166 @@
                             </div>
                             <!--end::Tab pane-->
 
+                            <!--begin::Tab pane-->
+                            <div class="tab-pane fade" id="kt_ecommerce_add_product_badges" role="tab-panel">
+                                <div class="d-flex flex-column gap-7 gap-lg-10">
+                                    <div class="card card-flush py-4">
+                                        <!--begin::Card header-->
+                                        <div class="card-header">
+                                            <!--begin::Card title-->
+                                            <div class="card-title">
+                                                <h2>Stiker 1</h2>
+                                            </div>
+                                            <!--end::Card title-->
+                                        </div>
+                                        <!--end::Card header-->
+                                        <!--begin::Card body-->
+                                        <div class="card-body text-center pt-0">
+                                            <!--begin::Image input-->
+                                            <!--begin::Image input placeholder-->
+                                            <style>
+                                                .image-input-placeholder { background-image: url('{{ asset('assets/media/svg/files/blank-image.svg') }}'); }
+                                                [data-bs-theme="dark"] .image-input-placeholder { background-image: url('{{ asset('assets/media/svg/files/blank-image-dark.svg') }}'); }
+                                            </style>
+                                            <!--end::Image input placeholder-->
+                                            <div class="image-input image-input-outline
+                                        @if($product->badge_1) image-input-filled @endif
+                                                image-input-placeholder mb-3"
+                                                 data-kt-image-input="true">
+                                                <!--begin::Preview existing avatar-->
+                                                <div class="image-input-wrapper w-150px h-150px"
+                                                     @if($product->badge_1)
+                                                     style="background-image: url('{{ asset('storage/images/badge/' . $product->badge_1) }}')"
+                                                    @endif>
+                                                </div>
+                                                <!--end::Preview existing avatar-->
+                                                <!--begin::Label-->
+                                                <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                       data-kt-image-input-action="change"
+                                                       data-bs-toggle="tooltip"
+                                                       title="Change avatar">
+                                                    <i class="ki-duotone ki-pencil fs-7">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                    </i>
+                                                    <!--begin::Inputs-->
+                                                    <input type="file" name="badge_1" accept=".svg" />
+                                                    <input type="hidden" name="badge_1_remove" />
+                                                    <!--end::Inputs-->
+                                                </label>
+                                                <!--end::Label-->
+                                                <!--begin::Cancel-->
+                                                @if($product->badge_1)
+                                                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                          data-kt-image-input-action="cancel"
+                                                          data-bs-toggle="tooltip"
+                                                          title="Cancel avatar">
+                                        <i class="ki-duotone ki-cross fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                                    <!--end::Cancel-->
+                                                    <!--begin::Remove-->
+                                                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                          data-kt-image-input-action="remove"
+                                                          data-bs-toggle="tooltip"
+                                                          title="Remove avatar">
+                                        <i class="ki-duotone ki-cross fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                                    <!--end::Remove-->
+                                                @endif
+                                            </div>
+                                            <!--end::Image input-->
+                                            <!--begin::Description-->
+                                            <div class="text-muted fs-7">Yükləmək üçün şəkili seçin.</div>
+                                            <!--end::Description-->
+                                        </div>
+                                        <!--end::Card body-->
+                                    </div>
+                                    <div class="card card-flush py-4">
+                                        <!--begin::Card header-->
+                                        <div class="card-header">
+                                            <!--begin::Card title-->
+                                            <div class="card-title">
+                                                <h2>Stiker 2</h2>
+                                            </div>
+                                            <!--end::Card title-->
+                                        </div>
+                                        <!--end::Card header-->
+                                        <!--begin::Card body-->
+                                        <div class="card-body text-center pt-0">
+                                            <!--begin::Image input-->
+                                            <!--begin::Image input placeholder-->
+                                            <style>
+                                                .image-input-placeholder { background-image: url('{{ asset('assets/media/svg/files/blank-image.svg') }}'); }
+                                                [data-bs-theme="dark"] .image-input-placeholder { background-image: url('{{ asset('assets/media/svg/files/blank-image-dark.svg') }}'); }
+                                            </style>
+                                            <!--end::Image input placeholder-->
+                                            <div class="image-input image-input-outline
+                                        @if($product->badge_2) image-input-filled @endif
+                                                image-input-placeholder mb-3"
+                                                 data-kt-image-input="true">
+                                                <!--begin::Preview existing avatar-->
+                                                <div class="image-input-wrapper w-150px h-150px"
+                                                     @if($product->badge_2)
+                                                     style="background-image: url('{{ asset('storage/images/badge/' . $product->badge_2) }}')"
+                                                    @endif>
+                                                </div>
+                                                <!--end::Preview existing avatar-->
+                                                <!--begin::Label-->
+                                                <label class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                       data-kt-image-input-action="change"
+                                                       data-bs-toggle="tooltip"
+                                                       title="Change avatar">
+                                                    <i class="ki-duotone ki-pencil fs-7">
+                                                        <span class="path1"></span>
+                                                        <span class="path2"></span>
+                                                    </i>
+                                                    <!--begin::Inputs-->
+                                                    <input type="file" name="badge_2" accept=".svg" />
+                                                    <input type="hidden" name="badge_2_remove" />
+                                                    <!--end::Inputs-->
+                                                </label>
+                                                <!--end::Label-->
+                                                <!--begin::Cancel-->
+                                                @if($product->badge_2)
+                                                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                          data-kt-image-input-action="cancel"
+                                                          data-bs-toggle="tooltip"
+                                                          title="Cancel avatar">
+                                        <i class="ki-duotone ki-cross fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                                    <!--end::Cancel-->
+                                                    <!--begin::Remove-->
+                                                    <span class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                                                          data-kt-image-input-action="remove"
+                                                          data-bs-toggle="tooltip"
+                                                          title="Remove avatar">
+                                        <i class="ki-duotone ki-cross fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                    </span>
+                                                    <!--end::Remove-->
+                                                @endif
+                                            </div>
+                                            <!--end::Image input-->
+                                            <!--begin::Description-->
+                                            <div class="text-muted fs-7">Yükləmək üçün şəkili seçin.</div>
+                                            <!--end::Description-->
+                                        </div>
+                                        <!--end::Card body-->
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Tab pane-->
                             <!--begin::Tab pane-->
                             <div class="tab-pane fade" id="kt_ecommerce_add_product_modules" role="tab-panel">
                                 <div class="d-flex flex-column gap-7 gap-lg-10">
@@ -627,6 +792,8 @@
 
                 var color = $('input[name="product_color"]').val();
                 var avatarFile = $('input[name="avatar"]')[0].files[0];
+                var badgeFile = $('input[name="badge_1"]')[0].files[0];
+                var badgeFile2 = $('input[name="badge_2"]')[0].files[0];
                 var selectedSubcategoryId = $('#subcategorySelect').val();
 
                 // Collect color options
@@ -659,6 +826,14 @@
                 // Append the avatar file if it exists
                 if (avatarFile) {
                     formData.append('main_image', avatarFile);
+                }
+
+                if (badgeFile) {
+                    formData.append('badge_file', badgeFile);
+                }
+
+                if (badgeFile2) {
+                    formData.append('badge_file_2', badgeFile2);
                 }
 
                 $('#kt_ecommerce_edit_order_selected_products > .col').each(function () {
