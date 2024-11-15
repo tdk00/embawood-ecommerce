@@ -18,7 +18,7 @@ class NotificationController extends Controller
     }
     public function index()
     {
-        $notifications = Notification::orderByDesc('created_at')->get();
+        $notifications = Notification::orderByDesc('created_at')->whereNull('user_id')->get();
         return view('admin.pages.notifications.index', compact('notifications'));
     }
 
