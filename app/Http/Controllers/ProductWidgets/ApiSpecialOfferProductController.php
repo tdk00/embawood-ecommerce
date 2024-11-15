@@ -35,7 +35,6 @@ class ApiSpecialOfferProductController extends Controller
         $transformedSpecialOfferProducts = $specialOfferProducts->map(function ($specialOfferProduct) {
             $product = $specialOfferProduct->product;
 
-            $product->main_image = url('storage/images/products/' . $product->main_image);
             $productData = [
                 'id' => $product->id,
                 'name' => $product->name,
