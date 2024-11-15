@@ -35,6 +35,7 @@ use App\Http\Controllers\Admin\ProductWidgets\NewProductController;
 use App\Http\Controllers\Admin\ProductWidgets\SpecialOfferProductController;
 use App\Http\Controllers\Admin\Review\ReviewControllerAdmin;
 use App\Http\Controllers\Admin\Settings\SettingsController;
+use App\Http\Controllers\Admin\Support\PhoneCallRequestController;
 use App\Http\Controllers\Admin\Support\VideoCallRequestController;
 use Illuminate\Support\Facades\Route;
 
@@ -206,6 +207,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Delete a video call request
     Route::delete('video_call_requests/{video_call_request}', [VideoCallRequestController::class, 'destroy'])->name('video_call_requests.destroy');
+
+
+    Route::get('phone_call_requests', [PhoneCallRequestController::class, 'index'])->name('phone_call_requests.index');
+
+    // Update the status of a video call request
+    Route::post('phone_call_requests/{phone_call_request}', [PhoneCallRequestController::class, 'update'])->name('phone_call_requests.update');
+
+    // Delete a video call request
+    Route::delete('phone_call_requests/{phone_call_request}', [PhoneCallRequestController::class, 'destroy'])->name('phone_call_requests.destroy');
 
     Route::resource('notifications', NotificationController::class);
     Route::post('notifications/{notification}/send', [NotificationController::class, 'sendNotification'])->name('notifications.send');

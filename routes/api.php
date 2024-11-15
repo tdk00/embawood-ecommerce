@@ -33,6 +33,7 @@ use App\Http\Controllers\ProductWidgets\ApiSelectedProductController;
 use App\Http\Controllers\ProductWidgets\ApiSpecialOfferProductController;
 use App\Http\Controllers\Search\ApiProductSearchController;
 use App\Http\Controllers\Settings\ApiSettingsController;
+use App\Http\Controllers\Support\ApiPhoneCallRequestController;
 use App\Http\Controllers\Support\ApiVideoCallRequestController;
 use App\Http\Controllers\User\ApiAccountController;
 use App\Http\Controllers\User\AuthController;
@@ -130,7 +131,7 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
         Route::get('settings', [ApiSettingsController::class, 'index']);
 
-
+        Route::get('phone_call_requests', [ApiPhoneCallRequestController::class, 'store']);
 
     });
 //Route::get('products', [ApiProductController::class, 'index']);
@@ -216,3 +217,4 @@ Route::post('auth/login', [AuthController::class, 'login']);
 Route::get('/category/{slug}', [ApiCategoryController::class, 'showBySlug']);
 
 Route::get('video_call_requests', [ApiVideoCallRequestController::class, 'store']);
+
