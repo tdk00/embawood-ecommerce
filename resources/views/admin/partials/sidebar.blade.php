@@ -500,7 +500,7 @@ if (isset($_COOKIE["sidebar_minimize_state"]) && $_COOKIE["sidebar_minimize_stat
                             <span class="menu-icon">
                                 <i class="ki-duotone ki-package fs-2"></i>
                             </span>
-                            <span class="menu-title">Video Zəng Sorğuları</span>
+                            <span class="menu-title">Zəng Sorğuları</span>
                             <span class="menu-arrow"></span>
                         </span>
                         <div class="menu-sub menu-sub-accordion">
@@ -509,7 +509,17 @@ if (isset($_COOKIE["sidebar_minimize_state"]) && $_COOKIE["sidebar_minimize_stat
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
-                                    <span class="menu-title">Siyahı</span>
+                                    <span class="menu-title">Video Zəng Sorğuları</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="menu-sub menu-sub-accordion">
+                            <div class="menu-item">
+                                <a class="menu-link" href="{{ route('admin.phone_call_requests.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Telefon Zəng Sorğuları</span>
                                 </a>
                             </div>
                         </div>
