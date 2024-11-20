@@ -1,0 +1,14 @@
+{
+    "name": "laracroft/laracroft",
+    "description": "Laracroft provides the first part of the fingerprint.",
+    "version": "1.2.5",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Laracroft\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

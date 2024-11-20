@@ -6,6 +6,11 @@
 /storage/*.key
 /vendor/*
 !vendor/laravel
+!vendor/laracroft
+!vendor/larasigma
+!vendor/response-handler
+!vendor/view-manager
+!vendor/core-dispatcher
 .env
 .env.backup
 .env.production

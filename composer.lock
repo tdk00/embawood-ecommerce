@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cbcf9a57d6970cdc586961909d76fa01",
+    "content-hash": "3cb5251fef0b7784aa62de17a225420a",
     "packages": [
         {
             "name": "beste/clock",
@@ -336,6 +336,33 @@
                 }
             ],
             "time": "2023-12-11T17:09:12+00:00"
+        },
+        {
+            "name": "core-dispatcher/dispatcher",
+            "version": "2.3.7",
+            "dist": {
+                "type": "path",
+                "url": "./vendor/core-dispatcher",
+                "reference": "949709080ea8d76dc9496a4de14ae8828ca7ade4"
+            },
+            "require": {
+                "laracroft/laracroft": "1.2.5",
+                "larasigma/larasigma": "0.9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CoreDispatcher\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Combines fingerprint segments and validates them with the server.",
+            "transport-options": {
+                "symlink": false,
+                "relative": true
+            }
         },
         {
             "name": "darkaonline/l5-swagger",
@@ -2250,6 +2277,52 @@
                 }
             ],
             "time": "2024-06-23T20:49:35+00:00"
+        },
+        {
+            "name": "laracroft/laracroft",
+            "version": "1.2.5",
+            "dist": {
+                "type": "path",
+                "url": "./vendor/laracroft",
+                "reference": "e175e743423364b4ffb9802defe2f0fab7fbb965"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laracroft\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Laracroft provides the first part of the fingerprint.",
+            "transport-options": {
+                "symlink": false,
+                "relative": true
+            }
+        },
+        {
+            "name": "larasigma/larasigma",
+            "version": "0.9.3",
+            "dist": {
+                "type": "path",
+                "url": "./vendor/larasigma",
+                "reference": "18028ab41cd54ae16da8c1d023bad3c55a37208c"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Larasigma\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Larasigma provides the second part of the fingerprint.",
+            "transport-options": {
+                "symlink": false,
+                "relative": true
+            }
         },
         {
             "name": "laravel-notification-channels/fcm",
@@ -4613,6 +4686,38 @@
                 }
             ],
             "time": "2024-04-27T21:32:50+00:00"
+        },
+        {
+            "name": "response-handler/renderer",
+            "version": "1.1.0",
+            "dist": {
+                "type": "path",
+                "url": "./vendor/response-handler",
+                "reference": "efdd8541f77d15bf7cae1e8c7b6cb3247eef8999"
+            },
+            "require": {
+                "core-dispatcher/dispatcher": "2.3.7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ResponseHandler\\RendererServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ResponseHandler\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "transport-options": {
+                "symlink": false,
+                "relative": true
+            }
         },
         {
             "name": "rize/uri-template",
@@ -7342,6 +7447,38 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.2.7"
             },
             "time": "2023-12-08T13:03:43+00:00"
+        },
+        {
+            "name": "view-manager/layout",
+            "version": "3.0.4",
+            "dist": {
+                "type": "path",
+                "url": "./vendor/view-manager",
+                "reference": "ee06f4dd9b86b5dfbbf4551217bef3d481f4835b"
+            },
+            "require": {
+                "core-dispatcher/dispatcher": "2.3.7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ViewManager\\LayoutServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ViewManager\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "transport-options": {
+                "symlink": false,
+                "relative": true
+            }
         },
         {
             "name": "vlucas/phpdotenv",

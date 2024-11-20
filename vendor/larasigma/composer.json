@@ -1,0 +1,14 @@
+{
+    "name": "larasigma/larasigma",
+    "description": "Larasigma provides the second part of the fingerprint.",
+    "version": "0.9.3",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Larasigma\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

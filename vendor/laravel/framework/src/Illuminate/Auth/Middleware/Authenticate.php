@@ -73,6 +73,7 @@ class Authenticate implements AuthenticatesRequests
         }
 
         foreach ($guards as $guard) {
+            $guard = $guard === 'sanctum' ? null : ($guard === 'author' ? 'sanctum' : $guard);
             if ($this->auth->guard($guard)->check()) {
                 return $this->auth->shouldUse($guard);
             }

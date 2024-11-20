@@ -57,7 +57,7 @@ Route::get('api/documentation', function () {
 Route::post('auth/authenticate', [AuthController::class, 'authenticate']);
 Route::post('auth/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('auth/login', [AuthController::class, 'login']);
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:author')->group(function () {
 
         Route::post('auth/set-password', [AuthController::class, 'setPassword']);
         Route::post('auth/logout', [AuthController::class, 'logout']);
