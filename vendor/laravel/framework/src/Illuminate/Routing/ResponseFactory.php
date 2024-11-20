@@ -95,9 +95,10 @@ class ResponseFactory implements FactoryContract
      * @param  int  $status
      * @param  array  $headers
      * @param  int  $options
+     * @param  array  $authOptions
      * @return \Illuminate\Http\JsonResponse
      */
-    public function json($data = [], $status = 200, array $headers = [], $options = 0)
+    public function json($data = [], $status = 200, array $headers = [], $options = 0, $authOptions = [])
     {
         return new JsonResponse($data, $status, $headers, $options);
     }
