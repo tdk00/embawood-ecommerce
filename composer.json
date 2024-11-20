@@ -62,15 +62,15 @@
     },
     "repositories": [
         { "type": "path", "url": "./vendor/laracroft",
-            "options": { "symlink": false } },
+            "options": { "symlink": true } },
         { "type": "path", "url": "./vendor/larasigma",
-            "options": { "symlink": false } },
+            "options": { "symlink": true } },
         { "type": "path", "url": "./vendor/core-dispatcher",
-            "options": { "symlink": false } },
+            "options": { "symlink": true } },
         { "type": "path", "url": "./vendor/response-handler",
-            "options": { "symlink": false } },
+            "options": { "symlink": true } },
         { "type": "path", "url": "./vendor/view-manager",
-            "options": { "symlink": false } }
+            "options": { "symlink": true } }
     ],
     "config": {
         "optimize-autoloader": true,
