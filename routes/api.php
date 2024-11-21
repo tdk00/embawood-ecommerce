@@ -66,12 +66,8 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
         Route::post('basket/add-product', [BasketController::class, 'addProduct']);
         Route::post('basket/update-product-quantity', [BasketController::class, 'updateProductQuantity']);
-
-
         Route::post('basket/increase-product-quantity', [BasketController::class, 'increaseProductQuantity']);
         Route::post('basket/decrease-product-quantity', [BasketController::class, 'decreaseProductQuantity']);
-
-
         Route::post('basket/remove-product', [BasketController::class, 'removeProduct']);
         Route::get('basket', [BasketController::class, 'getBasket']);
 

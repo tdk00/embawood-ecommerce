@@ -25,30 +25,37 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/authenticate",
-     *     tags={"Auth"},
-     *     summary="Authenticate user",
-     *     description="Authenticate user with phone number",
+     *     path="/api/auth/authenticate",
+     *     operationId="authenticateUser",
+     *     tags={"Authentication"},
+     *     summary="Authenticate user via phone number",
+     *     description="Handles user authentication by verifying the phone number. The phone number should follow the format (XX) XXX-XX-XX.",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="phone", type="string", example="0991111111")
+     *             @OA\Property(
+     *                 property="phone",
+     *                 type="string",
+     *                 description="User's phone number in the format (XX) XXX-XX-XX",
+     *                 example="(33) 445-55-55",
+     *                 pattern="\(\d{2}\) \d{3}-\d{2}-\d{2}"
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Authentication response",
+     *         description="Successful authentication or OTP required",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="otp_required"),
-     *             @OA\Property(property="message", type="string", example="OTP sent to your phone number"),
-     *             @OA\Property(property="otp", type="string", example="123456")  // Note: Remove OTP from response in production
+     *             @OA\Property(property="status", type="string", description="Authentication status", example="otp_required"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="OTP sent to your phone number"),
+     *             @OA\Property(property="otp", type="string", nullable=true, description="Generated OTP if applicable", example="1234")
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation errors",
+     *         description="Validation error",
      *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
+     *             @OA\Property(property="errors", type="object", description="Validation errors", example={"phone": {"The phone field is required."}})
      *         )
      *     )
      * )
@@ -100,38 +107,52 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/verify-otp",
-     *     tags={"Auth"},
-     *     summary="Verify OTP",
-     *     description="Verify OTP sent to user's phone",
+     *     path="/api/auth/verify-otp",
+     *     operationId="verifyOtp",
+     *     tags={"Authentication"},
+     *     summary="Verify the OTP for phone number authentication",
+     *     description="Verifies the OTP sent to the user's phone. If successful, marks the phone as verified and either prompts the user to log in or set a password.",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="phone", type="string", example="0991111111"),
-     *             @OA\Property(property="otp", type="string", example="123456")
+     *             @OA\Property(
+     *                 property="phone",
+     *                 type="string",
+     *                 maxLength=15,
+     *                 description="User's phone number in the format (XX) XXX-XX-XX",
+     *                 example="(33) 445-55-55",
+     *                 pattern="\(\d{2}\) \d{3}-\d{2}-\d{2}"
+     *             ),
+     *             @OA\Property(
+     *                 property="otp",
+     *                 type="string",
+     *                 maxLength=4,
+     *                 description="One-time password sent to the user's phone",
+     *                 example="1234"
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="OTP verification response",
+     *         description="OTP successfully verified",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="set_password"),
-     *             @OA\Property(property="message", type="string", example="OTP verified, set your password."),
-     *             @OA\Property(property="temp_token", type="string", example="temp_token_here")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation errors",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
+     *             @OA\Property(property="status", type="string", description="Authentication status", example="set_password"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="OTP verified, set your password."),
+     *             @OA\Property(property="temp_token", type="string", nullable=true, description="Temporary token for password setup", example="abcd1234efgh5678ijkl91011mnop12")
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
      *         description="Invalid OTP",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Invalid OTP")
+     *             @OA\Property(property="error", type="string", description="Error message", example="Invalid OTP")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object", description="Validation errors", example={"phone": {"The phone field is required."}, "otp": {"The otp field is required."}})
      *         )
      *     )
      * )
@@ -173,39 +194,50 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/set-user-password",
-     *     tags={"Auth"},
-     *     summary="Set user password",
-     *     description="Set the password for the authenticated user",
-     *     security={{"bearerAuth":{}}},
+     *     path="/api/auth/set-password",
+     *     operationId="setPassword",
+     *     tags={"Authentication"},
+     *     summary="Set a new password for the authenticated user",
+     *     description="Allows the user to set a new password. Requires the password confirmation and ensures the password meets the minimum length requirement.",
+     *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="password", type="string", example="new_password"),
-     *             @OA\Property(property="password_confirmation", type="string", example="new_password")
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 description="New password (must be confirmed)",
+     *                 example="newpassword123"
+     *             ),
+     *             @OA\Property(
+     *                 property="password_confirmation",
+     *                 type="string",
+     *                 description="Password confirmation",
+     *                 example="newpassword123"
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
      *         description="Password set successfully",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Password set successfully."),
-     *             @OA\Property(property="token", type="string", example="token_here")
+     *             @OA\Property(property="status", type="string", description="Response status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Password set successfully."),
+     *             @OA\Property(property="token", type="string", description="Bearer token for authenticated access", example="abcd1234efgh5678ijkl91011mnop12")
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Validation errors",
+     *         description="Validation error",
      *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
+     *             @OA\Property(property="errors", type="object", description="Validation errors", example={"password": {"The password field is required.", "The password must be at least 6 characters."}})
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="User not found",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="User not found")
+     *             @OA\Property(property="error", type="string", description="Error message", example="User not found")
      *         )
      *     )
      * )
@@ -226,6 +258,8 @@ class AuthController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
 
+        $user->tokens()->delete();
+
         $user->password = Hash::make($request->password);
         $user->save();
 
@@ -239,38 +273,51 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/login",
-     *     tags={"Auth"},
-     *     summary="Login",
-     *     description="Login with phone and password",
+     *     path="/api/auth/login",
+     *     operationId="loginUser",
+     *     tags={"Authentication"},
+     *     summary="Log in a user",
+     *     description="Authenticates the user using their phone number and password. Returns an authentication token upon successful login.",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="phone", type="string", example="0991111111"),
-     *             @OA\Property(property="password", type="string", example="password")
+     *             @OA\Property(
+     *                 property="phone",
+     *                 type="string",
+     *                 maxLength=15,
+     *                 description="User's phone number",
+     *                 example="(33) 445-55-55",
+     *                 pattern="\(\d{2}\) \d{3}-\d{2}-\d{2}"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 description="User's password",
+     *                 example="userpassword"
+     *             )
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Login response",
+     *         description="Login successful",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Login successful."),
-     *             @OA\Property(property="token", type="string", example="token_here")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation errors",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="object")
+     *             @OA\Property(property="status", type="string", description="Response status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Login successful."),
+     *             @OA\Property(property="token", type="string", description="Bearer token for authenticated access", example="abcd1234efgh5678ijkl91011mnop12")
      *         )
      *     ),
      *     @OA\Response(
      *         response=401,
      *         description="Invalid credentials",
      *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string", example="Invalid credentials")
+     *             @OA\Property(property="error", type="string", description="Error message", example="Invalid credentials")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object", description="Validation errors", example={"phone": {"The phone field is required."}, "password": {"The password field is required."}})
      *         )
      *     )
      * )
@@ -302,17 +349,18 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/logout",
-     *     tags={"Auth"},
-     *     summary="Logout",
-     *     description="Logout the authenticated user",
-     *     security={{"bearerAuth":{}}},
+     *     path="/api/auth/logout",
+     *     operationId="logoutUser",
+     *     tags={"Authentication"},
+     *     summary="Log out the authenticated user",
+     *     description="Revokes the current access token for the authenticated user.",
+     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Logout response",
+     *         description="Successfully logged out",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Successfully logged out")
+     *             @OA\Property(property="status", type="string", description="Response status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Successfully logged out")
      *         )
      *     )
      * )
@@ -328,23 +376,26 @@ class AuthController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/me",
-     *     tags={"Auth"},
-     *     summary="Get current user",
-     *     description="Get the authenticated user's details",
-     *     security={{"bearerAuth":{}}},
+     *     path="/api/auth/me",
+     *     operationId="getAuthenticatedUser",
+     *     tags={"Authentication"},
+     *     summary="Retrieve authenticated user details",
+     *     description="Returns basic information about the currently authenticated user.",
+     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Current user details",
+     *         description="Authenticated user details",
      *         @OA\JsonContent(
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="phone", type="string", example="0991111111"),
-     *                 @OA\Property(property="name", type="string", example="John Doe"),
-     *                 @OA\Property(property="email", type="string", example="john.doe@example.com"),
-     *                 @OA\Property(property="created_at", type="string", example="2022-01-01T00:00:00.000000Z"),
-     *                 @OA\Property(property="updated_at", type="string", example="2022-01-01T00:00:00.000000Z")
+     *             @OA\Property(property="status", type="string", description="Response status", example="success"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 description="User data",
+     *                 @OA\Property(property="id", type="integer", description="User ID", example=1),
+     *                 @OA\Property(property="name", type="string", description="User's first name", example="John"),
+     *                 @OA\Property(property="surname", type="string", description="User's last name", example="Doe"),
+     *                 @OA\Property(property="phone", type="string", description="User's phone number", example="(33) 445-55-55"),
+     *                 @OA\Property(property="remaining_bonus_amount", type="number", format="float", description="User's remaining bonus amount", example=150.5)
      *             )
      *         )
      *     )
@@ -352,9 +403,17 @@ class AuthController extends Controller
      */
     public function me(Request $request)
     {
+        $user = $request->user()->only([
+            'id',
+            'name',
+            'surname',
+            'phone',
+            'remaining_bonus_amount'
+        ]);
+
         return response()->json([
             'status' => 'success',
-            'data' => $request->user()
+            'data' => $user
         ]);
     }
 }
