@@ -81,7 +81,6 @@ class ApiMostViewedProductController extends Controller
         $transformedMostViewedProducts = $mostViewedProducts->map(function ($mostViewedProduct) {
             $product = $mostViewedProduct->product;
 
-            $product->main_image = url('storage/images/products/' . $product->main_image);
             $productData = [
                 'id' => $product->id,
                 'name' => $product->name,

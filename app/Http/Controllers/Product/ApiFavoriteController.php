@@ -52,7 +52,6 @@ class ApiFavoriteController extends Controller
         $transformedFavorites = $favorites->map(function ($favorite) {
             $product = $favorite->product;
 
-            $product->main_image = url('storage/images/products/' . $product->main_image);
             $productData = [
                 'id' => $product->id,
                 'name' => $product->name,
