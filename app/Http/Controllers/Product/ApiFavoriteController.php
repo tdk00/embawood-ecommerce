@@ -10,6 +10,40 @@ use Illuminate\Support\Facades\Auth;
 
 class ApiFavoriteController extends Controller
 {
+
+    /**
+     * @OA\Get(
+     *     path="/api/favorites",
+     *     operationId="getUserFavorites",
+     *     tags={"Favorites"},
+     *     summary="Retrieve all favorite products for the authenticated user",
+     *     description="Returns a list of all favorite products for the authenticated user with product details.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of favorite products",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", description="Product ID", example=1),
+     *                 @OA\Property(property="name", type="string", description="Product name", example="Wooden Chair"),
+     *                 @OA\Property(property="is_set", type="boolean", description="Indicates if the product is part of a set", example=false),
+     *                 @OA\Property(property="price", type="number", format="float", description="Price of the product", example=100.0),
+     *                 @OA\Property(property="discount", type="number", format="float", description="Discount amount", example=10.0),
+     *                 @OA\Property(property="final_price", type="number", format="float", description="Final price after discount", example=90.0),
+     *                 @OA\Property(property="main_image", type="string", description="URL of the product's main image", example="https://example.com/image.jpg"),
+     *                 @OA\Property(property="average_rating", type="number", format="float", description="Average rating of the product", example=4.5),
+     *                 @OA\Property(property="is_in_basket", type="boolean", description="Indicates if the product is in the user's basket", example=true),
+     *                 @OA\Property(property="is_favorite", type="boolean", description="Indicates if the product is a favorite", example=true),
+     *                 @OA\Property(property="remaining_discount_seconds", type="integer", description="Time remaining for the discount (in seconds)", example=3600),
+     *                 @OA\Property(property="has_unlimited_discount", type="boolean", description="Indicates if the discount is unlimited", example=false),
+     *                 @OA\Property(property="badge", type="string", nullable=true, description="URL of the first badge image", example="https://example.com/badge1.png"),
+     *                 @OA\Property(property="badge2", type="string", nullable=true, description="URL of the second badge image", example="https://example.com/badge2.png")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function index()
     {
         $userId = Auth::id();
@@ -43,6 +77,47 @@ class ApiFavoriteController extends Controller
         return response()->json($transformedFavorites);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/favorites/toggle",
+     *     operationId="toggleFavorite",
+     *     tags={"Favorites"},
+     *     summary="Add or remove a product from favorites",
+     *     description="Toggles the favorite status of a product for the authenticated user. Returns the updated favorite status and all favorite product IDs.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="product_id", type="integer", description="ID of the product to toggle", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Favorite status toggled",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(property="product_id", type="integer", description="ID of the product", example=1),
+     *             @OA\Property(property="product_name", type="string", description="Name of the product", example="Wooden Chair"),
+     *             @OA\Property(property="is_favorite", type="boolean", description="Updated favorite status", example=true),
+     *             @OA\Property(
+     *                 property="favorites",
+     *                 type="array",
+     *                 description="List of all favorite product IDs",
+     *                 @OA\Items(type="integer", example=1)
+     *             ),
+     *             @OA\Property(property="message", type="string", description="Operation message", example="Product added to favorites")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="error"),
+     *             @OA\Property(property="message", type="string", description="Error message", example="Product not found")
+     *         )
+     *     )
+     * )
+     */
     public function toggle(Request $request)
     {
         $userId = Auth::id();
@@ -80,11 +155,58 @@ class ApiFavoriteController extends Controller
             'product_id' => $productId,
             'product_name' => $product->name,
             'is_favorite' => $isFavorite,
-            'favorites' => $favorites, // Return all favorites
+            'favorites' => $favorites,
             'message' => $message
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/favorites/remove",
+     *     operationId="removeFavorite",
+     *     tags={"Favorites"},
+     *     summary="Remove a product from favorites",
+     *     description="Removes a product from the authenticated user's favorites. Returns the updated list of favorite products.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="product_id", type="integer", description="ID of the product to remove from favorites", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product removed from favorites",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", description="Product ID", example=1),
+     *                 @OA\Property(property="name", type="string", description="Product name", example="Wooden Chair"),
+     *                 @OA\Property(property="is_set", type="boolean", description="Indicates if the product is part of a set", example=false),
+     *                 @OA\Property(property="price", type="number", format="float", description="Price of the product", example=100.0),
+     *                 @OA\Property(property="discount", type="number", format="float", description="Discount amount", example=10.0),
+     *                 @OA\Property(property="final_price", type="number", format="float", description="Final price after discount", example=90.0),
+     *                 @OA\Property(property="main_image", type="string", description="URL of the product's main image", example="https://example.com/image.jpg"),
+     *                 @OA\Property(property="average_rating", type="number", format="float", description="Average rating of the product", example=4.5),
+     *                 @OA\Property(property="is_in_basket", type="boolean", description="Indicates if the product is in the user's basket", example=true),
+     *                 @OA\Property(property="is_favorite", type="boolean", description="Indicates if the product is a favorite", example=true),
+     *                 @OA\Property(property="remaining_discount_seconds", type="integer", description="Time remaining for the discount (in seconds)", example=3600),
+     *                 @OA\Property(property="has_unlimited_discount", type="boolean", description="Indicates if the discount is unlimited", example=false),
+     *                 @OA\Property(property="badge", type="string", nullable=true, description="URL of the first badge image", example="https://example.com/badge1.png"),
+     *                 @OA\Property(property="badge2", type="string", nullable=true, description="URL of the second badge image", example="https://example.com/badge2.png")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found or not in favorites",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="error"),
+     *             @OA\Property(property="message", type="string", description="Error message", example="Product not found")
+     *         )
+     *     )
+     * )
+     */
     public function remove(Request $request)
     {
         $userId = Auth::id();

@@ -17,6 +17,38 @@ class ApiCheckoutDetailsController extends Controller
         $this->user = Auth::guard('sanctum')->user();
     }
 
+
+    /**
+     * @OA\Post(
+     *     path="/api/checkout/details",
+     *     operationId="getCheckoutDetails",
+     *     tags={"Checkout"},
+     *     summary="Retrieve checkout details including applicable bonus usage",
+     *     description="Calculates the maximum bonus amount that can be applied to a checkout based on the final total and the user's remaining bonus amount.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="final_total", type="number", format="float", description="Final total amount for the checkout", example=150.50)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Checkout details retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="bonus_can_be_used", type="number", format="float", description="Maximum bonus amount that can be applied to this checkout", example=100.0)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="User not authenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", description="Operation status", example=false),
+     *             @OA\Property(property="message", type="string", description="Error message", example="User not authenticated.")
+     *         )
+     *     )
+     * )
+     */
     public function getDetails(Request $request)
     {
         // Accept final_amount from request and cast it to float

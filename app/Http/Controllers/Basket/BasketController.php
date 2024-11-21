@@ -26,6 +26,52 @@ use Illuminate\Support\Str;
 
 class BasketController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/basket/add-product",
+     *     operationId="addProductToBasket",
+     *     tags={"Basket"},
+     *     summary="Add a product to the basket",
+     *     description="Adds a product or a set to the user's basket based on the product type. Returns the updated basket data.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="product_id", type="integer", description="ID of the product to add", example=1),
+     *             @OA\Property(property="quantity", type="integer", description="Quantity of the product", example=2)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product successfully added to the basket",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", description="Success message", example="Product added to basket"),
+     *             @OA\Property(property="basket", type="object", description="Updated basket data")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid quantity",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", description="Error message", example="Quantity must be greater than zero")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", description="Error message", example="Product not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", description="Error message", example="Unauthorized")
+     *         )
+     *     )
+     * )
+     */
     public function addProduct(Request $request)
     {
         $product = Product::findOrFail($request->product_id);
@@ -70,6 +116,49 @@ class BasketController extends Controller
         }
     }
 
+
+    /**
+     * @OA\Post(
+     *     path="/api/basket/update-product-quantity",
+     *     operationId="updateProductQuantity",
+     *     tags={"Basket"},
+     *     summary="Update the quantity of a product in the basket",
+     *     description="Updates the quantity of a specific product in the user's basket. If the quantity is set to 0, the product is removed from the basket.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="basket_item_id", type="integer", description="ID of the basket item to update", example=1),
+     *             @OA\Property(property="quantity", type="integer", description="New quantity for the product. If set to 0, the product will be removed.", example=2)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Quantity updated successfully or product removed",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Quantity updated"),
+     *             @OA\Property(property="basket", type="object", description="Updated basket data")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid quantity",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="failure"),
+     *             @OA\Property(property="message", type="string", description="Error message", example="Quantity cannot be negative")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found in basket",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="failure"),
+     *             @OA\Property(property="message", type="string", description="Error message", example="Product not found in basket")
+     *         )
+     *     )
+     * )
+     */
     public function updateProductQuantity(Request $request)
     {
         $identifier = $this->getBasketIdentifier();
@@ -119,6 +208,39 @@ class BasketController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/basket/increase-product-quantity",
+     *     operationId="increaseProductQuantity",
+     *     tags={"Basket"},
+     *     summary="Increase the quantity of a product in the basket",
+     *     description="Increases the quantity of a specific product in the user's basket by 1. Returns the updated basket data.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="basket_item_id", type="integer", description="ID of the basket item to update", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Quantity increased successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Quantity increased"),
+     *             @OA\Property(property="basket", type="object", description="Updated basket data")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found in basket",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="failure"),
+     *             @OA\Property(property="message", type="string", description="Error message", example="Product not found in basket")
+     *         )
+     *     )
+     * )
+     */
     public function increaseProductQuantity(Request $request)
     {
         $identifier = $this->getBasketIdentifier();
@@ -155,6 +277,39 @@ class BasketController extends Controller
     }
 
 
+    /**
+     * @OA\Post(
+     *     path="/api/basket/decrease-product-quantity",
+     *     operationId="decreaseProductQuantity",
+     *     tags={"Basket"},
+     *     summary="Decrease the quantity of a product in the basket",
+     *     description="Decreases the quantity of a specific product in the user's basket by 1, provided the quantity is greater than 1. Returns the updated basket data.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="basket_item_id", type="integer", description="ID of the basket item to update", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Quantity decreased successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Quantity decreased"),
+     *             @OA\Property(property="basket", type="object", description="Updated basket data")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found in basket",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="failure"),
+     *             @OA\Property(property="message", type="string", description="Error message", example="Product not found in basket")
+     *         )
+     *     )
+     * )
+     */
     public function decreaseProductQuantity(Request $request)
     {
         $identifier = $this->getBasketIdentifier();
@@ -191,6 +346,39 @@ class BasketController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Quantity decreased', 'basket' => $this->getBasketData()]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/basket/remove-product",
+     *     operationId="removeProductFromBasket",
+     *     tags={"Basket"},
+     *     summary="Remove a product from the basket",
+     *     description="Removes a specific product from the user's basket. Returns the updated basket data upon success.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="basket_item_id", type="integer", description="ID of the basket item to remove", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product removed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Product removed from basket"),
+     *             @OA\Property(property="basket", type="object", description="Updated basket data")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found in basket",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="failure"),
+     *             @OA\Property(property="message", type="string", description="Error message", example="Product not found in basket")
+     *         )
+     *     )
+     * )
+     */
     public function removeProduct(Request $request)
     {
         $basketItemId = $request->basket_item_id;
@@ -359,6 +547,31 @@ class BasketController extends Controller
         return $user?->coupons()?->first();
     }
 
+    /**
+     * @OA\Post(
+     *     path="api/basket/attach-coupon",
+     *     operationId="attachCouponToBasket",
+     *     tags={"Basket"},
+     *     summary="Attach a coupon to the user's basket",
+     *     description="Validates and attaches a coupon to the user's basket if the requirements are met. Returns the updated basket data.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="coupon_code", type="string", description="The code of the coupon to attach", example="DISCOUNT10")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Coupon attachment response",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Coupon applied"),
+     *             @OA\Property(property="basket", type="object", description="Updated basket data")
+     *         )
+     *     )
+     * )
+     */
     public function attachCouponToBasket( Request $request )
     {
         $user = Auth::guard('api')?->user();
@@ -436,6 +649,32 @@ class BasketController extends Controller
         ]);
     }
 
+
+    /**
+     * @OA\Post(
+     *     path="/api/basket/detach-coupon",
+     *     operationId="detachCouponFromBasket",
+     *     tags={"Basket"},
+     *     summary="Detach a coupon from the user's basket",
+     *     description="Detaches a specific coupon from the user's basket and returns the updated basket data.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="coupon_code", type="string", description="The code of the coupon to detach", example="DISCOUNT10")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Coupon detached successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(property="message", type="string", description="Response message", example="Coupon detached"),
+     *             @OA\Property(property="basket", type="object", description="Updated basket data")
+     *         )
+     *     )
+     * )
+     */
     public function detachCouponFromBasket(Request $request)
     {
 
@@ -752,53 +991,67 @@ class BasketController extends Controller
      *     path="/api/basket",
      *     operationId="getBasket",
      *     tags={"Basket"},
-     *     summary="Get the user's basket",
-     *     description="Retrieves the current state of the user's basket, including products, sets, and the total cost. The basket can be retrieved using a Bearer token for logged-in users or a session for unregistered users.",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
-     *         )
-     *     ),
+     *     summary="Retrieve the current user's basket",
+     *     description="Returns the details of the user's basket, including products, sets, discounts, and any applied coupons.",
+     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Basket retrieved successfully",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="status", type="string", example="success"),
-     *             @OA\Property(property="message", type="string", example="Basket retrieved successfully"),
-     *             @OA\Property(property="total_items", type="integer", example=1),
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(property="is_empty", type="boolean", description="Indicates if the basket is empty", example=false),
+     *             @OA\Property(property="message", type="string", description="Message indicating the basket status", example="Basket retrieved successfully"),
+     *             @OA\Property(property="total_items", type="integer", description="Total number of items in the basket", example=3),
      *             @OA\Property(
      *                 property="basket",
      *                 type="object",
+     *                 description="Detailed basket data",
+     *                 @OA\Property(property="total", type="number", format="float", description="Total price of items before discounts", example=200.5),
+     *                 @OA\Property(property="final_total", type="number", format="float", description="Total price after applying discounts", example=180.0),
+     *                 @OA\Property(property="product_discount_amount", type="number", format="float", description="Total discount amount from products", example=15.0),
+     *                 @OA\Property(property="coupon_discount_amount", type="number", format="float", description="Total discount amount from coupons", example=5.5),
+     *                 @OA\Property(
+     *                     property="safety_information",
+     *                     type="array",
+     *                     description="List of safety information notices",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer", description="ID of the safety notice", example=1),
+     *                         @OA\Property(property="title", type="string", description="Title of the safety notice", example="Fire Safety"),
+     *                         @OA\Property(property="description", type="string", description="Description of the safety notice", example="Keep flammable items away."),
+     *                         @OA\Property(property="icon", type="string", description="Icon URL for the safety notice", example="https://example.com/icon.png")
+     *                     )
+     *                 ),
      *                 @OA\Property(
      *                     property="products",
      *                     type="array",
+     *                     description="List of individual products in the basket",
      *                     @OA\Items(
-     *                         @OA\Property(property="basket_item_id", type="integer", example=60),
-     *                         @OA\Property(property="quantity", type="integer", example=2),
-     *                         @OA\Property(property="item_product_id", type="integer", example=52),
-     *                         @OA\Property(property="name", type="string", example="Məhsul 24 (Komod güzgü)"),
-     *                         @OA\Property(property="price", type="string", example="102.00"),
-     *                         @OA\Property(property="main_image", type="string", example="product image-2.png")
+     *                         @OA\Property(property="basket_item_id", type="integer", description="ID of the basket item", example=1),
+     *                         @OA\Property(property="quantity", type="integer", description="Quantity of the product", example=2),
+     *                         @OA\Property(property="item_product_id", type="integer", description="ID of the product", example=101),
+     *                         @OA\Property(property="name", type="string", description="Name of the product", example="Wooden Chair"),
+     *                         @OA\Property(property="price", type="number", format="float", description="Price of the product", example=100.0),
+     *                         @OA\Property(property="final_price", type="number", format="float", description="Final price after discounts", example=90.0),
+     *                         @OA\Property(property="main_image", type="string", description="URL of the product's main image", example="https://example.com/product.png")
      *                     )
      *                 ),
-     *                 @OA\Property(property="sets", type="array", @OA\Items(type="object")),
-     *                 @OA\Property(property="total", type="number", format="float", example=204)
+     *                 @OA\Property(
+     *                     property="sets",
+     *                     type="array",
+     *                     description="List of sets in the basket",
+     *                     @OA\Items(
+     *                         @OA\Property(property="basket_item_id", type="integer", description="ID of the basket item", example=2),
+     *                         @OA\Property(property="parent_basket_item_id", type="integer", description="ID of the parent basket item if applicable", example=1),
+     *                         @OA\Property(property="quantity", type="integer", description="Quantity of the set", example=1),
+     *                         @OA\Property(property="name", type="string", description="Name of the set", example="Living Room Set"),
+     *                         @OA\Property(property="basket_price", type="number", format="float", description="Total price of the set before discounts", example=300.0),
+     *                         @OA\Property(property="basket_final_price", type="number", format="float", description="Total price of the set after discounts", example=270.0)
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="applied_coupon", type="string", nullable=true, description="Code of the applied coupon, if any", example="DISCOUNT10"),
+     *                 @OA\Property(property="coupon_valid", type="boolean", description="Indicates whether the applied coupon is valid", example=true),
+     *                 @OA\Property(property="coupon_error", type="string", nullable=true, description="Error message related to the coupon, if invalid", example=null)
      *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=401,
-     *         description="Unauthorized",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Unauthorized")
      *         )
      *     )
      * )
@@ -818,69 +1071,61 @@ class BasketController extends Controller
 
         return response()->json($response);
     }
-    public function applyCoupon(Request $request)
-    {
-        $userId = Auth::id();
-        $couponCode = $request->input('coupon_code');
 
-        // Validate the coupon
-        $coupon = Coupon::where('code', $couponCode)
-            ->where('start_date', '<=', now())
-            ->where('expiration_date', '>=', now())
-            ->first();
 
-        if (!$coupon) {
-            return response()->json(['message' => 'Invalid or expired coupon'], 400);
-        }
-
-        // Get the user coupon
-        $userCoupon = UserCoupon::where('user_id', $userId)
-            ->where('coupon_id', $coupon->id)
-            ->where('is_used', false)
-            ->first();
-
-        if (!$userCoupon) {
-            return response()->json(['message' => 'Coupon not available for this user'], 400);
-        }
-
-        // Get basket items
-        $basketItems = BasketItem::where('user_id', $userId)->with('product')->get();
-        if ($basketItems->isEmpty()) {
-            return response()->json(['message' => 'Basket is empty'], 400);
-        }
-
-        // Calculate the discount
-        $total = 0;
-        $itemDiscountsTotal = 0;
-
-        foreach ($basketItems as $item) {
-            $price = $item->product->price * $item->quantity;
-            $itemDiscountPercentage = $item->discount ?? 0;
-            $itemDiscountAmount = $price * ($itemDiscountPercentage / 100);
-            $finalPrice = $price - $itemDiscountAmount;
-
-            if (!$item->product->is_set) {
-                $total += $finalPrice;
-            }
-
-            $itemDiscountsTotal += $itemDiscountAmount;
-        }
-
-        // Apply coupon discount
-        $couponDiscountAmount = $userCoupon->earned_amount;
-        $total -= $couponDiscountAmount;
-
-        // Return updated basket
-        $updatedBasket = [
-            'items' => $basketItems,
-            'total' => $total,
-            'item_discounts_total' => $itemDiscountsTotal,
-            'coupon_discount' => $couponDiscountAmount,
-        ];
-
-        return response()->json($updatedBasket);
-    }
-
+    /**
+     * @OA\Post(
+     *     path="/api/checkout",
+     *     operationId="checkout",
+     *     tags={"Checkout"},
+     *     summary="Perform the checkout process",
+     *     description="Completes the checkout process for the user's basket, applying bonuses and coupons where applicable, and creates an order. Clears the user's basket upon successful checkout.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="apply_bonus", type="boolean", nullable=true, description="Indicates if the user's bonus should be applied to the checkout", example=true)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Checkout successful",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", description="Success message", example="Checkout successful"),
+     *             @OA\Property(
+     *                 property="order",
+     *                 type="object",
+     *                 description="Order details",
+     *                 @OA\Property(property="id", type="integer", description="Order ID", example=1),
+     *                 @OA\Property(property="user_id", type="integer", description="ID of the user who placed the order", example=10),
+     *                 @OA\Property(property="total", type="number", format="float", description="Total order amount before discounts", example=150.50),
+     *                 @OA\Property(property="bonus_discount", type="number", format="float", description="Total discount from bonuses applied", example=20.0),
+     *                 @OA\Property(property="coupon_discount", type="number", format="float", description="Total discount from coupons applied", example=10.0),
+     *                 @OA\Property(property="item_discounts_total", type="number", format="float", description="Total discount from items", example=15.0),
+     *                 @OA\Property(property="address", type="string", description="Delivery address for the order", example="John Doe, +123456789, 123 Main Street, Apt 4B, New York"),
+     *                 @OA\Property(property="status", type="string", description="Order status", example="pending"),
+     *                 @OA\Property(property="created_at", type="string", format="datetime", description="Timestamp when the order was created", example="2024-11-20T15:30:00Z"),
+     *                 @OA\Property(property="updated_at", type="string", format="datetime", description="Timestamp when the order was last updated", example="2024-11-20T15:35:00Z")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad request",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", description="Error message", example="Basket is empty")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Checkout failed due to a server error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", description="Error message", example="Checkout failed"),
+     *             @OA\Property(property="error", type="string", description="Detailed error message", example="SQLSTATE[42S22]: Column not found: 1054 Unknown column...")
+     *         )
+     *     )
+     * )
+     */
     public function checkout(Request $request)
     {
         $userId = Auth::id();
@@ -1023,25 +1268,6 @@ class BasketController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Checkout failed', 'error' => $e->getMessage()], 500);
-        }
-    }
-
-    private function checkAndAssignEarnedCoupons($order)
-    {
-        $coupons = Coupon::where('type', 'earned')
-            ->where('start_date', '<=', now())
-            ->where('expiration_date', '>=', now())
-            ->get();
-
-        foreach ($coupons as $coupon) {
-            if ($order->total >= $coupon->coupon_min && $order->total <= $coupon->coupon_max) {
-                $earnedAmount = $order->total * ($coupon->discount_percentage / 100);
-                UserCoupon::create([
-                    'user_id' => $order->user_id,
-                    'coupon_id' => $coupon->id,
-                    'earned_amount' => $earnedAmount,
-                ]);
-            }
         }
     }
 }

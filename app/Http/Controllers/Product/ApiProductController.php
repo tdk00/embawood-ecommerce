@@ -23,36 +23,42 @@ class ApiProductController extends Controller
         $this->creditService = $creditService;
     }
 
-    public function viewProduct(Request $request)
-    {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-        ]);
 
-        $user = Auth::guard('api')->user();
-
-        if (!$user) {
-            throw ValidationException::withMessages(['user' => 'Unauthorized']);
-        }
-
-        $this->bonusService->handleProductView($user, $request->product_id);
-
-        return response()->json(['message' => 'Product view recorded.']);
-    }
-
-    public function getProductViewBonusProgress(Request $request)
-    {
-        $user = Auth::guard('api')->user();
-
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        $progress = $this->bonusService->getProductViewBonusProgress($user);
-
-        return response()->json($progress);
-    }
-
+    /**
+     * @OA\Get(
+     *     path="/api/products/{id}",
+     *     operationId="getProductDetails",
+     *     tags={"Products"},
+     *     summary="Retrieve product details",
+     *     description="Returns detailed information about a specific product, including images, reviews, credit options, and similar products.",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Product ID or slug",
+     *         @OA\Schema(
+     *             type="string",
+     *             example="123"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Product details retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="data", type="object", description="Product details")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Product not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Product not found")
+     *         )
+     *     )
+     * )
+     */
     public function show($identifier)
     {
         // Determine if the identifier is a numeric ID or a slug
@@ -285,6 +291,24 @@ class ApiProductController extends Controller
     }
 
 
+    /**
+     * @OA\Post(
+     *     path="/api/products/filter",
+     *     operationId="filterProducts",
+     *     tags={"Products"},
+     *     summary="Filter products",
+     *     description="Returns a list of products based on specified filters.",
+     *     @OA\RequestBody(
+     *         required=false,
+     *         description="Filters for products"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Filtered products retrieved successfully",
+     *         @OA\JsonContent(type="array", @OA\Items(type="object", description="Product details"))
+     *     )
+     * )
+     */
     public function filter(ProductFilterRequest $request)
     {
         $query = Product::main();
@@ -295,26 +319,41 @@ class ApiProductController extends Controller
         return response()->json($products);
     }
 
-    public function store(Request $request)
-    {
-        $product = Product::create($request->all());
 
-        if ($request->has('images')) {
-            foreach ($request->images as $image) {
-                ProductImage::create(['product_id' => $product->id, 'image_path' => $image]);
-            }
-        }
-
-        if ($request->is_set && $request->has('products')) {
-            foreach ($request->products as $productData) {
-                $product->products()->attach($productData['product_id'], ['quantity' => $productData['quantity']]);
-            }
-        }
-
-        return response()->json($product, 201);
-    }
-
-
+    /**
+     * @OA\Get(
+     *     path="/api/fetch-viewed-products-by-ids",
+     *     operationId="fetchViewedProductsByIds",
+     *     tags={"Products"},
+     *     summary="Fetch products by viewed IDs",
+     *     description="Fetches a list of products based on a comma-separated list of product IDs.",
+     *     @OA\Parameter(
+     *         name="ids",
+     *         in="query",
+     *         required=true,
+     *         description="Comma-separated list of product IDs",
+     *         @OA\Schema(type="string", example="1,2,3")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Viewed products retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(type="object", description="Product details")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *             @OA\Property(property="errors", type="object",
+     *                 @OA\Property(property="ids", type="array", @OA\Items(type="string", example="The ids field is required."))
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function fetchViewedProductsByIds(Request $request)
     {
         // Validate the incoming request to ensure 'ids' is present

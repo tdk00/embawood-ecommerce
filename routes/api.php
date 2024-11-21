@@ -75,11 +75,6 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::post('basket/attach-coupon', [BasketController::class, 'attachCouponToBasket']);
         Route::post('basket/detach-coupon', [BasketController::class, 'detachCouponFromBasket']);
 
-        Route::post('products/view', [ApiProductController::class, 'viewProduct']);
-        Route::get('bonus-history', [ApiBonusHistoryController::class, 'index']);
-        Route::get('product-view-bonus-progress', [ApiProductController::class, 'getProductViewBonusProgress']);
-
-        Route::get('earn-bonus-info', [ApiEarnBonusController::class, 'getInfo']);
 
         Route::get('user/delivery-addresses', [ApiUserDeliveryAddressController::class, 'index']);
         Route::post('user/delivery-addresses', [ApiUserDeliveryAddressController::class, 'store']);
@@ -87,14 +82,6 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::delete('user/delivery-addresses/{id}', [ApiUserDeliveryAddressController::class, 'destroy']);
         Route::post('user/delivery-addresses/select', [ApiUserDeliveryAddressController::class, 'makeSelected']);
 
-
-        Route::post('apply-coupon', [BasketController::class, 'applyCoupon']);
-
-
-        Route::post('checkout/details', [ApiCheckoutDetailsController::class, 'getDetails']);
-
-
-        Route::post('checkout', [BasketController::class, 'checkout']);
 
 
         Route::get('orders', [ApiOrderController::class, 'index']);
@@ -108,8 +95,6 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::post('favorites/toggle', [ApiFavoriteController::class, 'toggle']);
         Route::post('favorites/remove', [ApiFavoriteController::class, 'remove']);
 
-
-        Route::get('me', [ApiUserDetailsController::class, 'getUserDetails']);
 
         Route::get('get-profile-summary', [ApiProfileSummaryController::class, 'getDetails']);
 
@@ -129,13 +114,24 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
         Route::get('phone_call_requests', [ApiPhoneCallRequestController::class, 'store']);
 
+        Route::post('checkout/details', [ApiCheckoutDetailsController::class, 'getDetails']);
+        Route::post('checkout', [BasketController::class, 'checkout']);
+
+        Route::get('earn-bonus-info', [ApiEarnBonusController::class, 'getInfo']);
+
+
+
+
+
+        Route::get('bonus-history', [ApiBonusHistoryController::class, 'index']);
+
+
     });
-//Route::get('products', [ApiProductController::class, 'index']);
+
     Route::get('products/{id}', [ApiProductController::class, 'show']);
     Route::post('products/filter', [ApiProductController::class, 'filter']);
-    Route::post('products', [ApiProductController::class, 'store']);
-
     Route::get('/fetch-viewed-products-by-ids', [ApiProductController::class, 'fetchViewedProductsByIds']);
+
 
     Route::get('news', [ApiNewsController::class, 'index']);
     Route::get('news/{id}', [ApiNewsController::class, 'show']);
@@ -155,21 +151,18 @@ Route::post('auth/login', [AuthController::class, 'login']);
     Route::get('selected-products', [ApiSelectedProductController::class, 'index']);
     Route::get('selected-products/{id}', [ApiSelectedProductController::class, 'show']);
 
-    Route::apiResource('categories', ApiCategoryController::class);
-    Route::apiResource('subcategories', ApiSubcategoryController::class);
-
-
+    Route::get('homescreen-categories', [ApiCategoryController::class, 'get_homescreen_categories']);
     Route::get('categories-with-subcategories', [ApiCategoryController::class, 'getCategoriesWithSubcategory']);
+    Route::get('category-details/{id}', [ApiCategoryController::class, 'show']);
+    Route::get('/category/{slug}', [ApiCategoryController::class, 'showBySlug']);
+
+
+
 
 
     Route::get('subcategory-details', [ApiSubcategoryController::class, 'show']);
-
-    Route::get('category-details/{id}', [ApiCategoryController::class, 'show']);
-
-
     Route::get('homescreen-subcategories', [ApiSubcategoryController::class, 'get_homescreen_subcategories']);
 
-    Route::get('homescreen-categories', [ApiCategoryController::class, 'get_homescreen_categories']);
 
     Route::get('ideas', [ApiIdeaController::class, 'index']);
     Route::get('ideas/{idea}', [ApiIdeaController::class, 'show']);
@@ -185,9 +178,6 @@ Route::post('auth/login', [AuthController::class, 'login']);
     Route::get('idea-widget-items', [ApiIdeaWidgetItemController::class, 'index']);
 
 
-    Route::get('/subcategories/{subcategory}/top-list', [ApiTopListController::class, 'index']);
-
-
     Route::post('/reviews/store/', [ApiReviewController::class, 'store']);
     Route::get('/reviews/{productId}', [ApiReviewController::class, 'getReviews']);
 
@@ -197,7 +187,6 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 
     Route::get('company/stores', [ApiStoresController::class, 'index']);
-
     Route::get('company/stores/nearest', [ApiStoresController::class, 'nearest']);
 
 
@@ -210,7 +199,6 @@ Route::post('auth/login', [AuthController::class, 'login']);
     Route::get('company/pages', [ApiPageController::class, 'index']);
 
 
-Route::get('/category/{slug}', [ApiCategoryController::class, 'showBySlug']);
 
-Route::get('video_call_requests', [ApiVideoCallRequestController::class, 'store']);
+    Route::get('video_call_requests', [ApiVideoCallRequestController::class, 'store']);
 

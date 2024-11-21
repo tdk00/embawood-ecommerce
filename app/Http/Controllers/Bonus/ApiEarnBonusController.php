@@ -19,6 +19,57 @@ class ApiEarnBonusController extends Controller
         return response()->json($bonusExecutions);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/earn-bonus-info",
+     *     operationId="getEarnBonusInfo",
+     *     tags={"Bonuses"},
+     *     summary="Retrieve bonus earning information",
+     *     description="Provides information about available bonuses for product views, registration, and orders, including current progress and bonus amounts.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Bonus earning information retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="product_view",
+     *                 type="object",
+     *                 description="Details about the product view bonus",
+     *                 @OA\Property(property="title", type="string", description="Title of the bonus", example="Earn bonus for viewing products"),
+     *                 @OA\Property(property="description", type="string", description="Description of the bonus", example="View products to earn bonuses."),
+     *                 @OA\Property(property="bonus_amount", type="integer", description="Bonus amount for achieving the target", example=10),
+     *                 @OA\Property(property="product_view_target", type="integer", description="Target product views to achieve the bonus", example=5),
+     *                 @OA\Property(property="current_view_count", type="integer", description="Current number of views by the user", example=3),
+     *                 @OA\Property(property="bonus_achieved", type="boolean", description="Indicates if the user has achieved the bonus", example=false)
+     *             ),
+     *             @OA\Property(
+     *                 property="registration",
+     *                 type="object",
+     *                 description="Details about the registration bonus",
+     *                 @OA\Property(property="title", type="string", description="Title of the bonus", example="Registration Bonus"),
+     *                 @OA\Property(property="description", type="string", description="Description of the bonus", example="Earn bonus for registering in the app."),
+     *                 @OA\Property(property="bonus_amount", type="integer", description="Bonus amount for registration", example=20),
+     *                 @OA\Property(property="bonus_achieved", type="boolean", description="Indicates if the registration bonus has been achieved", example=true)
+     *             ),
+     *             @OA\Property(
+     *                 property="order",
+     *                 type="object",
+     *                 description="Details about the order bonus",
+     *                 @OA\Property(property="title", type="string", nullable=true, description="Title of the bonus", example="Order Bonus"),
+     *                 @OA\Property(property="description", type="string", nullable=true, description="Description of the bonus", example="Earn bonus for placing orders.")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="User not authenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", description="Operation status", example=false),
+     *             @OA\Property(property="message", type="string", description="Error message", example="User not authenticated")
+     *         )
+     *     )
+     * )
+     */
     public function getInfo(){
         $user = Auth::guard('api')->user();
 

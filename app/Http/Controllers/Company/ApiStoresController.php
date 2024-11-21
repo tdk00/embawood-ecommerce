@@ -9,19 +9,64 @@ use Illuminate\Http\Request;
 
 class ApiStoresController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/company/stores",
+     *     operationId="getAllStores",
+     *     tags={"Stores"},
+     *     summary="Get all stores grouped by region",
+     *     description="Retrieves all stores grouped by their respective regions, including store details and associated phone numbers.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Stores retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="regions",
+     *                 type="array",
+     *                 description="List of regions with their stores",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", nullable=true, description="Region ID", example=1),
+     *                     @OA\Property(property="name", type="string", description="Region name", example="Downtown"),
+     *                     @OA\Property(
+     *                         property="stores",
+     *                         type="array",
+     *                         description="List of stores in the region",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer", description="Store ID", example=1),
+     *                             @OA\Property(property="name", type="string", description="Store name", example="Main Street Store"),
+     *                             @OA\Property(property="address", type="string", description="Store address", example="123 Main St"),
+     *                             @OA\Property(property="city", type="string", description="City of the store", example="Springfield"),
+     *                             @OA\Property(property="latitude", type="number", format="float", description="Latitude of the store", example=40.7128),
+     *                             @OA\Property(property="longitude", type="number", format="float", description="Longitude of the store", example=-74.0060),
+     *                             @OA\Property(
+     *                                 property="phone_numbers",
+     *                                 type="array",
+     *                                 description="Phone numbers of the store",
+     *                                 @OA\Items(
+     *                                     @OA\Property(property="id", type="integer", description="Phone number ID", example=1),
+     *                                     @OA\Property(property="store_id", type="integer", description="Store ID", example=1),
+     *                                     @OA\Property(property="phone_number", type="string", description="Phone number", example="(123) 456-7890")
+     *                                 )
+     *                             )
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function index()
     {
-        // Fetch all stores with their associated regions and phone numbers
         $stores = Store::with(['region', 'phoneNumbers'])->get();
 
-        // Group the stores by their regions
         $groupedStores = $stores->groupBy(function ($store) {
             return $store->region ? $store->region->id : 'no_region';
         });
 
-        // Prepare regions response with stores grouped under each region
         $regions = $groupedStores->map(function ($stores, $regionId) {
-            $region = $stores->first()->region; // Fetch the region from the first store of the group
+            $region = $stores->first()->region;
 
             return [
                 'id' => $regionId == 'no_region' ? null : $region->id,
@@ -44,15 +89,69 @@ class ApiStoresController extends Controller
                     ];
                 }),
             ];
-        })->values(); // Ensure it's an array of regions without keys
+        })->values();
 
-        // Return the regions with associated stores
+
         return response()->json(['regions' => $regions]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/company/stores/nearest",
+     *     operationId="getNearestStore",
+     *     tags={"Stores"},
+     *     summary="Get the nearest store",
+     *     description="Finds the nearest store to the provided latitude and longitude coordinates.",
+     *     @OA\Parameter(
+     *         name="latitude",
+     *         in="query",
+     *         required=true,
+     *         description="Latitude of the user's location",
+     *         @OA\Schema(type="number", format="float", example=40.7128)
+     *     ),
+     *     @OA\Parameter(
+     *         name="longitude",
+     *         in="query",
+     *         required=true,
+     *         description="Longitude of the user's location",
+     *         @OA\Schema(type="number", format="float", example=-74.0060)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Nearest store retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", description="Store ID", example=1),
+     *             @OA\Property(property="name", type="string", description="Store name", example="Main Street Store"),
+     *             @OA\Property(property="address", type="string", description="Store address", example="123 Main St"),
+     *             @OA\Property(property="city", type="string", description="City of the store", example="Springfield"),
+     *             @OA\Property(property="latitude", type="number", format="float", description="Latitude of the store", example=40.7128),
+     *             @OA\Property(property="longitude", type="number", format="float", description="Longitude of the store", example=-74.0060),
+     *             @OA\Property(
+     *                 property="phone_numbers",
+     *                 type="array",
+     *                 description="Phone numbers of the store",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", description="Phone number ID", example=1),
+     *                     @OA\Property(property="store_id", type="integer", description="Store ID", example=1),
+     *                     @OA\Property(property="phone_number", type="string", description="Phone number", example="(123) 456-7890")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid input",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", description="Error message", example="Validation failed")
+     *         )
+     *     )
+     * )
+     */
     public function nearest(Request $request)
     {
-        // Validate the request to ensure lat and long are provided
+
         $request->validate([
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
@@ -61,7 +160,6 @@ class ApiStoresController extends Controller
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
 
-        // Calculate the nearest store using the Haversine formula
         $nearestStore = Store::selectRaw(
             "*, ( 6371 * acos( cos( radians(?) ) *
             cos( radians( latitude ) ) *

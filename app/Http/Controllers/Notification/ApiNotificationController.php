@@ -9,23 +9,52 @@ use Illuminate\Http\Request;
 class ApiNotificationController extends Controller
 {
     /**
-     * Get notifications for a specific user, including general and user-specific notifications.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Get(
+     *     path="/api/user/notifications",
+     *     operationId="getUserNotifications",
+     *     tags={"Notifications"},
+     *     summary="Retrieve notifications for the authenticated user",
+     *     description="Returns both general notifications (applicable to all users) and user-specific notifications for the authenticated user.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Notifications retrieved successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="success"),
+     *             @OA\Property(
+     *                 property="notifications",
+     *                 type="array",
+     *                 description="List of notifications",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", description="Notification ID", example=1),
+     *                     @OA\Property(property="title", type="string", description="Title of the notification", example="Welcome to the app!"),
+     *                     @OA\Property(property="message", type="string", description="Notification message", example="Don't forget to check our latest features."),
+     *                     @OA\Property(property="status", type="string", description="Notification status", example="unread"),
+     *                     @OA\Property(property="sent_at", type="string", format="datetime", description="Date and time when the notification was sent", example="2024-11-20T14:35:00Z"),
+     *                     @OA\Property(property="user_id", type="integer", nullable=true, description="User ID if the notification is user-specific, null for general notifications", example=1)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="User not authenticated",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="string", description="Operation status", example="error"),
+     *             @OA\Property(property="message", type="string", description="Error message", example="User not authenticated")
+     *         )
+     *     )
+     * )
      */
     public function getUserNotifications(Request $request)
     {
-        // Assume the user is authenticated, and we retrieve the user ID from the request or auth.
         $userId = $request->user()->id;
 
-        // Query to get both general (user_id is null) and user-specific notifications.
         $notifications = Notification::whereNull('user_id')
             ->orWhere('user_id', $userId)
-            ->orderBy('sent_at', 'desc') // Optionally order by sent date
+            ->orderBy('sent_at', 'desc')
             ->get();
 
-        // Return the notifications as a JSON response
         return response()->json([
             'status' => 'success',
             'notifications' => $notifications,

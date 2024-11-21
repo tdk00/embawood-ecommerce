@@ -21,34 +21,23 @@ class ApiUserDeliveryAddressController extends Controller
      * @OA\Get(
      *     path="/api/user/delivery-addresses",
      *     operationId="getUserDeliveryAddresses",
-     *     tags={"User Delivery Addresses"},
-     *     summary="Get all delivery addresses for the authenticated user",
+     *     tags={"Delivery Addresses"},
+     *     summary="Retrieve all delivery addresses for the authenticated user",
      *     description="Returns a list of all delivery addresses associated with the authenticated user.",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
-     *         )
-     *     ),
+     *     security={{"bearerAuth": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="List of delivery addresses",
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="fullname", type="string", example="John Doe"),
-     *                 @OA\Property(property="phone", type="string", example="+1234567890"),
-     *                 @OA\Property(property="address_line1", type="string", example="123 Main St"),
-     *                 @OA\Property(property="address_line2", type="string", example="Apartment 4B"),
-     *                 @OA\Property(property="city", type="string", example="New York"),
-     *                 @OA\Property(property="is_default", type="boolean", example=true)
+     *                 @OA\Property(property="id", type="integer", description="Address ID", example=1),
+     *                 @OA\Property(property="fullname", type="string", description="Full name associated with the address", example="John Doe"),
+     *                 @OA\Property(property="phone", type="string", description="Phone number", example="+123456789"),
+     *                 @OA\Property(property="address_line1", type="string", description="Primary address line", example="123 Main Street"),
+     *                 @OA\Property(property="address_line2", type="string", nullable=true, description="Secondary address line", example="Apt 4B"),
+     *                 @OA\Property(property="city", type="string", description="City", example="New York"),
+     *                 @OA\Property(property="is_default", type="boolean", description="Indicates if this is the default address", example=true)
      *             )
      *         )
      *     )
@@ -74,51 +63,33 @@ class ApiUserDeliveryAddressController extends Controller
     /**
      * @OA\Post(
      *     path="/api/user/delivery-addresses",
-     *     operationId="createUserDeliveryAddress",
-     *     tags={"User Delivery Addresses"},
-     *     summary="Create a new delivery address for the authenticated user",
-     *     description="Creates a new delivery address and returns the created address data.",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
-     *         )
-     *     ),
+     *     operationId="storeUserDeliveryAddress",
+     *     tags={"Delivery Addresses"},
+     *     summary="Create a new delivery address",
+     *     description="Allows the authenticated user to create a new delivery address. If `is_default` is true, this address will be set as the default.",
+     *     security={{"bearerAuth": {}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="fullname", type="string", example="John Doe"),
-     *             @OA\Property(property="phone", type="string", example="+1234567890"),
-     *             @OA\Property(property="address_line1", type="string", example="123 Main St"),
-     *             @OA\Property(property="address_line2", type="string", example="Apartment 4B", nullable=true),
-     *             @OA\Property(property="city", type="string", example="New York"),
+     *             @OA\Property(property="fullname", type="string", description="Full name", example="Jane Doe"),
+     *             @OA\Property(property="phone", type="string", description="Phone number", example="+123456789"),
+     *             @OA\Property(property="address_line1", type="string", description="Primary address line", example="456 Elm Street"),
+     *             @OA\Property(property="address_line2", type="string", nullable=true, description="Secondary address line", example="Suite 101"),
+     *             @OA\Property(property="city", type="string", description="City", example="Los Angeles"),
+     *             @OA\Property(property="is_default", type="boolean", nullable=true, description="Indicates if this should be the default address", example=true)
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
      *         description="Address created successfully",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="fullname", type="string", example="John Doe"),
-     *             @OA\Property(property="phone", type="string", example="+1234567890"),
-     *             @OA\Property(property="address_line1", type="string", example="123 Main St"),
-     *             @OA\Property(property="address_line2", type="string", example="Apartment 4B"),
-     *             @OA\Property(property="city", type="string", example="New York"),
-     *             @OA\Property(property="is_default", type="boolean", example=true)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="The given data was invalid.")
+     *             @OA\Property(property="id", type="integer", description="Address ID", example=2),
+     *             @OA\Property(property="fullname", type="string", description="Full name", example="Jane Doe"),
+     *             @OA\Property(property="phone", type="string", description="Phone number", example="+123456789"),
+     *             @OA\Property(property="address_line1", type="string", description="Primary address line", example="456 Elm Street"),
+     *             @OA\Property(property="address_line2", type="string", nullable=true, description="Secondary address line", example="Suite 101"),
+     *             @OA\Property(property="city", type="string", description="City", example="Los Angeles"),
+     *             @OA\Property(property="is_default", type="boolean", description="Indicates if this is the default address", example=true)
      *         )
      *     )
      * )
@@ -153,62 +124,51 @@ class ApiUserDeliveryAddressController extends Controller
         return response()->json($address, 201);
     }
 
+
     /**
      * @OA\Put(
      *     path="/api/user/delivery-addresses/{id}",
      *     operationId="updateUserDeliveryAddress",
-     *     tags={"User Delivery Addresses"},
-     *     summary="Update a delivery address for the authenticated user",
-     *     description="Updates an existing delivery address and returns the updated address data.",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
-     *         )
-     *     ),
+     *     tags={"Delivery Addresses"},
+     *     summary="Update an existing delivery address",
+     *     description="Allows the authenticated user to update an existing delivery address. If `is_default` is true, this address will be set as the default.",
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of the delivery address to update",
      *         required=true,
+     *         description="ID of the delivery address to update",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="fullname", type="string", example="John Doe"),
-     *             @OA\Property(property="phone", type="string", example="+1234567890"),
-     *             @OA\Property(property="address_line1", type="string", example="123 Main St"),
-     *             @OA\Property(property="address_line2", type="string", example="Apartment 4B", nullable=true),
-     *             @OA\Property(property="city", type="string", example="New York"),
-     *             @OA\Property(property="is_default", type="boolean", example=true)
+     *             @OA\Property(property="fullname", type="string", description="Full name", example="Jane Doe"),
+     *             @OA\Property(property="phone", type="string", description="Phone number", example="+123456789"),
+     *             @OA\Property(property="address_line1", type="string", description="Primary address line", example="789 Maple Ave"),
+     *             @OA\Property(property="address_line2", type="string", nullable=true, description="Secondary address line", example="Suite 303"),
+     *             @OA\Property(property="city", type="string", description="City", example="San Francisco"),
+     *             @OA\Property(property="is_default", type="boolean", nullable=true, description="Indicates if this should be the default address", example=true)
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Address updated successfully",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="fullname", type="string", example="John Doe"),
-     *             @OA\Property(property="phone", type="string", example="+1234567890"),
-     *             @OA\Property(property="address_line1", type="string", example="123 Main St"),
-     *             @OA\Property(property="address_line2", type="string", example="Apartment 4B"),
-     *             @OA\Property(property="city", type="string", example="New York"),
-     *             @OA\Property(property="is_default", type="boolean", example=true)
+     *             @OA\Property(property="id", type="integer", description="Address ID", example=1),
+     *             @OA\Property(property="fullname", type="string", description="Full name", example="Jane Doe"),
+     *             @OA\Property(property="phone", type="string", description="Phone number", example="+123456789"),
+     *             @OA\Property(property="address_line1", type="string", description="Primary address line", example="789 Maple Ave"),
+     *             @OA\Property(property="address_line2", type="string", nullable=true, description="Secondary address line", example="Suite 303"),
+     *             @OA\Property(property="city", type="string", description="City", example="San Francisco"),
+     *             @OA\Property(property="is_default", type="boolean", description="Indicates if this is the default address", example=true)
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Address not found",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Address not found")
+     *             @OA\Property(property="message", type="string", description="Error message", example="Address not found")
      *         )
      *     )
      * )
@@ -259,45 +219,34 @@ class ApiUserDeliveryAddressController extends Controller
      * @OA\Delete(
      *     path="/api/user/delivery-addresses/{id}",
      *     operationId="deleteUserDeliveryAddress",
-     *     tags={"User Delivery Addresses"},
-     *     summary="Delete a delivery address for the authenticated user",
-     *     description="Deletes an existing delivery address.",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
-     *         )
-     *     ),
+     *     tags={"Delivery Addresses"},
+     *     summary="Delete a delivery address",
+     *     description="Allows the authenticated user to delete an existing delivery address.",
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="ID of the delivery address to delete",
      *         required=true,
+     *         description="ID of the delivery address to delete",
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Address deleted successfully",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Address deleted")
+     *             @OA\Property(property="message", type="string", description="Success message", example="Address deleted")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Address not found",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Address not found")
+     *             @OA\Property(property="message", type="string", description="Error message", example="Address not found")
      *         )
      *     )
      * )
      */
+
     public function destroy($id)
     {
         $address = UserDeliveryAddress::where('user_id', $this->user->id)->find($id);
@@ -310,41 +259,45 @@ class ApiUserDeliveryAddressController extends Controller
         return response()->json(['message' => 'Address deleted']);
     }
 
+
     /**
      * @OA\Post(
-     *     path="/api/user/delivery-addresses/{id}/select",
-     *     operationId="selectUserDeliveryAddress",
-     *     tags={"User Delivery Addresses"},
-     *     summary="Set a delivery address as the default for the authenticated user",
-     *     description="Sets the selected delivery address as the default address for the user.",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="ID of the delivery address to select as default",
+     *     path="/api/user/delivery-addresses/select",
+     *     operationId="makeAddressDefault",
+     *     tags={"Delivery Addresses"},
+     *     summary="Mark a delivery address as default",
+     *     description="Allows the authenticated user to mark a specific delivery address as the default.",
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
      *         required=true,
-     *         @OA\Schema(type="integer", example=1)
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", description="ID of the delivery address to mark as default", example=1)
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Address selected as default"
+     *         description="Address marked as default successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", description="Success message", example="Address selected as default"),
+     *             @OA\Property(
+     *                 property="address",
+     *                 type="object",
+     *                 description="Updated default address",
+     *                 @OA\Property(property="id", type="integer", description="Address ID", example=1),
+     *                 @OA\Property(property="fullname", type="string", description="Full name", example="Jane Doe"),
+     *                 @OA\Property(property="phone", type="string", description="Phone number", example="+123456789"),
+     *                 @OA\Property(property="address_line1", type="string", description="Primary address line", example="123 Main St"),
+     *                 @OA\Property(property="address_line2", type="string", nullable=true, description="Secondary address line", example="Suite 101"),
+     *                 @OA\Property(property="city", type="string", description="City", example="New York"),
+     *                 @OA\Property(property="is_default", type="boolean", description="Indicates if this is the default address", example=true)
+     *             )
+     *         )
      *     ),
      *     @OA\Response(
      *         response=404,
      *         description="Address not found",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Address not found")
+     *             @OA\Property(property="message", type="string", description="Error message", example="Address not found")
      *         )
      *     )
      * )

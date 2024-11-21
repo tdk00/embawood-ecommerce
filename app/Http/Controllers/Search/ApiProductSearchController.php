@@ -12,53 +12,40 @@ class ApiProductSearchController extends Controller
     /**
      * @OA\Get(
      *     path="/api/search/autocomplete",
-     *     operationId="autocompleteProduct",
+     *     operationId="autocompleteSearch",
      *     tags={"Search"},
      *     summary="Autocomplete product search",
-     *     description="Searches for products by name and returns a list of matching products. The search is limited to the main products only.",
+     *     description="Provides up to 5 product suggestions based on a search term.",
      *     @OA\Parameter(
      *         name="term",
      *         in="query",
-     *         description="The search term used to find matching products",
      *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="Laptop"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
-     *         )
+     *         description="Search term to find products",
+     *         @OA\Schema(type="string", example="chair")
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="A list of matching products",
+     *         description="Autocomplete suggestions retrieved successfully",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Laptop Pro 15"),
-     *                 @OA\Property(property="price", type="number", format="float", example=999.99),
-     *                 @OA\Property(property="discount", type="number", format="float", example=10.5),
-     *                 @OA\Property(property="discount_ends_at", type="string", format="date-time", example="2024-12-31T23:59:59Z"),
-     *                 @OA\Property(property="is_set", type="boolean", example=false),
-     *                 @OA\Property(property="final_price", type="number", format="float", example=899.49)
+     *             type="object",
+     *             @OA\Property(property="count", type="integer", description="Total count of matching products", example=12),
+     *             @OA\Property(
+     *                 property="items",
+     *                 type="array",
+     *                 description="List of product suggestions",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", description="Product ID", example=1),
+     *                     @OA\Property(property="name", type="string", description="Product name", example="Wooden Chair")
+     *                 )
      *             )
      *         )
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="No products found",
+     *         response=400,
+     *         description="Bad request",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="No products found")
+     *             @OA\Property(property="message", type="string", description="Error message", example="Invalid request")
      *         )
      *     )
      * )
@@ -67,16 +54,12 @@ class ApiProductSearchController extends Controller
     {
         $term = $request->get('term', '');
 
-        // Fetch the top 5 matching products and get the total count in a single query
         $productsQuery = Product::searchByName($term);
 
-        // Get the limited results for display
         $products = $productsQuery->take(5)->get(['id', 'name']);
 
-        // Get the total count without running an additional query
         $totalCount = $productsQuery->count();
 
-        // Transform the results to match the expected Flutter structure
         $transformedProducts = $products->map(function ($product) {
             return [
                 'id' => $product->id,
@@ -85,70 +68,72 @@ class ApiProductSearchController extends Controller
         });
 
         return response()->json([
-            'count' => $totalCount, // Total count of all matching products
-            'items' => $transformedProducts->toArray(), // Top 5 matching items
+            'count' => $totalCount,
+            'items' => $transformedProducts->toArray(),
         ]);
     }
 
     /**
-     * @OA\Get(
+     * @OA\Post(
      *     path="/api/search/search-results",
-     *     operationId="searchProductResults",
+     *     operationId="searchResults",
      *     tags={"Search"},
-     *     summary="Search for products",
-     *     description="Searches for products by name and returns a list of matching products.",
-     *     @OA\Parameter(
-     *         name="term",
-     *         in="query",
-     *         description="The search term used to find matching products",
+     *     summary="Get search results for products",
+     *     description="Retrieves a list of products matching the search term.",
+     *     @OA\RequestBody(
      *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="Laptop"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="term", type="string", description="Search term to filter products", example="chair")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="A list of matching products",
+     *         description="Search results retrieved successfully",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Laptop Pro 15"),
-     *                 @OA\Property(property="price", type="number", format="float", example=999.99),
-     *                 @OA\Property(property="discount", type="number", format="float", example=10.5),
-     *                 @OA\Property(property="discount_ends_at", type="string", format="date-time", example="2024-12-31T23:59:59Z"),
-     *                 @OA\Property(property="is_set", type="boolean", example=false),
-     *                 @OA\Property(property="final_price", type="number", format="float", example=899.49)
+     *             type="object",
+     *             @OA\Property(property="total_results", type="integer", description="Total number of matching products", example=5),
+     *             @OA\Property(
+     *                 property="products",
+     *                 type="array",
+     *                 description="List of matching products",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", description="Product ID", example=1),
+     *                     @OA\Property(property="name", type="string", description="Product name", example="Wooden Chair"),
+     *                     @OA\Property(property="is_set", type="boolean", description="Indicates if the product is part of a set", example=false),
+     *                     @OA\Property(property="price", type="number", format="float", description="Product price", example=120.99),
+     *                     @OA\Property(property="discount", type="number", format="float", description="Discount amount", example=10),
+     *                     @OA\Property(property="discount_ends_at", type="string", format="date-time", description="Discount end time", example="2024-12-31T23:59:59Z"),
+     *                     @OA\Property(property="final_price", type="number", format="float", description="Final price after discount", example=110.99),
+     *                     @OA\Property(property="main_image", type="string", description="URL to the product's main image", example="https://example.com/images/products/chair.jpg"),
+     *                     @OA\Property(property="average_rating", type="number", format="float", description="Average product rating", example=4.5),
+     *                     @OA\Property(property="is_in_basket", type="boolean", description="Indicates if the product is in the user's basket", example=false),
+     *                     @OA\Property(property="is_favorite", type="boolean", description="Indicates if the product is marked as favorite", example=true),
+     *                     @OA\Property(property="remaining_discount_seconds", type="integer", description="Remaining time for the discount in seconds", example=3600),
+     *                     @OA\Property(property="has_unlimited_discount", type="boolean", description="Indicates if the product has an unlimited discount", example=false),
+     *                     @OA\Property(property="has_limited_discount", type="boolean", description="Indicates if the product has a limited-time discount", example=true),
+     *                     @OA\Property(property="badge", type="string", description="URL to the first badge image", example="https://example.com/images/badges/new.png"),
+     *                     @OA\Property(property="badge2", type="string", description="URL to the second badge image", example="https://example.com/images/badges/sale.png")
+     *                 )
      *             )
      *         )
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="No products found",
+     *         response=400,
+     *         description="Bad request",
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="message", type="string", example="No products found")
+     *             @OA\Property(property="message", type="string", description="Error message", example="Invalid request")
      *         )
      *     )
      * )
      */
+
     public function searchResults(Request $request)
     {
         $term = $request->get('term', '');
 
-        $products = Product::main() // Use the 'main' scope to filter products with a null parent_id
+        $products = Product::main()
         ->where(function($query) use ($term) {
             $query->where('name', 'LIKE', "%{$term}%");
         })->get();
@@ -180,63 +165,5 @@ class ApiProductSearchController extends Controller
             'total_results' => $products->count(),
             'products' => $transformedProducts
         ]);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/search/search-tags",
-     *     operationId="getSearchTags",
-     *     tags={"Search"},
-     *     summary="Get search tags",
-     *     description="Retrieves a list of search tags with an optional limit on the number of tags returned.",
-     *     @OA\Parameter(
-     *         name="limit",
-     *         in="query",
-     *         description="Limit the number of search tags returned",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="integer",
-     *             example=3
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="locale",
-     *         in="query",
-     *         description="Locale for translations",
-     *         required=false,
-     *         @OA\Schema(
-     *             type="string",
-     *             example="en"
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="A list of search tags",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Armada Masa"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", example=null),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", example=null)
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="No search tags found",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="No search tags found")
-     *         )
-     *     )
-     * )
-     */
-    public function getSearchTags(Request $request)
-    {
-        $limit = $request->input('limit', 3);
-        $tags = ProductSearchTag::limit($limit)->get();
-        return response()->json($tags);
     }
 }
