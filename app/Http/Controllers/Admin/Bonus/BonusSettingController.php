@@ -5,10 +5,16 @@ namespace App\Http\Controllers\Admin\Bonus;
 use App\Http\Controllers\Controller;
 use App\Models\Bonus\BonusSetting;
 use App\Models\Bonus\BonusSettingTranslation;
+use App\Services\BonusSettingsService;
 use Illuminate\Http\Request;
 
 class BonusSettingController extends Controller
 {
+    protected $bonusSettingsService;
+    public function __construct(BonusSettingsService $bonusSettingsService)
+    {
+        $this->bonusSettingsService = $bonusSettingsService;
+    }
     public function editAll()
     {
         // Load the three predefined bonus settings
@@ -65,6 +71,6 @@ class BonusSettingController extends Controller
             $bonusSetting->save();
         }
 
-        return redirect()->route('admin.bonus-settings.editAll')->with('success', 'Bonus settings updated successfully.');
+//        return redirect()->route('admin.bonus-settings.editAll')->with('success', 'Bonus settings updated successfully.');
     }
 }

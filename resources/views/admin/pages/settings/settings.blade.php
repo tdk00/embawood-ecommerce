@@ -5,8 +5,10 @@
 @section('content')
     <div class="container">
         <div class="card shadow-sm mt-5">
-            <div class="card-header">
-                <h3>Edit Settings</h3>
+            <div class="card-header border-0 pt-5">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bold text-dark">Edit Settings</span>
+                </h3>
             </div>
 
             <div class="card-body">
@@ -22,7 +24,7 @@
                     @csrf
 
                     @foreach($settings as $setting)
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-3 align-items-center mb-7">
                             <label for="{{ $setting->key }}" class="form-label">
                                 {{ ucfirst(str_replace('_', ' ', $setting->key)) }}
                             </label>

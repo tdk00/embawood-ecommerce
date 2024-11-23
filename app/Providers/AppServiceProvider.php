@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\BonusSettingsService;
 use App\Services\CreditService;
 use App\Services\SettingsService;
 use Illuminate\Support\ServiceProvider;
@@ -19,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(SettingsService::class, function ($app) {
             return new SettingsService();
+        });
+
+        $this->app->singleton(BonusSettingsService::class, function ($app) {
+            return new BonusSettingsService();
         });
     }
 

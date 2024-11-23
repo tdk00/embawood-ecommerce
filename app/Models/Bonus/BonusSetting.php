@@ -9,7 +9,7 @@ class BonusSetting extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type', 'target_count', 'bonus_amount', 'period'];
+    protected $fillable = ['title', 'description', 'type', 'target_count', 'bonus_amount', 'period'];
 
     public function translations()
     {
