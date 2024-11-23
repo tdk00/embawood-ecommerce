@@ -71,6 +71,6 @@ class BonusSettingController extends Controller
             $bonusSetting->save();
         }
 
-//        return redirect()->route('admin.bonus-settings.editAll')->with('success', 'Bonus settings updated successfully.');
+        return redirect()->route('admin.bonus-settings.editAll')->with('success', 'Bonus settings updated successfully.');
     }
 }

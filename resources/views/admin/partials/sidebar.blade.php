@@ -582,14 +582,6 @@ if (isset($_COOKIE["sidebar_minimize_state"]) && $_COOKIE["sidebar_minimize_stat
                                     <span class="menu-title">Təhlükəsizlik məlumatları (Səbət)</span>
                                 </a>
                             </div>
-                            <div class="menu-item">
-                                <a class="menu-link" href="{{ route('admin.badges.index') }}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title"> Məhsul etiket şəkli </span>
-                                </a>
-                            </div>
                         </div>
                     </div>
                     <!--end:Orders Menu-->

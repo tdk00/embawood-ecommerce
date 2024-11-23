@@ -121,13 +121,15 @@
                                     </div>
                                 @endif
 
+                                <div class="mb-10">
+                                    <button type="submit" class="btn btn-primary">Update Bonus Settings</button>
+                                </div>
                             </div>
                         </div>
 
 
                     @endforeach
 
-                    <button type="submit" class="btn btn-primary">Update Bonus Settings</button>
                 </form>
             </div>
         </div>
