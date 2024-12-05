@@ -68,7 +68,8 @@ class SliderNewsController extends Controller
             // Handle banner image upload
             $banner_image = $request->file('banner_image');
             $banner_image_name = time() . '_' . $banner_image->getClientOriginalName();
-            $banner_image->move(public_path('storage/images/news/'), $banner_image_name);
+
+            $banner_image->storeAs('public/images/news/', $banner_image_name);
             $news->banner_image = $banner_image_name;
 
             $news->save();
@@ -105,7 +106,7 @@ class SliderNewsController extends Controller
 
             $slider_image = $request->file('slider_image');
             $slider_image_name = time() . '_' . $slider_image->getClientOriginalName();
-            $slider_image->move(public_path('storage/images/home_screen/sliders/'), $slider_image_name);
+            $slider_image->storeAs('public/images/home_screen/sliders/', $slider_image_name);
             $slider->slider_image = $slider_image_name;
 
             $slider->is_active = $request->input('is_active');
@@ -164,7 +165,7 @@ class SliderNewsController extends Controller
 
             $banner_image = $request->file('banner_image');
             $banner_image_name = time() . '_' . $banner_image->getClientOriginalName();
-            $banner_image->move(public_path('storage/images/news/'), $banner_image_name);
+            $banner_image->storeAs('public/images/news/', $banner_image_name);
             $news->banner_image = $banner_image_name;
         }
 
@@ -210,7 +211,7 @@ class SliderNewsController extends Controller
 
             $slider_image = $request->file('slider_image');
             $slider_image_name = time() . '_' . $slider_image->getClientOriginalName();
-            $slider_image->move(public_path('storage/images/home_screen/sliders/'), $slider_image_name);
+            $slider_image->storeAs('public/images/home_screen/sliders/', $slider_image_name);
             $slider->slider_image = $slider_image_name;
         }
 
