@@ -129,12 +129,12 @@ class ApiSubcategoryController extends Controller
         $subcategory->banner = url('storage/images/subcategories/banner/' . $subcategory->banner_image);
         $subCategoryData = [
             'category_id' => $subcategory->category_id,
-            'name' => $subcategory->name,
+            'name' => $subcategory->name ?? "",
             'slug' => $subcategory->slug, // Include slug here
-            'description' => $subcategory->description,
-            'meta_title' => $subcategory->meta_title,
-            'meta_description' => $subcategory->meta_description,
-            'description_web' => $subcategory->description_web,
+            'description' => $subcategory->description ?? "",
+            'meta_title' => $subcategory->meta_title ?? "",
+            'meta_description' => $subcategory->meta_description ?? "",
+            'description_web' => $subcategory->description_web ?? "",
             'banner_image' => $subcategory->banner_image,
         ];
 

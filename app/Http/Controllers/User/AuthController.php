@@ -416,4 +416,27 @@ class AuthController extends Controller
             'data' => $user
         ]);
     }
+
+    public function deactivateAccount(Request $request)
+    {
+        // Validate the input
+        $request->validate([
+            'phone_number' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        // Find the user by phone number
+        $user = User::where('phone', $request->phone_number)->first();
+
+        // If user is not found or password is incorrect
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return redirect()->back()->with('error', 'Invalid phone number or password.');
+        }
+
+        // Deactivate the user
+        $user->is_active = false;
+        $user->save();
+
+        return redirect()->back()->with('success', 'Your account has been deactivated successfully.');
+    }
 }

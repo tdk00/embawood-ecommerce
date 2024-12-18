@@ -276,21 +276,21 @@ class ApiCategoryController extends Controller
         });
 
         return response()->json([
-            'slug' => $category->slug,
-            'name' => $category->name,
-            'description' => $category->description,
-            'meta_title' => $category->meta_title,
-            'meta_description' => $category->meta_description,
-            'description_web' => $category->description_web,
-            'banner_image' => url('storage/images/category/banner/' . $category->banner_image),
+            'slug' => $category->slug ?? "",
+            'name' => $category->name ?? "",
+            'description' => $category->description ?? "",
+            'meta_title' => $category->meta_title ?? "",
+            'meta_description' => $category->meta_description ?? "",
+            'description_web' => $category->description_web ?? "",
+            'banner_image' => url('storage/images/category/banner/' . $category->banner_image) ?? "",
             'product_count' => $allProducts->count(),
             'products' => $allProducts, // All products from subcategories
             'subcategories' => $category->subcategories->map(function ($subcategory) {
                 return [
                     'category_id' => $subcategory->id,
-                    'name' => $subcategory->name,
-                    'description' => $subcategory->description,
-                    'banner_image' => url('storage/images/subcategories/banner/' . $subcategory->banner_image),
+                    'name' => $subcategory->name ?? "",
+                    'description' => $subcategory->description ?? "",
+                    'banner_image' => url('storage/images/subcategories/banner/' . $subcategory->banner_image) ?? "",
                     'products' => $subcategory->products->map(function ($product) {
                         return [
                             'id' => $product->id,

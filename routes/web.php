@@ -37,6 +37,8 @@ use App\Http\Controllers\Admin\Review\ReviewControllerAdmin;
 use App\Http\Controllers\Admin\Settings\SettingsController;
 use App\Http\Controllers\Admin\Support\PhoneCallRequestController;
 use App\Http\Controllers\Admin\Support\VideoCallRequestController;
+use App\Http\Controllers\User\AuthController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -244,4 +246,11 @@ Route::prefix('admin/products/{productId}/purchased-together-products')->group(f
     Route::post('/attach', [PurchasedTogetherProductsController::class, 'attach'])->name('admin.purchased-together-products.attach');
     Route::get('/detach/{purchasedTogetherProductId}', [PurchasedTogetherProductsController::class, 'detach'])->name('admin.purchased-together-products.detach');
 });
+
+
+Route::get('/deactivate-account', function () {
+    return view('deactivate_account');
+})->name('deactivate.account.view');
+
+Route::post('/deactivate-account', [AuthController::class, 'deactivateAccount'])->name('deactivate.account');
 
