@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Http;
 class OtpService
 {
     protected $smsApiUrl = 'https://send.atlsms.az:7443/bulksms/api';
-    protected $smsLogin = 'embawood';
-    protected $smsPassword = 'mbwd1467';
+    protected $smsLogin = 'embaser';
+    protected $smsPassword = 'mbsr146';
     protected $smsTitle = 'Embawood';
 
 
@@ -27,11 +27,11 @@ class OtpService
 
         // Send OTP using ATL SMS API
         $response = $this->sendSms($phone, "Your OTP is $otp");
-
-        // Log or handle the response
-        if ($response['head']['responsecode'] !== '000') {
-//            throw new \Exception('Failed to send OTP via SMS. Error Code: ' . $response['head']['responsecode']);
-        }
+//
+//        // Log or handle the response
+//        if ($response['head']['responsecode'] !== '000') {
+////            throw new \Exception('Failed to send OTP via SMS. Error Code: ' . $response['head']['responsecode']);
+//        }
 
         return $otp; // For testing purposes only, remove this in production
     }

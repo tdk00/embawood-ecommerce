@@ -35,4 +35,11 @@ return [
         'credentials' => storage_path('app/firebase/embawood-app-firebase-adminsdk-5mfyh-0facddf866.json'),
     ],
 
+    'creatio' => [
+        'client_id' => env('CREATIO_CLIENT_ID'),
+        'client_secret' => env('CREATIO_CLIENT_SECRET'),
+        'token_url' => env('CREATIO_TOKEN_URL'),
+        'api_url' => env('CREATIO_API_URL'),
+    ],
+
 ];

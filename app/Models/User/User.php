@@ -35,7 +35,10 @@ class User extends Authenticatable
         'total_bonus_amount',
         'used_bonus_amount',
         'remaining_bonus_amount',
-        'last_product_view_bonus_achieved_at'
+        'last_product_view_bonus_achieved_at',
+        'latest_payment_id',
+        'latest_payment_status',
+        'latest_payment_amount',
     ];
 
     /**

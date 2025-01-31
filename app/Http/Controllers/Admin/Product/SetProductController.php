@@ -77,6 +77,7 @@ class SetProductController extends Controller
 
         // Validation
         $validated = $request->validate([
+            'ar_model_url' => 'nullable|string',
             'slug' => 'required|unique:products,slug|max:255',
             'name_az' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
@@ -104,6 +105,7 @@ class SetProductController extends Controller
         try {
             // Create the base product
             $product = Product::create([
+                'ar_model_url' => $request->ar_model_url,
                 'slug' => $request->slug,
                 'name' => $request->name_az,
                 'description' => $request->description_az,
@@ -216,6 +218,7 @@ class SetProductController extends Controller
 
         // Validation
         $validated = $request->validate([
+            'ar_model_url' => 'nullable|string',
             'slug' => 'required|unique:products,slug,' . $product->id . '|max:255',
             'name_az' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
@@ -248,6 +251,7 @@ class SetProductController extends Controller
 
             // Update the base product
             $product->update([
+                'ar_model_url' => $request->ar_model_url,
                 'slug' => $request->slug,
                 'name' => $request->name_az,
                 'description' => $request->description_az,

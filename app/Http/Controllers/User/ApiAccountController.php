@@ -3,12 +3,24 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\User;
+use App\Services\Bonus\BonusService;
+use App\Services\User\CreatioApiService;
+use App\Services\User\CreatioService;
+use App\Services\User\OtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
 class ApiAccountController extends Controller
 {
+    protected $creatioService;
+    protected $creatioApiService;
+
+    public function __construct( CreatioService $creatioService, CreatioApiService $creatioApiService )
+    {
+        $this->creatioService = $creatioService;
+        $this->creatioApiService = $creatioApiService;
+    }
 
     /**
      * @OA\Get(
@@ -141,6 +153,18 @@ class ApiAccountController extends Controller
             'birthdate' => $request->birthdate,
         ]);
 
+        $accessToken = $this->creatioService->getAccessToken();
+
+
+        $data = [
+            'name'=> empty($user->name) ? "DIDNT SET YET" :  $user->name,
+            'surname' => empty( $user->surname ) ? "DIDNT SET YET" :  $user->surname,
+            'phone' => $this->formatPhoneNumberForCRM( $user->phone ),
+            'email' => "embawd@embawood.az"
+        ];
+
+
+        $response = $this->creatioApiService->createOrUpdateClient($data, $accessToken);
         // Return success response with updated user data
         return response()->json([
             'message' => 'User updated successfully',
@@ -151,7 +175,23 @@ class ApiAccountController extends Controller
                 'phone' => $user->phone,               // Return phone as non-changeable
                 'gender' => $user->gender,
                 'birthdate' => $user->birthdate->toIso8601String(),
-            ]
+            ],
+            'creatio' => $response
         ]);
+    }
+
+
+
+    private function formatPhoneNumberForCRM($phone)
+    {
+        // Remove all non-numeric characters
+        $cleanedPhone = preg_replace('/\D/', '', $phone);
+
+        // Add the country code prefix (994) if missing
+        if (substr($cleanedPhone, 0, 2) !== '99') {
+            $cleanedPhone = '+994' . $cleanedPhone;
+        }
+
+        return $cleanedPhone;
     }
 }

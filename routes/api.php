@@ -4,6 +4,7 @@ use App\Http\Controllers\Account\ApiProfileSummaryController;
 use App\Http\Controllers\Account\ApiUserDeliveryAddressController;
 use App\Http\Controllers\Account\ApiUserDetailsController;
 use App\Http\Controllers\Basket\BasketController;
+use App\Http\Controllers\Basket\CouponController;
 use App\Http\Controllers\Bonus\ApiBonusExecutionController;
 use App\Http\Controllers\Bonus\ApiBonusHistoryController;
 use App\Http\Controllers\Bonus\ApiEarnBonusController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Ideas\ApiSubIdeaController;
 use App\Http\Controllers\Ideas\ApiSubIdeaItemController;
 use App\Http\Controllers\News\ApiNewsController;
 use App\Http\Controllers\Notification\ApiNotificationController;
+use App\Http\Controllers\PaymentIntegration\PaymentController;
 use App\Http\Controllers\Product\ApiFavoriteController;
 use App\Http\Controllers\Product\ApiProductController;
 use App\Http\Controllers\Product\ApiReviewController;
@@ -36,6 +38,7 @@ use App\Http\Controllers\Settings\ApiSettingsController;
 use App\Http\Controllers\Support\ApiPhoneCallRequestController;
 use App\Http\Controllers\Support\ApiVideoCallRequestController;
 use App\Http\Controllers\User\ApiAccountController;
+use App\Http\Controllers\User\ApiCreatioController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -72,8 +75,8 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::get('basket', [BasketController::class, 'getBasket']);
 
 
-        Route::post('basket/attach-coupon', [BasketController::class, 'attachCouponToBasket']);
-        Route::post('basket/detach-coupon', [BasketController::class, 'detachCouponFromBasket']);
+        Route::post('basket/attach-coupon', [CouponController::class, 'attachCouponToBasket']);
+        Route::post('basket/detach-coupon', [CouponController::class, 'detachCouponFromBasket']);
 
 
         Route::get('user/delivery-addresses', [ApiUserDeliveryAddressController::class, 'index']);
@@ -126,8 +129,14 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::get('bonus-history', [ApiBonusHistoryController::class, 'index']);
 
 
+        Route::post('kapital-payment/initiate', [PaymentController::class, 'initiatePayment']);
+        Route::post('kapital-payment/verify', [PaymentController::class, 'verifyPayment']);
+        Route::post('payment/clearing', [PaymentController::class, 'executeClearing']);
+
+
     });
 
+    Route::get('payment/callback', [PaymentController::class, 'paymentCallback']);
     Route::get('products/{id}', [ApiProductController::class, 'show']);
     Route::post('products/filter', [ApiProductController::class, 'filter']);
     Route::get('/fetch-viewed-products-by-ids', [ApiProductController::class, 'fetchViewedProductsByIds']);
@@ -201,4 +210,7 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 
     Route::get('video_call_requests', [ApiVideoCallRequestController::class, 'store']);
+
+    Route::post('/creatio-contacts', [ApiCreatioController::class, 'store']);
+
 

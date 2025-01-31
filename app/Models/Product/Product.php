@@ -18,7 +18,7 @@ class Product extends Model
 
     protected $fillable = [
         'parent_id', 'name', 'sku', 'description', 'price', 'stock', 'discount',
-        'discount_ends_at', 'is_set', 'color', 'badge_1', 'badge_2', 'is_active', 'slug'
+        'discount_ends_at', 'is_set', 'color', 'badge_1', 'badge_2', 'is_active', 'slug', 'ar_model_url'
     ];
 
 

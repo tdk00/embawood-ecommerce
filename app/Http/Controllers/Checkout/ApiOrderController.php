@@ -220,9 +220,10 @@ class ApiOrderController extends Controller
 
         return response()->json([
             'order_total' => $order->total,
-            'final_total' => ($order->total - $order->item_discounts_total - $order->coupon_discount),
+            'final_total' => ($order->total - $order->item_discounts_total - $order->coupon_discount - $order->bonus_discount),
             'item_discounts_total' => $order->item_discounts_total,
             'coupon_discount' => $order->coupon_discount,
+            'bonus_discount' => $order->bonus_discount,
             'items' => $items
         ]);
     }

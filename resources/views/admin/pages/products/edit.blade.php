@@ -308,6 +308,17 @@
                                                 <!--end::Input-->
                                             </div>
                                             <!--end::Input group-->
+                                            <!--begin::Input group-->
+                                            <div class="mb-10 fv-row">
+                                                <!--begin::Label-->
+                                                <label class="form-label">3D modelin linki</label>
+                                                <!--end::Label-->
+                                                <!--begin::Input-->
+                                                <input type="text" name="ar_model_url" class="form-control mb-2" placeholder="https://app.tryverse.io/model/viewer/a90351a4-54a6-40ee-bc82-de12d3007250"
+                                                       value="{{ old('ar_model_url', $product->ar_model_url) }}" />
+                                                <!--end::Input-->
+                                            </div>
+                                            <!--end::Input group-->
 
                                         </div>
                                         <!--end::Card body-->
@@ -1040,6 +1051,7 @@
             $("#edit_product_submit").on('click', function () {
 
                 var productId = {{$product->id}}; // Get the product ID
+                var arModelUrl = $('input[name="ar_model_url"]').val();
                 var slug = $('input[name="slug"]').val();
                 var productNameAz = $('input[name="product_name_az"]').val();
                 var productNameEn = $('input[name="product_name_en"]').val();
@@ -1079,6 +1091,7 @@
                 formData.append('_method', 'PUT');
 
 
+                formData.append('ar_model_url', arModelUrl);
                 formData.append('slug', slug);
                 formData.append('name_az', productNameAz);
                 formData.append('name_en', productNameEn);

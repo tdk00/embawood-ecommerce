@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\User\User;
 use App\Services\Bonus\BonusService;
+use App\Services\User\CreatioApiService;
+use App\Services\User\CreatioService;
 use App\Services\User\OtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,11 +17,15 @@ class AuthController extends Controller
 {
     protected $otpService;
     protected $bonusService;
+    protected $creatioService;
+    protected $creatioApiService;
 
-    public function __construct(OtpService $otpService, BonusService $bonusService)
+    public function __construct(OtpService $otpService, BonusService $bonusService, CreatioService $creatioService, CreatioApiService $creatioApiService)
     {
         $this->otpService = $otpService;
         $this->bonusService = $bonusService;
+        $this->creatioService = $creatioService;
+        $this->creatioApiService = $creatioApiService;
 
     }
 
@@ -175,6 +181,19 @@ class AuthController extends Controller
 
             $tempToken = $user->createToken('temp_token')->plainTextToken;
 
+            $accessToken = $this->creatioService->getAccessToken();
+
+            // Prepare client data
+            $data = [
+                'name'=> "DIDNT SET YET",
+                'surname' => "DIDNT SET YET",
+                'phone' => $this->formatPhoneNumberForCRM($user->phone),
+                'email' => "embawood@embawood.az"
+            ];
+
+            // Call the API to create/update the client
+            $response = $this->creatioApiService->createOrUpdateClient($data, $accessToken);
+
             if ($user->password) {
                 return response()->json([
                     'status' => 'login',
@@ -190,6 +209,19 @@ class AuthController extends Controller
         }
 
         return response()->json(['error' => 'Invalid OTP'], 401);
+    }
+
+    private function formatPhoneNumberForCRM($phone)
+    {
+        // Remove all non-numeric characters
+        $cleanedPhone = preg_replace('/\D/', '', $phone);
+
+        // Add the country code prefix (994) if missing
+        if (substr($cleanedPhone, 0, 2) !== '99') {
+            $cleanedPhone = '+994' . $cleanedPhone;
+        }
+
+        return $cleanedPhone;
     }
 
     /**

@@ -120,7 +120,7 @@ class ApiProductController extends Controller
             'product' => $product->only([
                 'id', 'name', 'sku', 'slug', 'description', 'price', 'final_price', 'stock', 'discount',
                 'discount_ends_at', 'is_set', 'is_in_basket', 'is_favorite', 'remaining_discount_seconds',
-                'has_unlimited_discount', 'has_limited_discount', 'average_rating', 'badge_1', 'badge_2'
+                'has_unlimited_discount', 'has_limited_discount', 'average_rating', 'badge_1', 'badge_2', 'ar_model_url'
             ]),
             'set_modules' => $this->getSetModules($product),
             'images' => $this->getImages($product) ,
