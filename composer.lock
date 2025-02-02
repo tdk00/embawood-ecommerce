@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3cb5251fef0b7784aa62de17a225420a",
+    "content-hash": "982c01206f402caf78831f3dba27abdc",
     "packages": [
         {
             "name": "beste/clock",
@@ -4780,6 +4780,67 @@
                 }
             ],
             "time": "2024-08-30T07:09:40+00:00"
+        },
+        {
+            "name": "srustamov/laravel-azericard",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/srustamov/laravel-azericard.git",
+                "reference": "9722916c3a567bc57f2d36d89a03567a45dccc3b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/srustamov/laravel-azericard/zipball/9722916c3a567bc57f2d36d89a03567a45dccc3b",
+                "reference": "9722916c3a567bc57f2d36d89a03567a45dccc3b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-openssl": "*",
+                "laravel/framework": "^8.0|^9.0|^10.0",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.0|^7.0|^8.0",
+                "phpunit/phpunit": "~9.5|^10.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Srustamov\\Azericard\\AzericardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Srustamov\\Azericard\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Samir Rustamov",
+                    "email": "rustemovv96@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Azericard for laravel framework",
+            "keywords": [
+                "azericard",
+                "laravel",
+                "payment",
+                "payment-gateway"
+            ],
+            "support": {
+                "issues": "https://github.com/srustamov/laravel-azericard/issues",
+                "source": "https://github.com/srustamov/laravel-azericard/tree/v3.0.1"
+            },
+            "time": "2023-07-19T10:16:27+00:00"
         },
         {
             "name": "swagger-api/swagger-ui",

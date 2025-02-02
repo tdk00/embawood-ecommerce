@@ -17,6 +17,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "response-handler/renderer": "1.1.0",
+        "srustamov/laravel-azericard": "^3.0",
         "view-manager/layout": "3.0.4"
     },
     "require-dev": {

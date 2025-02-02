@@ -25,6 +25,8 @@ use App\Http\Controllers\Ideas\ApiSubIdeaController;
 use App\Http\Controllers\Ideas\ApiSubIdeaItemController;
 use App\Http\Controllers\News\ApiNewsController;
 use App\Http\Controllers\Notification\ApiNotificationController;
+use App\Http\Controllers\PaymentIntegration\AzericardController;
+use App\Http\Controllers\PaymentIntegration\AzericardPaymentController;
 use App\Http\Controllers\PaymentIntegration\PaymentController;
 use App\Http\Controllers\Product\ApiFavoriteController;
 use App\Http\Controllers\Product\ApiProductController;
@@ -133,9 +135,12 @@ Route::post('auth/login', [AuthController::class, 'login']);
         Route::post('kapital-payment/verify', [PaymentController::class, 'verifyPayment']);
         Route::post('payment/clearing', [PaymentController::class, 'executeClearing']);
 
+        Route::post('azericard/create-order',[AzericardPaymentController::class,'initiatePayment']);
 
     });
 
+    Route::get('/payment/form', [AzericardPaymentController::class, 'loadPaymentForm'])->name('payment.form');
+    Route::get('/azericard/callback', [AzericardPaymentController::class, 'callback'])->name('payment.callback');
     Route::get('payment/callback', [PaymentController::class, 'paymentCallback']);
     Route::get('products/{id}', [ApiProductController::class, 'show']);
     Route::post('products/filter', [ApiProductController::class, 'filter']);

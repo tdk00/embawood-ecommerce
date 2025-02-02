@@ -204,7 +204,7 @@ class BasketService
         }
     }
 
-    public function getBasketData($couponError = null)
+    public function getBasketData( $couponError = null )
     {
         $basketItems = $this->getBasketItems();
 
